@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../providers/onboarding_provider.dart';
@@ -31,6 +32,8 @@ class StepFitness extends StatelessWidget {
         totalSteps: provider.totalSteps,
         question: AppStrings.onboardingTitles[7],
         questionSubtitle: AppStrings.onboardingSubtitles[7],
+        illustrationPath: AppAssets.fitnessIllustration,
+        fallbackIcon: Icons.fitness_center_rounded,
         onBack: onBack,
         onContinue: onNext,
         content: Column(

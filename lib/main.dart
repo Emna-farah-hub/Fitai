@@ -12,6 +12,7 @@ import 'firebase_options.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/onboarding_provider.dart';
 import 'presentation/providers/user_provider.dart';
+import 'services/food_seeder.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +35,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await seedAllFoods();
 
   runApp(const FitAIApp());
 }

@@ -105,10 +105,10 @@ class AppTheme {
         color: AppColors.surface,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(20),
         ),
         margin: EdgeInsets.zero,
+        shadowColor: Colors.black.withValues(alpha: 0.04),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceVariant,

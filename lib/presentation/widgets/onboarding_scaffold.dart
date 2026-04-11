@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/constants/app_colors.dart';
-import 'chat_bubble.dart';
 import 'gradient_button.dart';
+import 'illustration_widget.dart';
 
 /// Shared scaffold used by every onboarding step.
-/// Renders: back button, progress bar, chat bubble, content area, continue button.
+/// Renders: back button, progress bar, illustration, title, subtitle, content, continue button.
 class OnboardingScaffold extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
@@ -17,6 +18,8 @@ class OnboardingScaffold extends StatelessWidget {
   final bool isLoading;
   final bool canContinue;
   final String continueLabel;
+  final String? illustrationPath;
+  final IconData fallbackIcon;
 
   const OnboardingScaffold({
     super.key,
@@ -30,6 +33,8 @@ class OnboardingScaffold extends StatelessWidget {
     this.isLoading = false,
     this.canContinue = true,
     this.continueLabel = 'Continue',
+    this.illustrationPath,
+    this.fallbackIcon = Icons.auto_awesome,
   });
 
   @override
@@ -54,7 +59,13 @@ class OnboardingScaffold extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: AppColors.surface,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: AppColors.border),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
                           child: const Icon(
                             Icons.arrow_back_ios_new_rounded,
@@ -66,45 +77,35 @@ class OnboardingScaffold extends StatelessWidget {
                     else
                       const SizedBox(width: 40),
                     const SizedBox(width: 12),
-                    // Progress bar
+                    // Thin progress bar
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Step ${currentStep + 1} of $totalSteps',
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Text(
-                                '${((currentStep + 1) / totalSteps * 100).round()}%',
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(2),
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween(
+                            begin: currentStep / totalSteps,
+                            end: (currentStep + 1) / totalSteps,
                           ),
-                          const SizedBox(height: 6),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: LinearProgressIndicator(
-                              value: (currentStep + 1) / totalSteps,
-                              backgroundColor: AppColors.border,
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                AppColors.primary,
-                              ),
-                              minHeight: 6,
+                          duration: const Duration(milliseconds: 400),
+                          curve: Curves.easeInOut,
+                          builder: (context, value, _) => LinearProgressIndicator(
+                            value: value,
+                            backgroundColor: AppColors.border,
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              AppColors.primary,
                             ),
+                            minHeight: 4,
                           ),
-                        ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '${currentStep + 1}/$totalSteps',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -114,18 +115,55 @@ class OnboardingScaffold extends StatelessWidget {
               // Scrollable content
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // AI chat bubble with the question
-                      ChatBubble(
-                        message: question,
-                        subtitle: questionSubtitle,
-                      ),
-                      const SizedBox(height: 28),
+                      // Illustration
+                      if (illustrationPath != null)
+                        IllustrationWidget(
+                          assetPath: illustrationPath!,
+                          fallbackIcon: fallbackIcon,
+                          height: 160,
+                        ).animate().fadeIn(duration: 400.ms),
+
+                      if (illustrationPath != null) const SizedBox(height: 16),
+
+                      // Title
+                      Text(
+                        question,
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textPrimary,
+                          letterSpacing: -0.5,
+                        ),
+                      )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 100.ms)
+                          .slideY(begin: 0.1, end: 0),
+
+                      if (questionSubtitle != null) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          questionSubtitle!,
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                            height: 1.5,
+                          ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 400.ms, delay: 150.ms),
+                      ],
+
+                      const SizedBox(height: 24),
+
                       // Step-specific input content
-                      content,
+                      content
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 200.ms),
+
                       const SizedBox(height: 20),
                     ],
                   ),

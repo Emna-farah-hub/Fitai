@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/nutrition_calculator.dart';
@@ -41,6 +42,8 @@ class _StepHeightState extends State<StepHeight> {
           totalSteps: provider.totalSteps,
           question: AppStrings.onboardingTitles[3],
           questionSubtitle: AppStrings.onboardingSubtitles[3],
+          illustrationPath: AppAssets.heightIllustration,
+          fallbackIcon: Icons.height_rounded,
           onBack: widget.onBack,
           onContinue: widget.onNext,
           content: Column(

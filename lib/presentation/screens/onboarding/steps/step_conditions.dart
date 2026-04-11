@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../providers/onboarding_provider.dart';
@@ -24,6 +25,8 @@ class StepConditions extends StatelessWidget {
         totalSteps: provider.totalSteps,
         question: AppStrings.onboardingTitles[8],
         questionSubtitle: AppStrings.onboardingSubtitles[8],
+        illustrationPath: AppAssets.conditionsIllustration,
+        fallbackIcon: Icons.medical_services_rounded,
         onBack: onBack,
         onContinue: onNext,
         canContinue: provider.conditions.isNotEmpty,
@@ -84,6 +87,28 @@ class StepConditions extends StatelessWidget {
                   ),
                 );
               }).toList(),
+            ),
+            // Medical disclaimer
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.primarySurface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.primaryBorder),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.shield_outlined, color: AppColors.primary, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'FitAI provides general nutritional guidance. Not a substitute for professional medical advice.',
+                      style: GoogleFonts.inter(fontSize: 12, color: AppColors.primaryDark, height: 1.4),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

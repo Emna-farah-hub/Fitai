@@ -26,9 +26,21 @@ dependencies:
   # Navigation
   go_router: ^14.8.1
 
+  # Animation & Charts
+  flutter_animate: ^4.5.2
+  percent_indicator: ^4.2.4
+  fl_chart: ^0.70.2
+  iconsax_flutter: ^1.0.0+1
+
+  # AI
+  google_generative_ai: ^0.4.3
+  flutter_local_notifications: ^17.0.0
+
   # Utilities
   intl: ^0.19.0
   cupertino_icons: ^1.0.8
+  http: ^1.2.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -37,6 +49,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # assets:          # Uncomment and add image assets here in Sprint 2
-  #   - assets/images/
-  #   - assets/icons/
+  assets:
+    - assets/common_foods.json
+    - assets/illustrations/
+    - assets/images/
+    - assets/icons/

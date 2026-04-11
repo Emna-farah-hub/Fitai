@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../providers/onboarding_provider.dart';
@@ -43,6 +44,8 @@ class _StepNameState extends State<StepName> {
         totalSteps: provider.totalSteps,
         question: AppStrings.onboardingTitles[1],
         questionSubtitle: AppStrings.onboardingSubtitles[1],
+        illustrationPath: AppAssets.nameIllustration,
+        fallbackIcon: Icons.person_rounded,
         canContinue: provider.name.trim().isNotEmpty,
         onBack: widget.onBack,
         onContinue: widget.onNext,

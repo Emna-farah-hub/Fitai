@@ -72,8 +72,10 @@ class AppStrings {
     'None',
     'Diabetes Type 1',
     'Diabetes Type 2',
-    'Hypertension',
     'High Cholesterol',
+    'Hypertension',
+    'Lactose Intolerant',
+    'Gluten Intolerant / Celiac',
   ];
 
   // Goals

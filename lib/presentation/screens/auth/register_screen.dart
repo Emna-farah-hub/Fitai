@@ -42,7 +42,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (!mounted) return;
 
-    if (!success && authProvider.errorMessage != null) {
+    if (success) {
+      context.go('/onboarding');
+    } else if (authProvider.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(authProvider.errorMessage!),
@@ -50,7 +52,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       );
     }
-    // On success, GoRouter redirect handles navigation to /onboarding
   }
 
   @override

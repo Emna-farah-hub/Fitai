@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/user_provider.dart';
 
-/// Home tab of the dashboard — Sprint 1 version.
-/// Shows: greeting, calorie goal ring, BMR/TDEE stats, and selected goals.
+/// Home tab of the dashboard — upgraded Sprint 1 version.
+/// Shows: greeting, AI insight, calorie ring with macros, glycemic tracker,
+/// BMR/TDEE stats, goals, today's meals, and coming soon banner.
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key});
 
@@ -22,10 +25,8 @@ class HomeTab extends StatelessWidget {
     return Consumer2<UserProvider, AuthProvider>(
       builder: (context, userProvider, authProvider, _) {
         if (userProvider.isLoading) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -35,18 +36,28 @@ class HomeTab extends StatelessWidget {
         final bmr = profile?.bmr ?? 0.0;
         final tdee = profile?.tdee ?? 0.0;
         final goals = profile?.goals ?? [];
+        final conditions = profile?.conditions ?? [];
+        final hasDiabetes = conditions.contains('Diabetes Type 1') ||
+            conditions.contains('Diabetes Type 2');
 
-        return Scaffold(
-          body: Container(
-            decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
+        // Macro targets from calorie goal
+        final proteinG = (calorieGoal * 0.30 / 4).round();
+        final carbsG = (calorieGoal * 0.45 / 4).round();
+        final fatsG = (calorieGoal * 0.25 / 9).round();
+
+        int delayIndex = 0;
+
+        return Container(
+          decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    // Header Row
+
+                    // 1. Header Row
                     Row(
                       children: [
                         Expanded(
@@ -56,14 +67,14 @@ class HomeTab extends StatelessWidget {
                               Text(
                                 '${_greeting()},',
                                 style: GoogleFonts.inter(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),
                               ),
                               Text(
                                 name,
                                 style: GoogleFonts.inter(
-                                  fontSize: 26,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.textPrimary,
                                   letterSpacing: -0.5,
@@ -72,19 +83,16 @@ class HomeTab extends StatelessWidget {
                             ],
                           ),
                         ),
-                        // Avatar circle
                         Container(
                           width: 50,
                           height: 50,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             gradient: AppColors.primaryGradient,
                             shape: BoxShape.circle,
                           ),
                           child: Center(
                             child: Text(
-                              name.isNotEmpty
-                                  ? name[0].toUpperCase()
-                                  : 'F',
+                              name.isNotEmpty ? name[0].toUpperCase() : 'F',
                               style: GoogleFonts.inter(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
@@ -94,12 +102,208 @@ class HomeTab extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 28),
-                    // Calorie Goal Card
-                    _CalorieGoalCard(calorieGoal: calorieGoal),
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms),
+
                     const SizedBox(height: 20),
-                    // BMR / TDEE stats
+
+                    // 2. AI Insight Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'AI INSIGHT',
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withValues(alpha: 0.8),
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Welcome to FitAI, $name! Log your first meal to get personalized insights.',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: Colors.white,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms)
+                        .slideY(begin: 0.05, end: 0),
+
+                    const SizedBox(height: 20),
+
+                    // 3. Calorie Ring Card
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          CircularPercentIndicator(
+                            radius: 60,
+                            lineWidth: 10,
+                            percent: 0.0,
+                            circularStrokeCap: CircularStrokeCap.round,
+                            progressColor: AppColors.primary,
+                            backgroundColor: AppColors.border,
+                            animation: true,
+                            animationDuration: 800,
+                            center: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '0',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.textPrimary,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                Text(
+                                  'of $calorieGoal kcal',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11,
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          // Macro progress row
+                          Row(
+                            children: [
+                              _MacroColumn(
+                                label: 'Protein',
+                                value: '0g',
+                                target: '${proteinG}g',
+                                color: AppColors.macroProtein,
+                                percent: 0.0,
+                              ),
+                              const SizedBox(width: 16),
+                              _MacroColumn(
+                                label: 'Carbs',
+                                value: '0g',
+                                target: '${carbsG}g',
+                                color: AppColors.macroCarbs,
+                                percent: 0.0,
+                              ),
+                              const SizedBox(width: 16),
+                              _MacroColumn(
+                                label: 'Fats',
+                                value: '0g',
+                                target: '${fatsG}g',
+                                color: AppColors.macroFats,
+                                percent: 0.0,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms)
+                        .slideY(begin: 0.05, end: 0),
+
+                    const SizedBox(height: 16),
+
+                    // 4. Glycemic Tracker (conditional)
+                    if (hasDiabetes) ...[
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 20,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 4,
+                                decoration: BoxDecoration(
+                                  color: AppColors.glycemicGreen,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    bottomLeft: Radius.circular(20),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Glycemic Status',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Log your first meal to see glycemic tracking',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms)
+                          .slideY(begin: 0.05, end: 0),
+                      const SizedBox(height: 16),
+                    ],
+
+                    // 5. BMR / TDEE stats
                     Row(
                       children: [
                         Expanded(
@@ -122,9 +326,14 @@ class HomeTab extends StatelessWidget {
                           ),
                         ),
                       ],
-                    ),
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms)
+                        .slideY(begin: 0.05, end: 0),
+
                     const SizedBox(height: 20),
-                    // Your Goals section
+
+                    // 6. Your Goals section
                     if (goals.isNotEmpty) ...[
                       Text(
                         'Your Goals',
@@ -139,89 +348,150 @@ class HomeTab extends StatelessWidget {
                         spacing: 8,
                         runSpacing: 8,
                         children: goals.map((goal) => _GoalChip(goal: goal)).toList(),
-                      ),
+                      )
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms),
                       const SizedBox(height: 20),
                     ],
-                    // Coming soon banner
-                    _ComingSoonBanner(),
+
+                    // 7. Today's Meals
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Today's meals",
+                                style: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              Text(
+                                '+ Add meal',
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          Icon(
+                            Icons.restaurant_outlined,
+                            size: 48,
+                            color: AppColors.primary.withValues(alpha: 0.4),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'No meals logged yet',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Tap + to log your first meal',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms)
+                        .slideY(begin: 0.05, end: 0),
+
+                    const SizedBox(height: 16),
+
+                    // 8. Coming soon banner
+                    _ComingSoonBanner()
+                        .animate()
+                        .fadeIn(duration: 400.ms, delay: (delayIndex++ * 100).ms),
+
                     const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
-          ),
-        );
+          );
       },
     );
   }
 }
 
-/// Large card displaying the daily calorie goal prominently.
-class _CalorieGoalCard extends StatelessWidget {
-  final int calorieGoal;
+/// Macro progress column for protein/carbs/fats.
+class _MacroColumn extends StatelessWidget {
+  final String label;
+  final String value;
+  final String target;
+  final Color color;
+  final double percent;
 
-  const _CalorieGoalCard({required this.calorieGoal});
+  const _MacroColumn({
+    required this.label,
+    required this.value,
+    required this.target,
+    required this.color,
+    required this.percent,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
+    return Expanded(
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Daily Calorie Goal',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.85),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '$calorieGoal',
-                  style: GoogleFonts.inter(
-                    fontSize: 44,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.white,
-                    letterSpacing: -1,
-                  ),
-                ),
-                Text(
-                  'kcal / day',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    color: Colors.white.withValues(alpha: 0.75),
-                  ),
-                ),
-              ],
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: color,
             ),
           ),
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              color: AppColors.textMuted,
             ),
-            child: const Icon(
-              Icons.local_fire_department_rounded,
-              color: Colors.white,
-              size: 36,
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(2),
+            child: LinearProgressIndicator(
+              value: percent,
+              backgroundColor: color.withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+              minHeight: 3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'of $target',
+            style: GoogleFonts.inter(
+              fontSize: 10,
+              color: AppColors.textMuted,
             ),
           ),
         ],
@@ -253,12 +523,11 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -348,8 +617,8 @@ class _ComingSoonBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFf0fdf4),
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.primarySurface,
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.primaryBorder),
       ),
       child: Row(
@@ -370,7 +639,7 @@ class _ComingSoonBanner extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Meal logging, AI chat & nutrition insights',
+                  'AI chat & meal insights coming soon',
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     color: AppColors.textSecondary,

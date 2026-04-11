@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../providers/onboarding_provider.dart';
@@ -31,6 +32,8 @@ class StepGoals extends StatelessWidget {
         totalSteps: provider.totalSteps,
         question: AppStrings.onboardingTitles[9],
         questionSubtitle: AppStrings.onboardingSubtitles[9],
+        illustrationPath: AppAssets.goalsIllustration,
+        fallbackIcon: Icons.flag_rounded,
         onBack: onBack,
         onContinue: onNext,
         canContinue: provider.goals.isNotEmpty,

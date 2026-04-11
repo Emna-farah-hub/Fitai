@@ -46,6 +46,20 @@ class AppColors {
     colors: [Color(0xFF16a34a), Color(0xFF15803d)],
   );
 
+  // Macro tracking colors
+  static const Color macroProtein = Color(0xFF6366f1);  // indigo
+  static const Color macroCarbs = Color(0xFFf97316);     // orange
+  static const Color macroFats = Color(0xFFeab308);      // yellow
+
+  // Glycemic indicator colors
+  static const Color glycemicGreen = Color(0xFF22c55e);
+  static const Color glycemicOrange = Color(0xFFf97316);
+  static const Color glycemicRed = Color(0xFFef4444);
+
+  // Streak
+  static const Color streak = Color(0xFFf59e0b);         // amber/gold
+  static const Color streakSurface = Color(0xFFfffbeb);
+
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
