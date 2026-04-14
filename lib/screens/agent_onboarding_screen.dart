@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../agent/agent_scheduler.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
 
@@ -198,6 +199,9 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
     await Future.delayed(const Duration(seconds: 3));
 
     if (mounted) {
+      try {
+        AgentScheduler().start(_uid);
+      } catch (_) {}
       context.go('/dashboard');
     }
   }

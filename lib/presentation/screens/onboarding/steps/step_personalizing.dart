@@ -12,15 +12,16 @@ class StepPersonalizing extends StatefulWidget {
   const StepPersonalizing({super.key, required this.onComplete});
 
   @override
-  State<StepPersonalizing> createState() => _StepPersonalizingState();
+  StepPersonalizingState createState() => StepPersonalizingState();
 }
 
-class _StepPersonalizingState extends State<StepPersonalizing>
+class StepPersonalizingState extends State<StepPersonalizing>
     with TickerProviderStateMixin {
   late AnimationController _progressController;
   late AnimationController _pulseController;
   late Animation<double> _progressAnimation;
   late Animation<double> _pulseAnimation;
+  bool _started = false;
 
   int _currentMessageIndex = 0;
   final _messages = [
@@ -62,9 +63,15 @@ class _StepPersonalizingState extends State<StepPersonalizing>
       }
     });
 
+    // Don't auto-start — wait until this step becomes visible
+  }
+
+  /// Called by the parent when this step becomes the active page.
+  void startAnimation() {
+    if (_started) return;
+    _started = true;
     _progressController.forward().then((_) async {
       if (!mounted) return;
-      // Save profile then navigate
       widget.onComplete();
     });
   }

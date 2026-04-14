@@ -5,10 +5,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../models/meal_entry.dart';
 import '../../../screens/daily_dashboard_screen.dart';
+import '../../../screens/chat_screen.dart';
 import '../../../screens/food_search_screen.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
-import 'tabs/placeholder_tab.dart';
 import 'tabs/profile_tab.dart';
 
 /// Main dashboard screen with bottom navigation (5 tabs).
@@ -54,11 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final tabs = [
       const DailyDashboardScreen(),
       const SizedBox.shrink(),
-      const PlaceholderTab(
-        icon: Icons.chat_bubble_outline_rounded,
-        label: 'AI Chat',
-        description: 'Chat with your AI nutrition coach — coming soon',
-      ),
+      const ChatScreen(),
       const _HistoryTab(),
       const ProfileTab(),
     ];

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/user_provider.dart';
 import '../../widgets/gradient_button.dart';
 
 /// Registration screen — create a new account with email + password.
@@ -35,16 +36,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final authProvider = context.read<AuthProvider>();
+    debugPrint('[REGISTER] Starting signUp...');
     final success = await authProvider.signUp(
       email: _emailController.text,
       password: _passwordController.text,
     );
+    debugPrint('[REGISTER] signUp result: $success, mounted: $mounted');
 
     if (!mounted) return;
 
     if (success) {
+      debugPrint('[REGISTER] Clearing profile and navigating to /onboarding');
+      context.read<UserProvider>().clearProfile();
       context.go('/onboarding');
     } else if (authProvider.errorMessage != null) {
+      debugPrint('[REGISTER] Error: ${authProvider.errorMessage}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(authProvider.errorMessage!),

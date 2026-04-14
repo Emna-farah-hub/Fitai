@@ -8,6 +8,9 @@ import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
 import '../../presentation/screens/onboarding/onboarding_screen.dart';
 import '../../presentation/screens/dashboard/dashboard_screen.dart';
+import '../../screens/agent_onboarding_screen.dart';
+import '../../screens/chat_screen.dart';
+import '../../screens/plan_screen.dart';
 
 /// GoRouter configuration for FitAI.
 ///
@@ -34,6 +37,10 @@ class AppRouter {
             state.matchedLocation == '/register';
         final isSplash = state.matchedLocation == '/splash';
 
+        debugPrint('[ROUTER] redirect: path=${state.matchedLocation}, '
+            'isLoggedIn=$isLoggedIn, isAuthRoute=$isAuthRoute, '
+            'onboardingComplete=${userProvider.onboardingComplete}');
+
         // Always allow splash screen to run its own routing logic
         if (isSplash) return null;
 
@@ -42,7 +49,8 @@ class AppRouter {
 
         // Logged in trying to access auth screens → go to appropriate screen
         if (isLoggedIn && isAuthRoute) {
-          return userProvider.onboardingComplete ? '/dashboard' : '/onboarding';
+          if (!userProvider.onboardingComplete) return '/onboarding';
+          return '/dashboard';
         }
 
         return null; // No redirect needed
@@ -65,8 +73,20 @@ class AppRouter {
           builder: (context, state) => const OnboardingScreen(),
         ),
         GoRoute(
+          path: '/agent-onboarding',
+          builder: (context, state) => const AgentOnboardingScreen(),
+        ),
+        GoRoute(
           path: '/dashboard',
           builder: (context, state) => const DashboardScreen(),
+        ),
+        GoRoute(
+          path: '/chat',
+          builder: (context, state) => const ChatScreen(),
+        ),
+        GoRoute(
+          path: '/plan',
+          builder: (context, state) => const PlanScreen(),
         ),
       ],
     );

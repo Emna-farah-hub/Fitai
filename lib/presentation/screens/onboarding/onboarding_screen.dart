@@ -27,6 +27,14 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageController = PageController();
+  final _personalizingKey = GlobalKey<StepPersonalizingState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset onboarding state in case of a previous incomplete session
+    context.read<OnboardingProvider>().reset();
+  }
 
   void _goToPage(int index) {
     _pageController.animateToPage(
@@ -39,7 +47,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _nextStep() {
     final provider = context.read<OnboardingProvider>();
     provider.nextStep();
-    _goToPage(provider.currentStep);
+    final step = provider.currentStep;
+    _goToPage(step);
+
+    // If we just arrived at the personalizing step, start its animation
+    if (step == 11) {
+      // Wait for the page animation to complete before starting
+      Future.delayed(const Duration(milliseconds: 450), () {
+        _personalizingKey.currentState?.startAnimation();
+      });
+    }
   }
 
   void _prevStep() {
@@ -59,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (!mounted) return;
 
     if (success) {
-      context.go('/dashboard');
+      context.go('/agent-onboarding');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -107,8 +124,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         StepGoals(onNext: _nextStep, onBack: _prevStep),
         // Step 10: Dietary preference
         StepDietary(onNext: _nextStep, onBack: _prevStep),
-        // Step 11: Personalizing (saves profile → navigates to dashboard)
-        StepPersonalizing(onComplete: _completeOnboarding),
+        // Step 11: Personalizing (saves profile → navigates to agent onboarding)
+        StepPersonalizing(key: _personalizingKey, onComplete: _completeOnboarding),
       ],
     );
   }

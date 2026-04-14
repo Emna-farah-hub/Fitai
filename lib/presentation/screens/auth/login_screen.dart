@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/user_provider.dart';
 import '../../widgets/gradient_button.dart';
 
 /// Login screen — email + password sign in.
@@ -39,7 +41,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
-    if (!success && authProvider.errorMessage != null) {
+    if (success) {
+      // Load profile to check onboarding status, then route
+      final userProvider = context.read<UserProvider>();
+      await userProvider.loadProfile(authProvider.currentUser!.uid);
+      if (!mounted) return;
+
+      if (!userProvider.onboardingComplete) {
+        context.go('/onboarding');
+      } else {
+        // Check agent onboarding
+        try {
+          final doc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(authProvider.currentUser!.uid)
+              .get();
+          final agentDone = doc.data()?['agentOnboardingComplete'] ?? false;
+          if (!mounted) return;
+          context.go(agentDone == true ? '/dashboard' : '/agent-onboarding');
+        } catch (_) {
+          if (!mounted) return;
+          context.go('/dashboard');
+        }
+      }
+    } else if (authProvider.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(authProvider.errorMessage!),
@@ -47,7 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     }
-    // On success, GoRouter's redirect handles navigation
   }
 
   @override

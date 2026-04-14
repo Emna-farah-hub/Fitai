@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import '../agent/core/agent_event.dart';
+import '../agent/orchestrator.dart';
 import '../models/meal_entry.dart';
 
 class MealJournalService {
@@ -14,6 +16,15 @@ class MealJournalService {
         .collection('entries')
         .doc(meal.id);
     await docRef.set(meal.toMap());
+
+    // Notify agent that a meal was logged
+    try {
+      AgentOrchestrator().handle(AgentEvent.now(
+        type: AgentEventType.mealLogged,
+        uid: uid,
+        payload: {'meal': meal, 'foodName': meal.foodName},
+      ));
+    } catch (_) {}
   }
 
   Future<List<MealEntry>> getRecentMeals(String uid) async {

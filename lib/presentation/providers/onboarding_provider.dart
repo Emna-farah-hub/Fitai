@@ -113,6 +113,24 @@ class OnboardingProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Resets all onboarding state for a fresh start.
+  void reset() {
+    _currentStep = 0;
+    _name = '';
+    _birthday = DateTime(1998, 1, 1);
+    _heightCm = 170.0;
+    _weightKg = 70.0;
+    _sex = 'male';
+    _activityLevel = 'Moderately Active';
+    _fitnessLevel = 'Just starting out';
+    _conditions.clear();
+    _goals.clear();
+    _dietaryPreference = 'Classic';
+    _isSaving = false;
+    _errorMessage = null;
+    notifyListeners();
+  }
+
   /// Advance to the next onboarding step.
   void nextStep() {
     if (_currentStep < totalSteps - 1) {

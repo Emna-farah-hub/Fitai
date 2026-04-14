@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../models/meal_entry.dart';
 import '../services/meal_journal_service.dart';
 import 'food_search_screen.dart';
+import 'plan_screen.dart';
 
 class DailyDashboardScreen extends StatefulWidget {
   const DailyDashboardScreen({super.key});
@@ -191,6 +192,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildAgentCard(),
             _buildHeader(),
             _buildCalorieRing(),
             const SizedBox(height: 12),
@@ -211,6 +213,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
               _buildMealSection(section.$1, section.$2, section.$3),
               const SizedBox(height: 12),
             ],
+            _buildSuggestionSection(),
             const SizedBox(height: 80),
           ],
         ),
@@ -220,6 +223,287 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         backgroundColor: const Color(0xFF4CAF50),
         child: const Icon(Icons.add, color: Colors.white),
       ),
+    );
+  }
+
+  // ─── AGENT CARD & SUGGESTION ───────────────────────────────
+
+  Widget _buildAgentCard() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('dashboard_pins')
+          .doc(_uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const SizedBox.shrink();
+        }
+        final data = snapshot.data!.data() as Map<String, dynamic>?;
+        if (data == null || data['dismissed'] == true) {
+          return const SizedBox.shrink();
+        }
+
+        final message = data['message'] as String? ?? '';
+        final type = data['type'] as String? ?? '';
+        final severity = data['severity'] as String? ?? 'info';
+
+        Color accentColor;
+        IconData icon;
+        if (severity == 'warning') {
+          accentColor = const Color(0xFFFF9800);
+          icon = Icons.warning_amber_rounded;
+        } else if (severity == 'success') {
+          accentColor = const Color(0xFF4CAF50);
+          icon = Icons.check_circle_outline;
+        } else {
+          accentColor = const Color(0xFF1565C0);
+          icon = Icons.auto_awesome;
+        }
+
+        return Container(
+          margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border(left: BorderSide(color: accentColor, width: 4)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, color: accentColor, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      type == 'plan_ready'
+                          ? 'Plan Ready'
+                          : type == 'morning_briefing'
+                              ? 'Good Morning'
+                              : 'FitAI Coach',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: accentColor,
+                      ),
+                    ),
+                  ),
+                  // Dismiss button
+                  GestureDetector(
+                    onTap: () {
+                      FirebaseFirestore.instance
+                          .collection('dashboard_pins')
+                          .doc(_uid)
+                          .update({'dismissed': true});
+                    },
+                    child: Icon(Icons.close,
+                        size: 18, color: Colors.grey.shade400),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.4),
+              ),
+              if (type == 'plan_ready' || type == 'weekly_review') ...[
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const PlanScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'View full plan \u2192',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF4CAF50),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSuggestionSection() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('dashboard_pins')
+          .doc(_uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const SizedBox.shrink();
+        }
+        final data = snapshot.data!.data() as Map<String, dynamic>?;
+        if (data == null || data['dismissed'] == true) {
+          return const SizedBox.shrink();
+        }
+
+        final suggestion =
+            data['foodSuggestion'] as Map<String, dynamic>?;
+        if (suggestion == null) return const SizedBox.shrink();
+
+        final foodName = suggestion['foodName'] as String? ?? '';
+        if (foodName.isEmpty) return const SizedBox.shrink();
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F8E9),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFC8E6C9)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.restaurant_menu,
+                      color: Color(0xFF4CAF50), size: 18),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Suggested for you',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2E7D32),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                foodName,
+                style: const TextStyle(
+                    fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${(suggestion['portion'] ?? 0)}g \u00b7 '
+                '${(suggestion['calories'] ?? 0).toInt()} kcal \u00b7 '
+                'P:${(suggestion['protein'] ?? 0).toInt()}g '
+                'C:${(suggestion['carbs'] ?? 0).toInt()}g '
+                'F:${(suggestion['fats'] ?? 0).toInt()}g',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+              ),
+              if (suggestion['whySuggested'] != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  suggestion['whySuggested'],
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey.shade600),
+                ),
+              ],
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CAF50),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      onPressed: () async {
+                        final now = DateTime.now();
+                        final dateStr =
+                            DateFormat('yyyy-MM-dd').format(now);
+                        final hour = now.hour;
+                        String mealType = 'Snack';
+                        if (hour < 10) {
+                          mealType = 'Breakfast';
+                        } else if (hour < 14) {
+                          mealType = 'Lunch';
+                        } else if (hour < 20) {
+                          mealType = 'Dinner';
+                        }
+
+                        final meal = MealEntry(
+                          id: FirebaseFirestore.instance
+                              .collection('_')
+                              .doc()
+                              .id,
+                          userId: _uid,
+                          date: dateStr,
+                          foodName: foodName,
+                          quantity:
+                              (suggestion['portion'] ?? 100).toDouble(),
+                          calories:
+                              (suggestion['calories'] ?? 0).toDouble(),
+                          protein:
+                              (suggestion['protein'] ?? 0).toDouble(),
+                          carbs: (suggestion['carbs'] ?? 0).toDouble(),
+                          fats: (suggestion['fats'] ?? 0).toDouble(),
+                          glycemicIndex:
+                              (suggestion['gi'] ?? 0).toInt(),
+                          mealType: mealType,
+                          inputMethod: 'agent_suggestion',
+                          timestamp: now,
+                        );
+                        await _mealService.addMeal(_uid, meal);
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('$foodName added!'),
+                              backgroundColor: const Color(0xFF4CAF50),
+                            ),
+                          );
+                        }
+                      },
+                      child: const Text('Add to diary',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF4CAF50),
+                      side: const BorderSide(color: Color(0xFF4CAF50)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    onPressed: () {
+                      // Dismiss to trigger a new suggestion on next orchestrator run
+                      FirebaseFirestore.instance
+                          .collection('dashboard_pins')
+                          .doc(_uid)
+                          .update({'dismissed': true});
+                    },
+                    child: const Text('Show another',
+                        style: TextStyle(fontSize: 13)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
