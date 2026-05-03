@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import '../../core/constants/api_key.dart';
 import '../tools/agent_tools.dart';
 import 'analyst_agent.dart';
 
@@ -61,13 +62,13 @@ class SuggestionCard {
 /// The Coach Agent: translates analysis into warm, specific messages.
 /// Has function calling with search_food_db tool.
 class CoachAgent {
-  static const _apiKey = String.fromEnvironment('GEMINI_API_KEY');
+  static const _apiKey = ApiKeys.geminiApiKey;
   final AgentTools _tools = AgentTools();
   GenerativeModel? _model;
 
   GenerativeModel get _gemini {
     _model ??= GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       apiKey: _apiKey,
       tools: [
         Tool(functionDeclarations: [

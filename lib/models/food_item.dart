@@ -9,6 +9,7 @@ class FoodItem {
   final bool isTunisian;
   final String source;
   final String category;
+  final List<String> tags;
 
   const FoodItem({
     required this.id,
@@ -21,6 +22,7 @@ class FoodItem {
     required this.isTunisian,
     required this.source,
     required this.category,
+    this.tags = const [],
   });
 
   factory FoodItem.fromMap(Map<String, dynamic> map) {
@@ -35,6 +37,7 @@ class FoodItem {
       isTunisian: map['isTunisian'] ?? false,
       source: map['source'] ?? 'local',
       category: map['category'] ?? '',
+      tags: List<String>.from(map['tags'] ?? []),
     );
   }
 
@@ -49,5 +52,6 @@ class FoodItem {
     'isTunisian': isTunisian,
     'source': source,
     'category': category,
+    'tags': tags,
   };
 }

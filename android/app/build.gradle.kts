@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.fitai.fitai"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

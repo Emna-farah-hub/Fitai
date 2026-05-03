@@ -3,6 +3,10 @@ import '../../models/meal_entry.dart';
 import '../tools/agent_tools.dart';
 import 'coach_agent.dart';
 import 'analyst_agent.dart';
+import 'dart:convert';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import '../tools/agent_tools.dart';
+import '../../core/constants/api_key.dart';
 
 /// The Guardian Agent: pure logic, no Gemini. Monitors glycemic safety.
 class GuardianAgent {

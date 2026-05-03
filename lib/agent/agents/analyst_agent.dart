@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../tools/agent_tools.dart';
-
+import '../../core/constants/api_key.dart';
 /// Analysis result from the Analyst Agent.
 class AnalysisResult {
   final String status; // on_track, under_eating, over_eating, protein_low, glycemic_risk, skipping_meals
@@ -63,13 +63,13 @@ class AnalysisResult {
 /// The Analyst Agent: reads data, finds patterns, returns JSON.
 /// Never talks to the user. Never gives advice.
 class AnalystAgent {
-  static const _apiKey = String.fromEnvironment('GEMINI_API_KEY');
+  static const _apiKey = ApiKeys.geminiApiKey;
   final AgentTools _tools = AgentTools();
   GenerativeModel? _model;
 
   GenerativeModel get _gemini {
     _model ??= GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash',
       apiKey: _apiKey,
       systemInstruction: Content.text(
         'You are a nutrition data analyst. You ONLY produce structured JSON analysis. '

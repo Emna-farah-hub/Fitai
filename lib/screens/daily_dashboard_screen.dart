@@ -8,6 +8,7 @@ import '../models/meal_entry.dart';
 import '../services/meal_journal_service.dart';
 import 'food_search_screen.dart';
 import 'plan_screen.dart';
+import 'swipe_screen.dart';
 
 class DailyDashboardScreen extends StatefulWidget {
   const DailyDashboardScreen({super.key});
@@ -193,6 +194,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildAgentCard(),
+            _buildDiscoverMealsCard(),
             _buildHeader(),
             _buildCalorieRing(),
             const SizedBox(height: 12),
@@ -222,6 +224,60 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         onPressed: () => _showMealTypeSheet('Lunch'),
         backgroundColor: const Color(0xFF4CAF50),
         child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  // ─── DISCOVER MEALS CARD ───────────────────────────────────
+
+  Widget _buildDiscoverMealsCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const SwipeScreen(isOnboarding: false),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF16a34a), Color(0xFF22c55e)],
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.swipe, color: Colors.white, size: 24),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Discover Meals',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                  Text(
+                    'Swipe to refine your preferences',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+          ],
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ import '../../presentation/screens/dashboard/dashboard_screen.dart';
 import '../../screens/agent_onboarding_screen.dart';
 import '../../screens/chat_screen.dart';
 import '../../screens/plan_screen.dart';
+import '../../screens/swipe_screen.dart';
 
 /// GoRouter configuration for FitAI.
 ///
@@ -87,6 +88,13 @@ class AppRouter {
         GoRoute(
           path: '/plan',
           builder: (context, state) => const PlanScreen(),
+        ),
+        GoRoute(
+          path: '/swipe',
+          builder: (context, state) {
+            final isOnboarding = state.extra as bool? ?? false;
+            return SwipeScreen(isOnboarding: isOnboarding);
+          },
         ),
       ],
     );

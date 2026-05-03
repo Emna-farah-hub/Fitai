@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../agent/agent_scheduler.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
+import 'swipe_screen.dart';
 
 /// Chat-style onboarding where the agent asks deeper questions
 /// to build a rich profile before generating the 30-day plan.
@@ -165,7 +166,7 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
 
   Future<void> _finishOnboarding() async {
     _addAgentMessage(
-      "Perfect. I have everything I need.\nLet me build your personalized 30-day plan now...",
+      "Perfect! Now let's learn your food preferences.\nSwipe right on foods you like, left on foods you don't.",
     );
 
     setState(() => _isGeneratingPlan = true);
@@ -189,20 +190,30 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
       'agentOnboardingComplete': true,
     });
 
-    // Fire onboardingComplete event — triggers plan generation
-    await AgentOrchestrator().handle(AgentEvent.now(
-      type: AgentEventType.onboardingComplete,
-      uid: _uid,
-    ));
-
-    // Wait a minimum of 3 seconds for UX
-    await Future.delayed(const Duration(seconds: 3));
+    // Wait briefly for UX, then navigate to swipe screen
+    await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
-      try {
-        AgentScheduler().start(_uid);
-      } catch (_) {}
-      context.go('/dashboard');
+      final uid = _uid;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SwipeScreen(
+            isOnboarding: true,
+            onComplete: () {
+              // After swipes are done, generate plan and go to dashboard
+              AgentOrchestrator().handle(AgentEvent.now(
+                type: AgentEventType.onboardingComplete,
+                uid: uid,
+              ));
+              try {
+                AgentScheduler().start(uid);
+              } catch (_) {}
+              if (mounted) context.go('/dashboard');
+            },
+          ),
+        ),
+      );
     }
   }
 
