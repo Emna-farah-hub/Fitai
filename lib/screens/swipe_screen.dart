@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -27,6 +28,7 @@ class _SwipeScreenState extends State<SwipeScreen>
     with TickerProviderStateMixin {
   final _scoringService = FoodScoringService();
   final _mealService = SwipeMealService();
+  final _db = FirebaseFirestore.instance;
 
   String get _uid => FirebaseAuth.instance.currentUser!.uid;
 
@@ -93,14 +95,30 @@ class _SwipeScreenState extends State<SwipeScreen>
     });
 
     try {
-      final meals = await _mealService.getUnswipedMeals(
+      final results = await Future.wait([
+        _mealService.getUnswipedMeals(uid: _uid),
+        _db.collection('users').doc(_uid).get(),
+      ]);
+      final meals = results[0] as List<SwipeMeal>;
+      final profileDoc = results[1] as DocumentSnapshot<Map<String, dynamic>>;
+      final profile = profileDoc.data() ?? {};
+      final goals = List<String>.from(profile['goals'] ?? []);
+      final conditions = List<String>.from(profile['conditions'] ?? []);
+
+      final rankedMeals = await _scoringService.rankSwipeMeals(
         uid: _uid,
-        limit: widget.isOnboarding ? 15 : null,
+        meals: meals,
+        goals: goals,
+        conditions: conditions,
       );
+      var filteredMeals = rankedMeals.map((ranked) => ranked.meal).toList();
+      if (widget.isOnboarding && filteredMeals.length > 15) {
+        filteredMeals = filteredMeals.take(15).toList();
+      }
 
       if (mounted) {
         setState(() {
-          _meals = meals;
+          _meals = filteredMeals;
           _isLoading = false;
           if (_meals.isEmpty) _isComplete = true;
         });

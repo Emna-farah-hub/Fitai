@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-/// Displays the 30-day meal plan from Firestore.
+/// Displays the 7-day meal plan from Firestore.
+/// Reads from `meal_plan/{uid}` with structure:
+///   days: { "1": {date, breakfast, lunch, dinner, snack, dailyTotal}, ... }
 class PlanScreen extends StatefulWidget {
   const PlanScreen({super.key});
 
@@ -51,7 +54,7 @@ class _PlanScreenState extends State<PlanScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Your 30-Day Plan',
+          'Your 7-Day Plan',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         bottom: PreferredSize(
@@ -93,9 +96,9 @@ class _PlanScreenState extends State<PlanScreen> {
 
   Widget _buildPlanView() {
     final days = _plan!['days'] as Map<String, dynamic>? ?? {};
-    final weeklyThemes =
-        _plan!['weeklyThemes'] as Map<String, dynamic>? ?? {};
     final version = _plan!['version'] ?? 1;
+    final reason = _plan!['generationReason'] ?? 'initial';
+    final calorieTarget = _plan!['dailyCalorieTarget'] ?? 2000;
 
     final dayData = days['$_selectedDay'] as Map<String, dynamic>?;
 
@@ -107,11 +110,12 @@ class _PlanScreenState extends State<PlanScreen> {
           color: const Color(0xFFF1F8E9),
           child: Row(
             children: [
-              const Icon(Icons.auto_awesome, color: Color(0xFF4CAF50), size: 18),
+              const Icon(Icons.auto_awesome,
+                  color: Color(0xFF4CAF50), size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Plan v$version \u00b7 ${_currentWeekTheme(weeklyThemes)}',
+                  'Plan v$version \u00b7 $reason \u00b7 ${calorieTarget} kcal/day',
                   style: const TextStyle(
                       fontSize: 13,
                       color: Color(0xFF2E7D32),
@@ -122,13 +126,14 @@ class _PlanScreenState extends State<PlanScreen> {
           ),
         ),
 
-        // Day selector
+        // Day selector — 7 days, not 30
         SizedBox(
           height: 72,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            itemCount: 30,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            itemCount: 7,
             itemBuilder: (context, index) {
               final day = index + 1;
               final isSelected = day == _selectedDay;
@@ -183,8 +188,8 @@ class _PlanScreenState extends State<PlanScreen> {
               : ListView(
                   padding: const EdgeInsets.all(16),
                   children: [
-                    // Day theme
-                    if (dayData['theme'] != null)
+                    // Day date
+                    if (dayData['date'] != null)
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
@@ -194,7 +199,7 @@ class _PlanScreenState extends State<PlanScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '\u{2728} ${dayData['theme']}',
+                          '\u{1F4C5} ${_formatDate(dayData['date'])}',
                           style: const TextStyle(
                               fontSize: 13,
                               color: Color(0xFFFF8F00),
@@ -204,16 +209,20 @@ class _PlanScreenState extends State<PlanScreen> {
 
                     // Meals
                     _buildMealCard('Breakfast', Icons.free_breakfast,
-                        const Color(0xFFFF8F00), dayData['breakfast']),
+                        const Color(0xFFFF8F00), dayData['breakfast'],
+                        dayNumber: _selectedDay, mealType: 'breakfast'),
                     const SizedBox(height: 12),
                     _buildMealCard('Lunch', Icons.lunch_dining,
-                        const Color(0xFF2E7D32), dayData['lunch']),
+                        const Color(0xFF2E7D32), dayData['lunch'],
+                        dayNumber: _selectedDay, mealType: 'lunch'),
                     const SizedBox(height: 12),
                     _buildMealCard('Dinner', Icons.dinner_dining,
-                        const Color(0xFF1565C0), dayData['dinner']),
+                        const Color(0xFF1565C0), dayData['dinner'],
+                        dayNumber: _selectedDay, mealType: 'dinner'),
                     const SizedBox(height: 12),
                     _buildMealCard('Snack', Icons.cookie,
-                        const Color(0xFF6A1B9A), dayData['snack']),
+                        const Color(0xFF6A1B9A), dayData['snack'],
+                        dayNumber: _selectedDay, mealType: 'snack'),
 
                     // Daily totals
                     if (dayData['dailyTotal'] != null) ...[
@@ -229,13 +238,18 @@ class _PlanScreenState extends State<PlanScreen> {
     );
   }
 
-  String _currentWeekTheme(Map<String, dynamic> themes) {
-    final weekNum = ((_selectedDay - 1) ~/ 7) + 1;
-    return themes['week$weekNum'] as String? ?? 'Week $weekNum';
+  String _formatDate(String iso) {
+    try {
+      final date = DateTime.parse(iso);
+      return DateFormat('EEEE, d MMMM').format(date);
+    } catch (_) {
+      return iso;
+    }
   }
 
   Widget _buildMealCard(
-      String type, IconData icon, Color color, Map<String, dynamic>? meal) {
+      String type, IconData icon, Color color, Map<String, dynamic>? meal,
+      {required int dayNumber, required String mealType}) {
     if (meal == null) {
       return Card(
         child: ListTile(
@@ -247,14 +261,18 @@ class _PlanScreenState extends State<PlanScreen> {
       );
     }
 
+    final isConfirmed = meal['confirmed'] == true;
+    final isSwapped = meal['swapped'] == true;
+
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
+            // Header row
             Row(
               children: [
                 Icon(icon, color: color, size: 20),
@@ -264,46 +282,192 @@ class _PlanScreenState extends State<PlanScreen> {
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey)),
+                const Spacer(),
+                if (isConfirmed)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F5E9),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      '\u2713 Eaten',
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E7D32)),
+                    ),
+                  ),
+                if (isSwapped) ...[
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFF3E0),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'Swapped',
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFE65100)),
+                    ),
+                  ),
+                ],
               ],
             ),
             const SizedBox(height: 8),
-            // Food name
+            // Meal name
             Text(
-              meal['suggestion'] ?? '',
+              meal['name']?.toString() ?? '',
               style: const TextStyle(
-                  fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
             ),
             const SizedBox(height: 4),
-            // Macros
+            // Macros line
             Text(
-              '${(meal['portion'] ?? 0)}g \u00b7 '
               '${(meal['calories'] ?? 0)} kcal \u00b7 '
               'P:${(meal['protein'] ?? 0)}g '
               'C:${(meal['carbs'] ?? 0)}g '
-              'F:${(meal['fats'] ?? 0)}g',
+              'F:${(meal['fats'] ?? 0)}g'
+              '${meal['glycemicIndex'] != null ? ' \u00b7 GI:${meal['glycemicIndex']}' : ''}',
               style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
             ),
-            // Recipe tip
-            if (meal['recipe'] != null && meal['recipe'].toString().isNotEmpty) ...[
+            // Cuisine + tags
+            if (meal['cuisine'] != null) ...[
               const SizedBox(height: 6),
-              Text(
-                '\u{1F373} ${meal['recipe']}',
-                style: TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: Colors.grey.shade700),
+              Row(
+                children: [
+                  if (meal['cuisine'] == 'tunisian')
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFEBEE),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text(
+                        '\u{1F1F9}\u{1F1F3} Tunisian',
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFFC62828)),
+                      ),
+                    ),
+                ],
               ),
             ],
-            // Tunisian alternative
-            if (meal['tunisianAlternative'] != null &&
-                meal['tunisianAlternative'].toString().isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Text(
-                '\u{1F1F9}\u{1F1F3} Alternative: ${meal['tunisianAlternative']}',
-                style: const TextStyle(
-                    fontSize: 12, color: Color(0xFF4CAF50)),
+            // Action buttons (only if not confirmed)
+            if (!isConfirmed) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CAF50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      onPressed: () => _confirmMeal(dayNumber, mealType),
+                      child: const Text(
+                        'I ate this',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF4CAF50),
+                      side: const BorderSide(color: Color(0xFF4CAF50)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                    ),
+                    onPressed: () => _showSwapOptions(dayNumber, mealType),
+                    child: const Text('Swap',
+                        style: TextStyle(fontSize: 13)),
+                  ),
+                ],
               ),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmMeal(int dayNumber, String mealType) async {
+    // Use orchestrator method (already exists in your code)
+    try {
+      // Direct Firestore update — simpler than going through orchestrator for UI
+      final planDoc = await _db.collection('meal_plan').doc(_uid).get();
+      if (!planDoc.exists) return;
+
+      final days = Map<String, dynamic>.from(planDoc.data()?['days'] ?? {});
+      final day = Map<String, dynamic>.from(days['$dayNumber'] ?? {});
+      final meal = Map<String, dynamic>.from(day[mealType] ?? {});
+      if (meal.isEmpty) return;
+
+      meal['confirmed'] = true;
+      day[mealType] = meal;
+      days['$dayNumber'] = day;
+
+      await _db.collection('meal_plan').doc(_uid).update({'days': days});
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('\u2713 ${meal['name']} marked as eaten'),
+            backgroundColor: const Color(0xFF4CAF50),
+          ),
+        );
+        _loadPlan(); // Refresh
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to confirm meal')),
+        );
+      }
+    }
+  }
+
+  void _showSwapOptions(int dayNumber, String mealType) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Swap meal',
+              style:
+                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Coming soon \u2014 alternative meal selection',
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
           ],
         ),
       ),
@@ -320,10 +484,14 @@ class _PlanScreenState extends State<PlanScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _totalStat('Calories', '${total['calories'] ?? 0}', const Color(0xFF4CAF50)),
-          _totalStat('Protein', '${total['protein'] ?? 0}g', const Color(0xFFEF5350)),
-          _totalStat('Carbs', '${total['carbs'] ?? 0}g', const Color(0xFF42A5F5)),
-          _totalStat('Fats', '${total['fats'] ?? 0}g', const Color(0xFFFFA726)),
+          _totalStat('Calories', '${total['calories'] ?? 0}',
+              const Color(0xFF4CAF50)),
+          _totalStat('Protein', '${total['protein'] ?? 0}g',
+              const Color(0xFFEF5350)),
+          _totalStat('Carbs', '${total['carbs'] ?? 0}g',
+              const Color(0xFF42A5F5)),
+          _totalStat(
+              'Fats', '${total['fats'] ?? 0}g', const Color(0xFFFFA726)),
         ],
       ),
     );

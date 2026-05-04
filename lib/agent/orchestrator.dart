@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intl/intl.dart';
-import '../core/constants/api_key.dart';
 import '../models/meal_entry.dart';
+import '../services/food_scoring_service.dart';
 import '../services/meal_journal_service.dart';
 import 'core/agent_event.dart';
 import 'tools/agent_tools.dart';
@@ -18,8 +16,8 @@ class AgentOrchestrator {
   factory AgentOrchestrator() => _instance;
   AgentOrchestrator._();
 
-  static const _apiKey = ApiKeys.geminiApiKey;
   final AgentTools _tools = AgentTools();
+  final FoodScoringService _foodScoring = FoodScoringService();
   final AnalystAgent _analyst = AnalystAgent();
   final CoachAgent _coach = CoachAgent();
   final GuardianAgent _guardian = GuardianAgent();
@@ -93,13 +91,19 @@ class AgentOrchestrator {
     }
 
     if (suggestMealType != null) {
-      final suggestion = await _coach.generateMealSuggestion(uid, suggestMealType);
-      await _tools.pinToDashboard(uid, {
-        'type': 'meal_suggestion',
-        'message': suggestion.whySuggested,
-        'severity': 'info',
-        'foodSuggestion': suggestion.toJson(),
-      });
+      final suggestion = await _buildDeterministicSuggestion(
+        uid,
+        suggestMealType,
+        source: 'app_opened',
+      );
+      if (suggestion != null) {
+        await _tools.pinToDashboard(uid, {
+          'type': 'meal_suggestion',
+          'message': suggestion.whySuggested,
+          'severity': 'info',
+          'foodSuggestion': suggestion.toJson(),
+        });
+      }
     }
   }
 
@@ -162,13 +166,17 @@ class AgentOrchestrator {
       context: 'morning_briefing',
     );
 
-    final suggestion = await _coach.generateMealSuggestion(uid, 'Breakfast');
+    final suggestion = await _buildDeterministicSuggestion(
+      uid,
+      'Breakfast',
+      source: 'morning_briefing',
+    );
 
     await _tools.pinToDashboard(uid, {
       'type': 'morning_briefing',
       'message': message,
       'severity': 'info',
-      'foodSuggestion': suggestion.toJson(),
+      'foodSuggestion': suggestion?.toJson(),
     });
 
     await _tools.logAgentAction(uid, {
@@ -177,8 +185,10 @@ class AgentOrchestrator {
       'observation': analysis.summary,
       'decision': 'Sent morning briefing',
       'action': 'pinned_message_with_suggestion',
-      'outcome': 'Breakfast suggestion: ${suggestion.foodName}',
-    });
+        'outcome': suggestion == null
+            ? 'No safe breakfast suggestion available'
+            : 'Breakfast suggestion: ${suggestion.foodName}',
+      });
   }
 
   // ─── MIDDAY CHECK ──────────────────────────────────────
@@ -217,13 +227,19 @@ class AgentOrchestrator {
       });
     }
 
-    final suggestion = await _coach.generateMealSuggestion(uid, 'Lunch');
-    await _tools.pinToDashboard(uid, {
-      'type': 'meal_suggestion',
-      'message': suggestion.whySuggested,
-      'severity': 'info',
-      'foodSuggestion': suggestion.toJson(),
-    });
+    final suggestion = await _buildDeterministicSuggestion(
+      uid,
+      'Lunch',
+      source: 'midday_check',
+    );
+    if (suggestion != null) {
+      await _tools.pinToDashboard(uid, {
+        'type': 'meal_suggestion',
+        'message': suggestion.whySuggested,
+        'severity': 'info',
+        'foodSuggestion': suggestion.toJson(),
+      });
+    }
   }
 
   // ─── EVENING SUMMARY ──────────────────────────────────
@@ -267,6 +283,7 @@ class AgentOrchestrator {
 
   Future<void> _handleWeeklyReview(String uid) async {
     final adaptationConstraints = await _calculateAdaptationConstraints(uid);
+    final learningSummary = await _performWeeklyLearning(uid);
     final prefTags = await _getPreferenceTags(uid);
     final analysis = await _analyst.analyze(uid);
     final profile = await _tools.getUserProfile(uid);
@@ -312,6 +329,7 @@ class AgentOrchestrator {
       'trigger': 'scheduled',
       'adaptationConstraints': adaptationConstraints,
       'prefTagsLiked': prefTags['liked'],
+      'weeklyLearningSummary': learningSummary,
       'outcome': 'New adapted plan generated',
     });
   }
@@ -346,12 +364,16 @@ class AgentOrchestrator {
         mealType = 'Dinner';
       }
 
-      final suggestion = await _coach.generateMealSuggestion(uid, mealType);
+      final suggestion = await _buildDeterministicSuggestion(
+        uid,
+        mealType,
+        source: 'meal_reminder',
+      );
       await _tools.pinToDashboard(uid, {
         'type': 'meal_reminder',
         'message': "It's been $hoursSince hours since your last meal. Time for $mealType?",
         'severity': 'info',
-        'foodSuggestion': suggestion.toJson(),
+        'foodSuggestion': suggestion?.toJson(),
       });
     }
   }
@@ -394,8 +416,12 @@ class AgentOrchestrator {
         mealType = 'Dinner';
       }
 
-      final suggestion = await _coach.generateMealSuggestion(uid, mealType);
-      suggestionData = suggestion.toJson();
+      final suggestion = await _buildDeterministicSuggestion(
+        uid,
+        mealType,
+        source: 'chat_request',
+      );
+      suggestionData = suggestion?.toJson();
     }
 
     await _db.collection('chat').doc(uid).collection('messages').add({
@@ -419,28 +445,15 @@ class AgentOrchestrator {
       return;
     }
 
-    final mealIndex = _buildMealIndex(mealDatabase);
-
-    if (_apiKey.isEmpty) {
-      await _saveFallbackPlan(uid, reason);
-      return;
-    }
-
     try {
       final profile = await _tools.getUserProfile(uid);
-      final agentProfile =
-          profile['agentProfile'] as Map<String, dynamic>? ?? {};
       final calorieTarget = (profile['dailyCalorieGoal'] ?? 2000).toInt();
       final conditions = List<String>.from(profile['conditions'] ?? []);
       final goals = List<String>.from(profile['goals'] ?? []);
-
-      final isDiabetic = conditions
-          .any((c) => c.toLowerCase().contains('diabet'));
-      final isWeightLoss =
-          goals.any((g) => g.toLowerCase().contains('lose'));
-      final isMuscleGain =
-          goals.any((g) => g.toLowerCase().contains('muscle'));
-
+      final goalProfile = _foodScoring.deriveGoalProfile(
+        goals: goals,
+        conditions: conditions,
+      );
       final prefTags = await _getPreferenceTags(uid);
       final likedTags = prefTags['liked'] ?? [];
       final dislikedTags = prefTags['disliked'] ?? [];
@@ -450,180 +463,127 @@ class AgentOrchestrator {
           ? ((existingPlan.data()?['version'] ?? 0) as num).toInt() + 1
           : 1;
 
-      // Filter meal lists by mealType (capitalized in dataset)
-      final breakfastMeals =
-          mealDatabase.where((m) => m['mealType'] == 'Breakfast').toList();
-      final lunchMeals =
-          mealDatabase.where((m) => m['mealType'] == 'Lunch').toList();
-      final dinnerMeals =
-          mealDatabase.where((m) => m['mealType'] == 'Dinner').toList();
-      final snackMeals =
-          mealDatabase.where((m) => m['mealType'] == 'Snack').toList();
-
-      // Diabetic safety filter on dinners (heaviest meal — biggest GI risk)
-      final safeDinners = isDiabetic
-          ? dinnerMeals.where((m) {
-              final suitable = List<String>.from(m['suitableFor'] ?? []);
-              final diet = List<String>.from(m['dietTags'] ?? []);
-              return suitable.contains('diabetic') ||
-                  diet.contains('low_gi');
-            }).toList()
-          : dinnerMeals;
-
-      // Adaptation: prefer flexible meals when user keeps skipping a slot
       List<Map<String, dynamic>> filterForAdaptation(
-          List<Map<String, dynamic>> meals, String mealType) {
-        final key = 'prefer_flexible_${mealType.toLowerCase()}';
-        if (adaptationConstraints.containsKey(key)) {
-          final flexible = meals
+        List<Map<String, dynamic>> meals,
+        String mealType,
+      ) {
+        var filtered = List<Map<String, dynamic>>.from(meals);
+        final flexibleKey = 'prefer_flexible_${mealType.toLowerCase()}';
+        if (adaptationConstraints.containsKey(flexibleKey)) {
+          final flexible = filtered
               .where((m) =>
                   ((m['flexibilityScore'] as num?)?.toInt() ?? 0) >= 4)
               .toList();
-          return flexible.isNotEmpty ? flexible : meals;
+          if (flexible.isNotEmpty) {
+            filtered = flexible;
+          }
         }
-        return meals;
+
+        final avoidTags = _extractAvoidTags(adaptationConstraints);
+        if (avoidTags.isNotEmpty) {
+          final withoutAvoided = filtered.where((meal) {
+            final mealTags = <String>{
+              ...List<String>.from(meal['tags'] ?? []),
+              ...List<String>.from(meal['dietTags'] ?? []),
+            }.map((tag) => tag.toString().toLowerCase()).toSet();
+            return avoidTags.intersection(mealTags).isEmpty;
+          }).toList();
+          if (withoutAvoided.isNotEmpty) {
+            filtered = withoutAvoided;
+          }
+        }
+
+        return filtered;
       }
 
-      final filteredBreakfast = filterForAdaptation(breakfastMeals, 'Breakfast');
-      final filteredLunch = filterForAdaptation(lunchMeals, 'Lunch');
-      final filteredDinner =
-          filterForAdaptation(isDiabetic ? safeDinners : dinnerMeals, 'Dinner');
-      final filteredSnack = filterForAdaptation(snackMeals, 'Snack');
-
-      String summarizeMeal(Map<String, dynamic> m) {
-        final isTunisian = m['cuisine'] == 'tunisian';
-        final dietTags = (m['dietTags'] as List?)?.join(',') ?? '';
-        final suitableFor = (m['suitableFor'] as List?)?.join(',') ?? '';
-        return '${m['id']}: ${m['name']} | '
-            '${m['calories']}kcal | P:${m['protein']}g C:${m['carbs']}g F:${m['fats']}g | '
-            'GI:${m['glycemicIndex']} | flex:${m['flexibilityScore']} | '
-            '${isTunisian ? 'tunisian' : m['cuisine']} | '
-            'dietTags:$dietTags | suitable:$suitableFor';
-      }
-
-      final adaptationBlock = adaptationConstraints.isEmpty
-          ? ''
-          : '\nADAPTATIONS SEMAINE PRÉCÉDENTE:\n${adaptationConstraints.entries.map((e) => '• ${e.key}: ${e.value}').join('\n')}';
-
-      final prompt = '''
-Tu es un nutritionniste. Crée un plan de repas 7 jours pour cet utilisateur.
-
-PROFIL:
-- Calories cibles: $calorieTarget kcal/jour
-- TDEE: ${profile['tdee']}
-- Objectifs: $goals
-- Conditions: $conditions
-- Préférence alimentaire: ${profile['dietaryPreference']}
-- Aliments évités: ${agentProfile['avoidedFoods'] ?? 'aucun'}
-- Niveau de cuisine: ${agentProfile['cookingLevel'] ?? 'basique'}
-
-TAGS APPRÉCIÉS (basés sur swipes): ${likedTags.join(', ')}
-TAGS À ÉVITER: ${dislikedTags.join(', ')}
-
-CONTRAINTES NUTRITIONNELLES:
-- Breakfast: 250–500 kcal
-- Lunch: 400–600 kcal
-- Dinner: 300–560 kcal
-- Snack: 90–250 kcal
-- Total/jour: entre ${(calorieTarget * 0.90).round()} et ${(calorieTarget * 1.10).round()} kcal
-${isDiabetic ? '⚠️ DIABÈTE: sélectionne UNIQUEMENT des repas avec "diabetic" dans suitableFor OU "low_gi" dans dietTags' : ''}
-${isWeightLoss ? '→ Préférer repas avec "weight_loss" dans suitableFor et "low_calorie" dans dietTags' : ''}
-${isMuscleGain ? '→ Préférer repas avec "muscle_gain" dans suitableFor et "high_protein" dans dietTags' : ''}
-$adaptationBlock
-
-PETITS-DÉJEUNERS DISPONIBLES (${filteredBreakfast.length} repas):
-${filteredBreakfast.map(summarizeMeal).join('\n')}
-
-DÉJEUNERS DISPONIBLES (${filteredLunch.length} repas):
-${filteredLunch.map(summarizeMeal).join('\n')}
-
-DÎNERS DISPONIBLES (${filteredDinner.length} repas):
-${filteredDinner.map(summarizeMeal).join('\n')}
-
-COLLATIONS DISPONIBLES (${filteredSnack.length} repas):
-${filteredSnack.map(summarizeMeal).join('\n')}
-
-RÈGLES:
-1. Sélectionne UNIQUEMENT des IDs de la liste ci-dessus
-2. Aucun ID répété dans la même semaine
-3. Inclure au moins 40% de repas avec cuisine:tunisian
-4. Varier: ne pas répéter la même source de protéine 2 jours de suite
-5. Privilégier les tags: ${likedTags.take(5).join(', ')}
-
-Retourne UNIQUEMENT ce JSON (sans markdown):
-{
-  "days": {
-    "1": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"},
-    "2": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"},
-    "3": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"},
-    "4": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"},
-    "5": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"},
-    "6": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"},
-    "7": {"breakfast":"B0XX","lunch":"L0XX","dinner":"D0XX","snack":"S0XX"}
-  }
-}
-''';
-
-      final model = GenerativeModel(
-        model: 'gemini-2.0-flash',
-        apiKey: _apiKey,
-        systemInstruction: Content.text(
-          'Tu es un nutritionniste clinique. Tu ne renvoies que du JSON valide. '
-          'Pas de markdown, pas d\'explication.',
+      final breakfastRanked = await _foodScoring.rankMealMaps(
+        uid: uid,
+        meals: filterForAdaptation(
+          mealDatabase.where((m) => m['mealType'] == 'Breakfast').toList(),
+          'Breakfast',
         ),
+        goals: goals,
+        conditions: conditions,
+      );
+      final lunchRanked = await _foodScoring.rankMealMaps(
+        uid: uid,
+        meals: filterForAdaptation(
+          mealDatabase.where((m) => m['mealType'] == 'Lunch').toList(),
+          'Lunch',
+        ),
+        goals: goals,
+        conditions: conditions,
+      );
+      final dinnerRanked = await _foodScoring.rankMealMaps(
+        uid: uid,
+        meals: filterForAdaptation(
+          mealDatabase.where((m) => m['mealType'] == 'Dinner').toList(),
+          'Dinner',
+        ),
+        goals: goals,
+        conditions: conditions,
+      );
+      final snackRanked = await _foodScoring.rankMealMaps(
+        uid: uid,
+        meals: filterForAdaptation(
+          mealDatabase.where((m) => m['mealType'] == 'Snack').toList(),
+          'Snack',
+        ),
+        goals: goals,
+        conditions: conditions,
       );
 
-      final response = await model.generateContent([Content.text(prompt)]);
-      final cleaned = _cleanJson(response.text ?? '');
-      final parsed = jsonDecode(cleaned) as Map<String, dynamic>;
-      final geminiDays = parsed['days'] as Map<String, dynamic>? ?? {};
-
-      // Validate, fall back per-slot if Gemini returns an unknown id
       final now = DateTime.now();
       final usedIds = <String>{};
-
-      Map<String, dynamic> resolveMeal(
-        String? id,
-        List<Map<String, dynamic>> pool,
-      ) {
-        if (id != null && mealIndex.containsKey(id)) {
-          usedIds.add(id);
-          return Map<String, dynamic>.from(mealIndex[id]!);
-        }
-        // Pick a fallback from pool that hasn't been used yet
-        final unused = pool.where((m) => !usedIds.contains(m['id'])).toList();
-        final pick = (unused.isNotEmpty ? unused : pool).first;
-        usedIds.add(pick['id'] as String);
-        return Map<String, dynamic>.from(pick);
-      }
-
+      var previousProteinSources = <String>{};
       final days = <String, dynamic>{};
+
       for (int i = 1; i <= 7; i++) {
-        final slot = geminiDays['$i'] as Map<String, dynamic>? ?? {};
-        final date =
-            DateFormat('yyyy-MM-dd').format(now.add(Duration(days: i - 1)));
+        final breakfast = _selectPlannedMeal(
+          rankedMeals: breakfastRanked,
+          usedIds: usedIds,
+          previousProteinSources: previousProteinSources,
+          targetCalories:
+              _slotTargetCalories('Breakfast', adaptationConstraints),
+          dayIndex: i,
+        );
+        final lunch = _selectPlannedMeal(
+          rankedMeals: lunchRanked,
+          usedIds: usedIds,
+          previousProteinSources: previousProteinSources,
+          targetCalories: _slotTargetCalories('Lunch', adaptationConstraints),
+          dayIndex: i,
+        );
+        final dinner = _selectPlannedMeal(
+          rankedMeals: dinnerRanked,
+          usedIds: usedIds,
+          previousProteinSources: previousProteinSources,
+          targetCalories: _slotTargetCalories('Dinner', adaptationConstraints),
+          dayIndex: i,
+        );
+        final snack = _selectPlannedMeal(
+          rankedMeals: snackRanked,
+          usedIds: usedIds,
+          previousProteinSources: previousProteinSources,
+          targetCalories: _slotTargetCalories('Snack', adaptationConstraints),
+          dayIndex: i,
+        );
 
-        final b = resolveMeal(slot['breakfast'] as String?, filteredBreakfast);
-        final l = resolveMeal(slot['lunch'] as String?, filteredLunch);
-        final d = resolveMeal(slot['dinner'] as String?, filteredDinner);
-        final s = resolveMeal(slot['snack'] as String?, filteredSnack);
-
-        b['confirmed'] = false;
-        b['swapped'] = false;
-        l['confirmed'] = false;
-        l['swapped'] = false;
-        d['confirmed'] = false;
-        d['swapped'] = false;
-        s['confirmed'] = false;
-        s['swapped'] = false;
+        previousProteinSources = _proteinSourcesForDay([
+          breakfast,
+          lunch,
+          dinner,
+          snack,
+        ]);
 
         days['$i'] = {
-          'date': date,
-          'breakfast': b,
-          'lunch': l,
-          'dinner': d,
-          'snack': s,
-          'dailyTotal': _dailyTotal([b, l, d, s]),
+          'date': DateFormat('yyyy-MM-dd')
+              .format(now.add(Duration(days: i - 1))),
+          'breakfast': breakfast,
+          'lunch': lunch,
+          'dinner': dinner,
+          'snack': snack,
+          'dailyTotal': _dailyTotal([breakfast, lunch, dinner, snack]),
         };
       }
 
@@ -632,6 +592,7 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
         'weekStartDate': DateFormat('yyyy-MM-dd').format(now),
         'version': currentVersion,
         'generationReason': reason,
+        'goalProfile': goalProfile.label,
         'dailyCalorieTarget': calorieTarget,
         'likedTagsUsed': likedTags,
         'dislikedTagsAvoided': dislikedTags,
@@ -647,8 +608,8 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
       await _tools.pinToDashboard(uid, {
         'type': 'plan_ready',
         'message': reason == 'initial'
-            ? 'Ton plan nutritionnel personnalisé de 7 jours est prêt !'
-            : 'Ton plan a été adapté selon ta semaine — découvre les nouveautés !',
+            ? 'Ton plan nutritionnel personnalise de 7 jours est pret !'
+            : 'Ton plan a ete adapte selon ta semaine, avec des repas mieux notes et plus varies.',
         'severity': 'success',
         'foodSuggestion': null,
       });
@@ -656,9 +617,10 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
       await _tools.logAgentAction(uid, {
         'type': 'plan_generated',
         'trigger': reason,
+        'goalProfile': goalProfile.label,
         'observation':
             'Plan v$currentVersion: ${likedTags.length} liked tags, ${adaptationConstraints.length} adaptations',
-        'decision': 'Plan v$currentVersion created',
+        'decision': 'Deterministic scored meal plan created',
         'action': 'saved_to_firestore',
         'outcome': 'Plan ready',
       });
@@ -668,10 +630,428 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
     }
   }
 
+  Future<SuggestionCard?> _buildDeterministicSuggestion(
+    String uid,
+    String mealType, {
+    required String source,
+  }) async {
+    final mealDatabase = await _loadMealDatabase();
+    if (mealDatabase.isEmpty) return null;
+
+    final profile = await _tools.getUserProfile(uid);
+    final goals = List<String>.from(profile['goals'] ?? []);
+    final conditions = List<String>.from(profile['conditions'] ?? []);
+    final goalProfile = _foodScoring.deriveGoalProfile(
+      goals: goals,
+      conditions: conditions,
+    );
+    final dailyLog = await _tools.analyzeDailyLog(uid);
+    final eatenToday = (dailyLog['meals'] as List<dynamic>? ?? [])
+        .map((meal) => (meal['foodName']?.toString() ?? '').toLowerCase())
+        .where((name) => name.isNotEmpty)
+        .toSet();
+
+    final typedMeals = mealDatabase
+        .where((meal) => meal['mealType'] == mealType)
+        .toList();
+    final pool = typedMeals
+        .where((meal) =>
+            !eatenToday.contains((meal['name']?.toString() ?? '').toLowerCase()))
+        .toList();
+    final recommendationPool = pool.isNotEmpty ? pool : typedMeals;
+    if (recommendationPool.isEmpty) return null;
+
+    final rankedMeals = await _foodScoring.rankMealMaps(
+      uid: uid,
+      meals: recommendationPool,
+      goals: goals,
+      conditions: conditions,
+    );
+    if (rankedMeals.isEmpty) return null;
+
+    final primary = rankedMeals.first;
+    final alternative =
+        rankedMeals.length > 1 ? rankedMeals[1].meal : null;
+    final suggestion = _rankedMealToSuggestionCard(
+      rankedMeal: primary,
+      goalProfile: goalProfile,
+      alternativeMeal: alternative,
+    );
+
+    await _logMealRecommendation(
+      uid: uid,
+      mealType: mealType,
+      rankedMeal: primary,
+      source: source,
+      goalProfile: goalProfile.label,
+    );
+
+    return suggestion;
+  }
+
+  SuggestionCard _rankedMealToSuggestionCard({
+    required RankedMeal<Map<String, dynamic>> rankedMeal,
+    required GoalProfile goalProfile,
+    Map<String, dynamic>? alternativeMeal,
+  }) {
+    final meal = rankedMeal.meal;
+    final ingredients = <String>[];
+    for (final ingredient in meal['ingredients'] as List? ?? const []) {
+      if (ingredient is Map) {
+        final name = ingredient['name']?.toString() ?? '';
+        if (name.isNotEmpty) ingredients.add(name);
+      }
+    }
+
+    return SuggestionCard(
+      foodName: meal['name']?.toString() ?? '',
+      portion: _portionFromMeal(meal),
+      calories: (meal['calories'] as num?)?.toDouble() ?? 0,
+      protein: (meal['protein'] as num?)?.toDouble() ?? 0,
+      carbs: (meal['carbs'] as num?)?.toDouble() ?? 0,
+      fats: (meal['fats'] as num?)?.toDouble() ?? 0,
+      gi: (meal['glycemicIndex'] as num?)?.toInt() ?? 0,
+      whySuggested: _suggestionReason(
+        meal: meal,
+        goalProfile: goalProfile,
+        rankedMeal: rankedMeal,
+      ),
+      quickPreparationTip: _preparationTip(
+        meal: meal,
+        ingredients: ingredients,
+      ),
+      alternativeOption: alternativeMeal?['name']?.toString() ?? '',
+    );
+  }
+
+  String _suggestionReason({
+    required Map<String, dynamic> meal,
+    required GoalProfile goalProfile,
+    required RankedMeal<Map<String, dynamic>> rankedMeal,
+  }) {
+    final protein = (meal['protein'] as num?)?.toInt() ?? 0;
+    final calories = (meal['calories'] as num?)?.toInt() ?? 0;
+    final gi = (meal['glycemicIndex'] as num?)?.toInt() ?? 0;
+    final roundedScore = (rankedMeal.finalScore * 100).round();
+
+    if (goalProfile.isDiabetes) {
+      return '${meal['name']} is goal-safe for diabetes with GI $gi, controlled carbs, and a score of $roundedScore/100.';
+    }
+    if (goalProfile.isMuscleGain) {
+      return '${meal['name']} supports muscle gain with $protein g protein, $calories kcal, and a score of $roundedScore/100.';
+    }
+    if (goalProfile.isWeightLoss) {
+      return '${meal['name']} fits weight loss with $calories kcal, balanced protein, and a score of $roundedScore/100.';
+    }
+    return '${meal['name']} is one of your top scored meals right now with $protein g protein and a score of $roundedScore/100.';
+  }
+
+  String _preparationTip({
+    required Map<String, dynamic> meal,
+    required List<String> ingredients,
+  }) {
+    final prepTime = meal['prepTime']?.toString();
+    if (ingredients.length >= 2) {
+      return 'Keep it simple: build it around ${ingredients[0]} and ${ingredients[1]}${prepTime == null ? '' : ' in about $prepTime'}.';
+    }
+    if (prepTime != null && prepTime.isNotEmpty) {
+      return 'This meal is a practical option you can prepare in about $prepTime.';
+    }
+    return 'Prep this as a simple, goal-safe meal using the ingredients already listed in your plan.';
+  }
+
+  double _portionFromMeal(Map<String, dynamic> meal) {
+    double totalQuantity = 0;
+    for (final ingredient in meal['ingredients'] as List? ?? const []) {
+      if (ingredient is Map) {
+        totalQuantity += ((ingredient['quantity'] as num?)?.toDouble() ?? 0);
+      }
+    }
+    return totalQuantity > 0 ? totalQuantity : 100;
+  }
+
+  Future<void> _logMealRecommendation({
+    required String uid,
+    required String mealType,
+    required RankedMeal<Map<String, dynamic>> rankedMeal,
+    required String source,
+    required String goalProfile,
+  }) async {
+    try {
+      await _db
+          .collection('meal_recommendations')
+          .doc(uid)
+          .collection('events')
+          .add({
+        'createdAt': Timestamp.now(),
+        'mealType': mealType,
+        'source': source,
+        'goalProfile': goalProfile,
+        'foodName': rankedMeal.meal['name'],
+        'mealId': rankedMeal.meal['id'],
+        'goalCompatibilityScore': rankedMeal.goalCompatibilityScore,
+        'preferenceScore': rankedMeal.preferenceScore,
+        'finalScore': rankedMeal.finalScore,
+        'meal': rankedMeal.meal,
+      });
+    } catch (_) {}
+  }
+
+  Map<String, dynamic>? _selectPlannedMeal({
+    required List<RankedMeal<Map<String, dynamic>>> rankedMeals,
+    required Set<String> usedIds,
+    required Set<String> previousProteinSources,
+    required double targetCalories,
+    required int dayIndex,
+  }) {
+    if (rankedMeals.isEmpty) return null;
+
+    final shortlist = rankedMeals.take(rankedMeals.length < 6 ? rankedMeals.length : 6).toList();
+    RankedMeal<Map<String, dynamic>>? best;
+    var bestScore = -9999.0;
+
+    for (int i = 0; i < shortlist.length; i++) {
+      final candidate = shortlist[i];
+      final meal = candidate.meal;
+      final id = meal['id']?.toString() ?? '';
+      if (id.isNotEmpty && usedIds.contains(id)) continue;
+
+      final proteinSources = _proteinSourcesForMeal(meal);
+      final hasRepeatedProtein =
+          proteinSources.intersection(previousProteinSources).isNotEmpty;
+      final calories = (meal['calories'] as num?)?.toDouble() ?? targetCalories;
+      final caloriePenalty = targetCalories <= 0
+          ? 0.0
+          : ((calories - targetCalories).abs() / targetCalories).clamp(0.0, 1.0);
+      final rotationBonus = i == (dayIndex % shortlist.length) ? 0.02 : 0.0;
+      final varietyPenalty = hasRepeatedProtein ? 0.18 : 0.0;
+      final candidateScore =
+          candidate.finalScore - (caloriePenalty * 0.08) - varietyPenalty + rotationBonus;
+
+      if (candidateScore > bestScore) {
+        best = candidate;
+        bestScore = candidateScore;
+      }
+    }
+
+    best ??= rankedMeals.firstWhere(
+      (candidate) {
+        final id = candidate.meal['id']?.toString() ?? '';
+        return id.isEmpty || !usedIds.contains(id);
+      },
+      orElse: () => rankedMeals.first,
+    );
+
+    final selected = Map<String, dynamic>.from(best.meal);
+    selected['confirmed'] = false;
+    selected['swapped'] = false;
+    selected['goalCompatibilityScore'] =
+        double.parse(best.goalCompatibilityScore.toStringAsFixed(3));
+    selected['preferenceScore'] =
+        double.parse(best.preferenceScore.toStringAsFixed(3));
+    selected['finalScore'] =
+        double.parse(best.finalScore.toStringAsFixed(3));
+
+    final id = selected['id']?.toString() ?? '';
+    if (id.isNotEmpty) {
+      usedIds.add(id);
+    }
+    return selected;
+  }
+
+  double _slotTargetCalories(
+    String mealType,
+    Map<String, String> adaptationConstraints,
+  ) {
+    double target;
+    switch (mealType.toLowerCase()) {
+      case 'breakfast':
+        target = 375.0;
+        break;
+      case 'lunch':
+        target = 500.0;
+        break;
+      case 'dinner':
+        target = 430.0;
+        break;
+      case 'snack':
+        target = 170.0;
+        break;
+      default:
+        target = 350.0;
+    }
+
+    if (adaptationConstraints.containsKey('calorie_low')) {
+      target += mealType.toLowerCase() == 'snack' ? 40 : 30;
+    }
+    if (adaptationConstraints.containsKey('calorie_high')) {
+      target -= mealType.toLowerCase() == 'snack' ? 25 : 20;
+    }
+    return target;
+  }
+
+  Set<String> _extractAvoidTags(Map<String, String> adaptationConstraints) {
+    final raw = adaptationConstraints['avoid_swapped_tags'];
+    if (raw == null || raw.isEmpty) return {};
+    final marker = raw.split(':');
+    if (marker.length < 2) return {};
+    return marker.last
+        .split(',')
+        .map((tag) => tag.trim().toLowerCase().replaceAll('.', ''))
+        .where((tag) => tag.isNotEmpty)
+        .toSet();
+  }
+
+  Set<String> _proteinSourcesForDay(List<Map<String, dynamic>?> meals) {
+    final proteins = <String>{};
+    for (final meal in meals) {
+      if (meal == null) continue;
+      proteins.addAll(_proteinSourcesForMeal(meal));
+    }
+    return proteins;
+  }
+
+  Set<String> _proteinSourcesForMeal(Map<String, dynamic> meal) {
+    final tokens = <String>{};
+    for (final ingredient in meal['ingredients'] as List? ?? const []) {
+      if (ingredient is Map) {
+        final name = ingredient['name']?.toString().toLowerCase() ?? '';
+        if (name.isNotEmpty) tokens.add(name);
+      }
+    }
+    for (final tag in List<String>.from(meal['tags'] ?? const [])) {
+      tokens.add(tag.toLowerCase());
+    }
+    for (final tag in List<String>.from(meal['dietTags'] ?? const [])) {
+      tokens.add(tag.toLowerCase());
+    }
+
+    const knownProteins = [
+      'chicken',
+      'turkey',
+      'beef',
+      'lamb',
+      'fish',
+      'salmon',
+      'tuna',
+      'egg',
+      'eggs',
+      'yogurt',
+      'cheese',
+      'lentil',
+      'lentils',
+      'bean',
+      'beans',
+      'chickpea',
+      'chickpeas',
+      'legume',
+      'shrimp',
+    ];
+
+    final matched = <String>{};
+    for (final token in tokens) {
+      for (final protein in knownProteins) {
+        if (token.contains(protein)) {
+          matched.add(protein);
+        }
+      }
+    }
+
+    if (matched.isEmpty && tokens.isNotEmpty) {
+      matched.add(tokens.first);
+    }
+    return matched;
+  }
+
+  Future<Map<String, dynamic>> _performWeeklyLearning(String uid) async {
+    final planDoc = await _db.collection('meal_plan').doc(uid).get();
+    final days = planDoc.data()?['days'] as Map<String, dynamic>? ?? {};
+    var planRecommendedCount = 0;
+
+    final eatenMeals = <Map<String, dynamic>>[];
+    final skippedMeals = <Map<String, dynamic>>[];
+    for (final dayData in days.values) {
+      final day = dayData as Map<String, dynamic>;
+      for (final mealType in ['breakfast', 'lunch', 'dinner', 'snack']) {
+        final meal = day[mealType] as Map<String, dynamic>?;
+        if (meal == null) continue;
+        planRecommendedCount++;
+        if (meal['confirmed'] == true) {
+          eatenMeals.add(Map<String, dynamic>.from(meal));
+        } else {
+          skippedMeals.add(Map<String, dynamic>.from(meal));
+        }
+      }
+    }
+
+    final recommendationEvents = await _db
+        .collection('meal_recommendations')
+        .doc(uid)
+        .collection('events')
+        .get();
+    final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+    final recentRecommendations = recommendationEvents.docs
+        .map((doc) => doc.data())
+        .where((event) {
+          final createdAt = event['createdAt'];
+          if (createdAt is! Timestamp) return false;
+          return createdAt.toDate().isAfter(weekAgo);
+        })
+        .toList();
+
+    final preferenceDoc = await _db.collection('preferences').doc(uid).get();
+    final allSwipeHistory = List<Map<String, dynamic>>.from(
+      preferenceDoc.data()?['swipeHistory'] ?? const [],
+    );
+    final recentSwipes = allSwipeHistory.where((swipe) {
+      final ts = swipe['timestamp'];
+      if (ts is! Timestamp) return false;
+      return ts.toDate().isAfter(weekAgo);
+    }).map((swipe) => Map<String, dynamic>.from(swipe)).toList();
+
+    var eatenRecommendations = 0;
+    for (int i = 0; i < 7; i++) {
+      final dateKey = DateFormat('yyyy-MM-dd')
+          .format(DateTime.now().subtract(Duration(days: i)));
+      final entries = await _db
+          .collection('meals')
+          .doc(uid)
+          .collection('logs')
+          .doc(dateKey)
+          .collection('entries')
+          .get();
+      for (final entry in entries.docs) {
+        final inputMethod = entry.data()['inputMethod']?.toString() ?? '';
+        if (inputMethod == 'agent_suggestion' || inputMethod == 'plan_confirmed') {
+          eatenRecommendations++;
+        }
+      }
+    }
+
+    await _foodScoring.applyWeeklyLearning(
+      uid: uid,
+      eatenMeals: eatenMeals,
+      skippedMeals: skippedMeals,
+      swipeHistory: recentSwipes,
+      recommendedMeals: recentRecommendations.length + planRecommendedCount,
+      eatenRecommendations: eatenRecommendations,
+      skippedRecommendations: skippedMeals.length,
+    );
+
+    return {
+      'recommendedMeals': recentRecommendations.length + planRecommendedCount,
+      'eatenMeals': eatenMeals.length,
+      'skippedMeals': skippedMeals.length,
+      'swipeEvents': recentSwipes.length,
+    };
+  }
+
   Future<void> _saveFallbackPlan(String uid, String reason) async {
     final allMeals = await _loadMealDatabase();
     final profile = await _tools.getUserProfile(uid);
     final target = (profile['dailyCalorieGoal'] ?? 2000).toInt();
+    final goals = List<String>.from(profile['goals'] ?? []);
+    final conditions = List<String>.from(profile['conditions'] ?? []);
     final now = DateTime.now();
 
     if (allMeals.isEmpty) {
@@ -687,43 +1067,61 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
       return;
     }
 
-    final byType = <String, List<Map<String, dynamic>>>{};
-    for (final meal in allMeals) {
-      final type = meal['mealType'] as String? ?? '';
-      byType.putIfAbsent(type, () => []).add(meal);
-    }
+    final breakfastRanked = await _foodScoring.rankMealMaps(
+      uid: uid,
+      meals: allMeals.where((meal) => meal['mealType'] == 'Breakfast').toList(),
+      goals: goals,
+      conditions: conditions,
+    );
+    final lunchRanked = await _foodScoring.rankMealMaps(
+      uid: uid,
+      meals: allMeals.where((meal) => meal['mealType'] == 'Lunch').toList(),
+      goals: goals,
+      conditions: conditions,
+    );
+    final dinnerRanked = await _foodScoring.rankMealMaps(
+      uid: uid,
+      meals: allMeals.where((meal) => meal['mealType'] == 'Dinner').toList(),
+      goals: goals,
+      conditions: conditions,
+    );
+    final snackRanked = await _foodScoring.rankMealMaps(
+      uid: uid,
+      meals: allMeals.where((meal) => meal['mealType'] == 'Snack').toList(),
+      goals: goals,
+      conditions: conditions,
+    );
 
     final usedIds = <String>{};
 
-    Map<String, dynamic>? pickMeal(String type) {
-      final pool = byType[type] ?? [];
-      if (pool.isEmpty) return null;
-      final unused = pool.where((m) => !usedIds.contains(m['id'])).toList();
-      if (unused.isEmpty) {
-        usedIds.clear();
-        final fallback = (List<Map<String, dynamic>>.from(pool)..shuffle()).first;
-        usedIds.add(fallback['id'] as String);
-        return Map<String, dynamic>.from(fallback);
+    Map<String, dynamic>? pickMeal(List<RankedMeal<Map<String, dynamic>>> ranked) {
+      if (ranked.isEmpty) return null;
+      for (final candidate in ranked) {
+        final id = candidate.meal['id']?.toString() ?? '';
+        if (!usedIds.contains(id)) {
+          final meal = Map<String, dynamic>.from(candidate.meal);
+          meal['confirmed'] = false;
+          meal['swapped'] = false;
+          meal['goalCompatibilityScore'] =
+              double.parse(candidate.goalCompatibilityScore.toStringAsFixed(3));
+          meal['preferenceScore'] =
+              double.parse(candidate.preferenceScore.toStringAsFixed(3));
+          meal['finalScore'] =
+              double.parse(candidate.finalScore.toStringAsFixed(3));
+          if (id.isNotEmpty) usedIds.add(id);
+          return meal;
+        }
       }
-      final meal = unused.first;
-      usedIds.add(meal['id'] as String);
-      return Map<String, dynamic>.from(meal);
+      return null;
     }
 
     final days = <String, dynamic>{};
     for (int i = 1; i <= 7; i++) {
       final date = DateFormat('yyyy-MM-dd').format(now.add(Duration(days: i - 1)));
-      final b = pickMeal('Breakfast');
-      final l = pickMeal('Lunch');
-      final d = pickMeal('Dinner');
-      final s = pickMeal('Snack');
-
-      for (final m in [b, l, d, s]) {
-        if (m != null) {
-          m['confirmed'] = false;
-          m['swapped'] = false;
-        }
-      }
+      final b = pickMeal(breakfastRanked);
+      final l = pickMeal(lunchRanked);
+      final d = pickMeal(dinnerRanked);
+      final s = pickMeal(snackRanked);
 
       days['$i'] = {
         'date': date,
@@ -864,9 +1262,9 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
         }
       }
 
-      final prefTags = await _getPreferenceTags(uid);
-      final likedTags = prefTags['liked'] ?? [];
-
+      final profile = await _tools.getUserProfile(uid);
+      final goals = List<String>.from(profile['goals'] ?? []);
+      final conditions = List<String>.from(profile['conditions'] ?? []);
       final allMeals = await _loadMealDatabase();
       final capitalType = _capitalize(slotKey);
 
@@ -877,22 +1275,22 @@ Retourne UNIQUEMENT ce JSON (sans markdown):
         final cal = (m['calories'] as num?)?.toDouble() ?? 0;
         return (cal - currentCalories).abs() <= currentCalories * 0.30;
       }).toList();
-
-      candidates.sort((a, b) {
-        final aTags = [
-          ...List<String>.from(a['tags'] ?? []),
-          ...List<String>.from(a['dietTags'] ?? []),
-        ];
-        final bTags = [
-          ...List<String>.from(b['tags'] ?? []),
-          ...List<String>.from(b['dietTags'] ?? []),
-        ];
-        final aScore = aTags.where(likedTags.contains).length;
-        final bScore = bTags.where(likedTags.contains).length;
-        return bScore.compareTo(aScore);
-      });
-
-      return candidates.take(3).toList();
+      final ranked = await _foodScoring.rankMealMaps(
+        uid: uid,
+        meals: candidates,
+        goals: goals,
+        conditions: conditions,
+      );
+      return ranked.take(3).map((rankedMeal) {
+        final meal = Map<String, dynamic>.from(rankedMeal.meal);
+        meal['goalCompatibilityScore'] =
+            double.parse(rankedMeal.goalCompatibilityScore.toStringAsFixed(3));
+        meal['preferenceScore'] =
+            double.parse(rankedMeal.preferenceScore.toStringAsFixed(3));
+        meal['finalScore'] =
+            double.parse(rankedMeal.finalScore.toStringAsFixed(3));
+        return meal;
+      }).toList();
     } catch (e) {
       debugPrint('getSwapAlternatives error: $e');
       return [];
