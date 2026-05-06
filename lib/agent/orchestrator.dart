@@ -391,21 +391,51 @@ class AgentOrchestrator {
     final uid = event.uid;
     final messageText = event.payload['message'] as String? ?? '';
 
+    // 1. Save user message first (before generating reply)
+    await _db.collection('chat').doc(uid).collection('messages').add({
+      'role': 'user',
+      'content': messageText,
+      'timestamp': FieldValue.serverTimestamp(),
+      'suggestionCard': null,
+    });
+
+    // 2. Load last 10 messages as conversation history (memory)
+    final history = await _db
+        .collection('chat')
+        .doc(uid)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .limit(10)
+        .get();
+
+    final conversationHistory = history.docs.reversed
+        .map((d) => '${d['role']}: ${d['content']}')
+        .join('\n');
+
+    // 3. Get analysis + profile
     final analysis = await _analyst.analyze(uid);
     final profile = await _tools.getUserProfile(uid);
 
+    // 4. Pass history as context to CoachAgent
     final response = await _coach.generateMessage(
       analysis: analysis,
       profile: profile,
-      context: 'user_message: $messageText',
+      context:
+          'CONVERSATION HISTORY (last 10 messages):\n$conversationHistory\n\n'
+          'CURRENT MESSAGE: $messageText\n\n'
+          'IMPORTANT: You remember the full conversation above. '
+          'Reference previous messages naturally when relevant.',
     );
 
-    Map<String, dynamic>? suggestionData;
-    final lower = messageText.toLowerCase();
-    if (lower.contains('what should i eat') ||
-        lower.contains('suggest') ||
-        lower.contains('hungry') ||
-        lower.contains('meal idea')) {
+    // 5. Detect meal suggestion intent
+    final lowerText = messageText.toLowerCase();
+    final wantsSuggestion = lowerText.contains('what should i eat') ||
+        lowerText.contains('suggest') ||
+        lowerText.contains('hungry') ||
+        lowerText.contains('meal idea');
+
+    Map<String, dynamic>? suggestionCardJson;
+    if (wantsSuggestion) {
       final hour = DateTime.now().hour;
       String mealType = 'Snack';
       if (hour < 10) {
@@ -415,20 +445,30 @@ class AgentOrchestrator {
       } else if (hour < 20) {
         mealType = 'Dinner';
       }
-
       final suggestion = await _buildDeterministicSuggestion(
         uid,
         mealType,
-        source: 'chat_request',
+        source: 'user_message',
       );
-      suggestionData = suggestion?.toJson();
+      suggestionCardJson = suggestion?.toJson();
     }
 
+    // 6. Save agent response
     await _db.collection('chat').doc(uid).collection('messages').add({
       'role': 'agent',
       'content': response,
       'timestamp': FieldValue.serverTimestamp(),
-      'suggestionCard': suggestionData,
+      'suggestionCard': suggestionCardJson,
+    });
+
+    // 7. Log agent action
+    await _tools.logAgentAction(uid, {
+      'type': 'user_message',
+      'trigger': 'chat',
+      'observation': 'User said: $messageText',
+      'decision': wantsSuggestion ? 'reply_with_suggestion' : 'reply',
+      'action': 'agent_response',
+      'outcome': response,
     });
   }
 

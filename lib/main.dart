@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,16 +16,13 @@ import 'presentation/providers/onboarding_provider.dart';
 import 'presentation/providers/user_provider.dart';
 import 'services/food_seeder.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Lock orientation to portrait
-  await SystemChrome.setPreferredOrientations([
+  unawaited(SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]);
-
-  // Transparent status bar
+  ]));
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -31,14 +30,26 @@ void main() async {
     ),
   );
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  FlutterError.onError = (details) {
+    debugPrint('FlutterError: ${details.exception}');
+    FlutterError.presentError(details);
+  };
 
-  await seedAllFoods();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).timeout(const Duration(seconds: 8));
+  } catch (e, st) {
+    debugPrint('Firebase init failed (continuing without it): $e\n$st');
+  }
 
   runApp(const FitAIApp());
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    seedAllFoods()
+        .then((_) => debugPrint('seedAllFoods: OK'))
+        .catchError((e, st) => debugPrint('seedAllFoods FAILED: $e\n$st'));
+  });
 }
 
 class FitAIApp extends StatelessWidget {

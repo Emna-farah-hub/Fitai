@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 /// Wraps Firebase Authentication with clean error handling.
 /// Translates Firebase error codes into human-readable messages.
@@ -24,8 +25,10 @@ class FirebaseAuthService {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      throw _mapErrorCode(e.code);
-    } catch (e) {
+      debugPrint('[AUTH] signUp FirebaseAuthException code=${e.code} message=${e.message}');
+      throw _mapErrorCode(e.code, e.message);
+    } catch (e, st) {
+      debugPrint('[AUTH] signUp unknown error: $e\n$st');
       throw 'Something went wrong. Please try again.';
     }
   }
@@ -42,8 +45,10 @@ class FirebaseAuthService {
         password: password,
       );
     } on FirebaseAuthException catch (e) {
-      throw _mapErrorCode(e.code);
-    } catch (e) {
+      debugPrint('[AUTH] signIn FirebaseAuthException code=${e.code} message=${e.message}');
+      throw _mapErrorCode(e.code, e.message);
+    } catch (e, st) {
+      debugPrint('[AUTH] signIn unknown error: $e\n$st');
       throw 'Something went wrong. Please try again.';
     }
   }
@@ -54,12 +59,14 @@ class FirebaseAuthService {
   }
 
   /// Maps Firebase Auth error codes to user-friendly messages.
-  String _mapErrorCode(String code) {
+  String _mapErrorCode(String code, [String? message]) {
     switch (code) {
       case 'user-not-found':
         return 'No account found with this email.';
       case 'wrong-password':
-        return 'Incorrect password. Please try again.';
+      case 'invalid-credential':
+      case 'invalid-login-credentials':
+        return 'Incorrect email or password.';
       case 'email-already-in-use':
         return 'An account already exists with this email.';
       case 'invalid-email':
@@ -72,8 +79,13 @@ class FirebaseAuthService {
         return 'Too many attempts. Please try again later.';
       case 'user-disabled':
         return 'This account has been disabled.';
+      case 'operation-not-allowed':
+        return 'Email/Password sign-in is disabled. Enable it in Firebase Console → Authentication → Sign-in method.';
+      case 'configuration-not-found':
+      case 'admin-restricted-operation':
+        return 'Auth not configured for this project. Enable Email/Password in Firebase Console.';
       default:
-        return 'Authentication failed. Please try again.';
+        return 'Authentication failed ($code)${message != null ? ': $message' : ''}';
     }
   }
 }

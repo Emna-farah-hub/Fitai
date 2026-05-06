@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
+import '../../providers/user_provider.dart';
 import 'steps/step_welcome.dart';
 import 'steps/step_name.dart';
 import 'steps/step_birthday.dart';
@@ -68,15 +69,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Future<void> _completeOnboarding() async {
     final authProvider = context.read<AuthProvider>();
     final onboardingProvider = context.read<OnboardingProvider>();
+    final userProvider = context.read<UserProvider>();
 
     final uid = authProvider.currentUser?.uid;
-    if (uid == null) return;
+    if (uid == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Not signed in. Please log in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     final success = await onboardingProvider.saveProfile(uid);
     if (!mounted) return;
 
     if (success) {
-      context.go('/agent-onboarding');
+      // Sync the in-memory profile so the router redirect sees onboardingComplete=true.
+      await userProvider.loadProfile(uid);
+      if (!mounted) return;
+      // Skip the agent chat — go straight to the meal-swipe taste profiling.
+      context.go('/swipe', extra: true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -84,6 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             onboardingProvider.errorMessage ?? 'Failed to save profile',
           ),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 8),
         ),
       );
     }

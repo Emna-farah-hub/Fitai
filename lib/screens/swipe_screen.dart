@@ -122,8 +122,10 @@ class _SwipeScreenState extends State<SwipeScreen>
           _isLoading = false;
           if (_meals.isEmpty) _isComplete = true;
         });
+        debugPrint('[SWIPE] loaded ${filteredMeals.length} meals');
       }
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('[SWIPE] _loadMeals FAILED: $e\n$st');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -181,8 +183,12 @@ class _SwipeScreenState extends State<SwipeScreen>
 
   void _handleComplete() {
     if (widget.isOnboarding && widget.onComplete != null) {
-      Future.delayed(const Duration(seconds: 2), () {
-        if (mounted) widget.onComplete!();
+      debugPrint('[SWIPE] all done, navigating in 800ms');
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (mounted) {
+          debugPrint('[SWIPE] firing onComplete -> dashboard');
+          widget.onComplete!();
+        }
       });
     }
   }
@@ -322,22 +328,15 @@ class _SwipeScreenState extends State<SwipeScreen>
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
-            ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
+            ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
             const SizedBox(height: 8),
             Text(
-              'Generating your personalized plan...',
+              'Taking you to your dashboard...',
               style: GoogleFonts.inter(
                 fontSize: 14,
                 color: AppColors.textSecondary,
               ),
-            ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
-            const SizedBox(height: 32),
-            const SizedBox(
-              width: 32,
-              height: 32,
-              child: CircularProgressIndicator(
-                  color: AppColors.primary, strokeWidth: 3),
-            ).animate().fadeIn(delay: 700.ms, duration: 300.ms),
+            ).animate().fadeIn(delay: 350.ms, duration: 300.ms),
           ],
         ),
       );

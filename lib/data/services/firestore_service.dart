@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import '../models/user_profile.dart';
 
 /// Handles all Firestore read/write operations for FitAI.
@@ -10,6 +11,22 @@ class FirestoreService {
   CollectionReference<Map<String, dynamic>> get _usersRef =>
       _db.collection('users');
 
+  String _friendly(String op, FirebaseException e) {
+    switch (e.code) {
+      case 'permission-denied':
+        return 'Permission denied while $op. Check Firestore rules in Firebase Console.';
+      case 'unavailable':
+      case 'deadline-exceeded':
+        return 'Network unavailable while $op. Check your internet connection.';
+      case 'not-found':
+        return 'Firestore database not found. Create it in Firebase Console → Firestore Database.';
+      case 'unauthenticated':
+        return 'You must be signed in to $op.';
+      default:
+        return 'Failed $op (${e.code}): ${e.message ?? "unknown"}';
+    }
+  }
+
   /// Saves or updates the full user profile in Firestore.
   /// Uses set with merge:true so partial updates don't wipe existing data.
   Future<void> saveUserProfile(UserProfile profile) async {
@@ -18,10 +35,13 @@ class FirestoreService {
         profile.toFirestore(),
         SetOptions(merge: true),
       );
+      debugPrint('[FIRESTORE] saveUserProfile OK uid=${profile.uid}');
     } on FirebaseException catch (e) {
-      throw 'Failed to save profile: ${e.message}';
-    } catch (e) {
-      throw 'Unexpected error saving profile.';
+      debugPrint('[FIRESTORE] saveUserProfile FAILED code=${e.code} message=${e.message}');
+      throw _friendly('saving profile', e);
+    } catch (e, st) {
+      debugPrint('[FIRESTORE] saveUserProfile unknown error: $e\n$st');
+      throw 'Unexpected error saving profile: $e';
     }
   }
 
@@ -33,23 +53,27 @@ class FirestoreService {
       if (!doc.exists) return null;
       return UserProfile.fromFirestore(doc);
     } on FirebaseException catch (e) {
-      throw 'Failed to load profile: ${e.message}';
-    } catch (e) {
-      throw 'Unexpected error loading profile.';
+      debugPrint('[FIRESTORE] getUserProfile FAILED code=${e.code} message=${e.message}');
+      throw _friendly('loading profile', e);
+    } catch (e, st) {
+      debugPrint('[FIRESTORE] getUserProfile unknown error: $e\n$st');
+      throw 'Unexpected error loading profile: $e';
     }
   }
 
   /// Updates specific fields in a user profile without overwriting the whole doc.
   Future<void> updateUserFields(String uid, Map<String, dynamic> fields) async {
     try {
-      await _usersRef.doc(uid).update({
+      await _usersRef.doc(uid).set({
         ...fields,
         'updatedAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
     } on FirebaseException catch (e) {
-      throw 'Failed to update profile: ${e.message}';
-    } catch (e) {
-      throw 'Unexpected error updating profile.';
+      debugPrint('[FIRESTORE] updateUserFields FAILED code=${e.code} message=${e.message}');
+      throw _friendly('updating profile', e);
+    } catch (e, st) {
+      debugPrint('[FIRESTORE] updateUserFields unknown error: $e\n$st');
+      throw 'Unexpected error updating profile: $e';
     }
   }
 

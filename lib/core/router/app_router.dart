@@ -93,7 +93,14 @@ class AppRouter {
           path: '/swipe',
           builder: (context, state) {
             final isOnboarding = state.extra as bool? ?? false;
-            return SwipeScreen(isOnboarding: isOnboarding);
+            return SwipeScreen(
+              isOnboarding: isOnboarding,
+              onComplete: isOnboarding
+                  ? () {
+                      if (context.mounted) context.go('/dashboard');
+                    }
+                  : null,
+            );
           },
         ),
       ],

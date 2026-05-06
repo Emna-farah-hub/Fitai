@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,19 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!userProvider.onboardingComplete) {
         context.go('/onboarding');
       } else {
-        // Check agent onboarding
-        try {
-          final doc = await FirebaseFirestore.instance
-              .collection('users')
-              .doc(authProvider.currentUser!.uid)
-              .get();
-          final agentDone = doc.data()?['agentOnboardingComplete'] ?? false;
-          if (!mounted) return;
-          context.go(agentDone == true ? '/dashboard' : '/agent-onboarding');
-        } catch (_) {
-          if (!mounted) return;
-          context.go('/dashboard');
-        }
+        context.go('/dashboard');
       }
     } else if (authProvider.errorMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
