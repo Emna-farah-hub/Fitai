@@ -14,4 +14,10 @@ class AppAssets {
   static const String dietaryIllustration = 'assets/illustrations/food.svg';
   static const String personalizingIllustration = 'assets/illustrations/loading.svg';
   static const String successIllustration = 'assets/illustrations/success.svg';
+  static const String celebrationIllustration = 'assets/illustrations/celebration.svg';
+  static const String emptyMealsIllustration = 'assets/illustrations/empty_meals.svg';
+  static const String chatIllustration = 'assets/illustrations/chat.svg';
+  static const String planIllustration = 'assets/illustrations/plan.svg';
+  static const String streakIllustration = 'assets/illustrations/streak.svg';
+  static const String errorIllustration = 'assets/illustrations/error.svg';
 }

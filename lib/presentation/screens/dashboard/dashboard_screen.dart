@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../models/meal_entry.dart';
+import '../../widgets/illustration_widget.dart';
 import '../../../screens/daily_dashboard_screen.dart';
 import '../../../screens/chat_screen.dart';
 import '../../../screens/food_search_screen.dart';
@@ -37,6 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _onTabTapped(int index) {
+    HapticFeedback.selectionClick();
     if (index == 1) {
       Navigator.push(
         context,
@@ -60,9 +65,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: tabs,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 200),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeOut,
+        child: KeyedSubtree(
+          key: ValueKey<int>(_selectedIndex),
+          child: tabs[_selectedIndex],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -104,10 +114,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 // ---------------------------------------------------------------------------
 
 const _historyMealSections = [
-  ('Breakfast', Icons.free_breakfast, Color(0xFFFF8F00)),
-  ('Lunch', Icons.lunch_dining, Color(0xFF2E7D32)),
-  ('Dinner', Icons.dinner_dining, Color(0xFF1565C0)),
-  ('Snack', Icons.cookie, Color(0xFF6A1B9A)),
+  ('Breakfast', Icons.free_breakfast, AppColors.mealBreakfast),
+  ('Lunch', Icons.lunch_dining, AppColors.mealLunch),
+  ('Dinner', Icons.dinner_dining, AppColors.mealDinner),
+  ('Snack', Icons.cookie, AppColors.mealSnack),
 ];
 
 class _HistoryTab extends StatefulWidget {
@@ -219,7 +229,7 @@ class _HistoryTabState extends State<_HistoryTab> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF4CAF50)))
+              child: CircularProgressIndicator(color: AppColors.primary))
           : !_hasAnyMeals
               ? _buildEmptyState()
               : RefreshIndicator(
@@ -252,8 +262,11 @@ class _HistoryTabState extends State<_HistoryTab> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.menu_book_outlined,
-                size: 72, color: Colors.grey.shade300),
+            const IllustrationWidget(
+              assetPath: AppAssets.emptyMealsIllustration,
+              fallbackIcon: Icons.menu_book_outlined,
+              height: 160,
+            ),
             const SizedBox(height: 16),
             const Text(
               'Your food diary is empty',
@@ -271,7 +284,7 @@ class _HistoryTabState extends State<_HistoryTab> {
             const SizedBox(height: 16),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -328,7 +341,7 @@ class _HistoryTabState extends State<_HistoryTab> {
             child: _statColumn(
               'Avg/Day',
               '$_avgCalPerDay kcal',
-              const Color(0xFF4CAF50),
+              AppColors.primary,
             ),
           ),
           Expanded(
@@ -376,9 +389,9 @@ class _HistoryTabState extends State<_HistoryTab> {
       calColor = Colors.grey;
     } else if ((dayCal - _dailyCalorieTarget).abs() <=
         _dailyCalorieTarget * 0.1) {
-      calColor = const Color(0xFF4CAF50);
+      calColor = AppColors.primary;
     } else if (dayCal > _dailyCalorieTarget) {
-      calColor = const Color(0xFFF44336);
+      calColor = AppColors.error;
     } else {
       calColor = Colors.grey.shade700;
     }
@@ -522,7 +535,7 @@ class _HistoryTabState extends State<_HistoryTab> {
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF4CAF50),
+                          color: AppColors.primary,
                         ),
                       ),
                       Text(

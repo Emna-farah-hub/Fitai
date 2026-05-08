@@ -19,7 +19,7 @@ class StepSex extends StatelessWidget {
     return Consumer<OnboardingProvider>(
       builder: (context, provider, _) => OnboardingScaffold(
         currentStep: provider.currentStep,
-        totalSteps: provider.totalSteps,
+        totalSteps: provider.progressBarSteps,
         question: AppStrings.onboardingTitles[5],
         questionSubtitle: AppStrings.onboardingSubtitles[5],
         illustrationPath: AppAssets.sexIllustration,

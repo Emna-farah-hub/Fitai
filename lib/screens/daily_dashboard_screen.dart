@@ -3,8 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import '../core/constants/app_assets.dart';
+import '../core/constants/app_colors.dart';
 import '../models/meal_entry.dart';
+import '../presentation/widgets/app_card.dart';
+import '../presentation/widgets/illustration_widget.dart';
+import '../presentation/widgets/meal_logged_overlay.dart';
 import '../services/meal_journal_service.dart';
 import 'food_search_screen.dart';
 import 'plan_screen.dart';
@@ -57,10 +63,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
 
   // Meal section config
   static const _mealSections = [
-    ('Breakfast', Icons.free_breakfast, Color(0xFFFF8F00)),
-    ('Lunch', Icons.lunch_dining, Color(0xFF2E7D32)),
-    ('Dinner', Icons.dinner_dining, Color(0xFF1565C0)),
-    ('Snack', Icons.cookie, Color(0xFF6A1B9A)),
+    ('Breakfast', Icons.free_breakfast, AppColors.mealBreakfast),
+    ('Lunch', Icons.lunch_dining, AppColors.mealLunch),
+    ('Dinner', Icons.dinner_dining, AppColors.mealDinner),
+    ('Snack', Icons.cookie, AppColors.mealSnack),
   ];
 
   @override
@@ -70,12 +76,27 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
     _subscription = _mealService.watchTodayMeals(_uid).listen((meals) {
       if (mounted) setState(() => _todayMeals = meals);
     });
+    MealJournalService.onMealLogged = _handleMealLogged;
   }
 
   @override
   void dispose() {
+    if (MealJournalService.onMealLogged == _handleMealLogged) {
+      MealJournalService.onMealLogged = null;
+    }
     _subscription?.cancel();
     super.dispose();
+  }
+
+  void _handleMealLogged(String foodName, double calories) {
+    if (!mounted) return;
+    MealLoggedOverlay.show(
+      context,
+      foodName: foodName,
+      calories: calories,
+      previousTotal: _totalCalories,
+      dailyTarget: _dailyCalorieTarget,
+    );
   }
 
   Future<void> _loadProfile() async {
@@ -136,7 +157,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Photo logging coming soon'),
-              backgroundColor: Color(0xFF4CAF50),
+              backgroundColor: AppColors.primary,
             ),
           );
         },
@@ -163,6 +184,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
       ),
     );
     if (confirmed == true) {
+      HapticFeedback.heavyImpact();
       await _mealService.deleteMeal(_uid, meal.date, meal.id);
     }
   }
@@ -171,7 +193,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
   Widget build(BuildContext context) {
     if (_isLoadingProfile) {
       return const Center(
-        child: CircularProgressIndicator(color: Color(0xFF4CAF50)),
+        child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
 
@@ -222,7 +244,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showMealTypeSheet('Lunch'),
-        backgroundColor: const Color(0xFF4CAF50),
+        backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -245,7 +267,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Color(0xFF16a34a), Color(0xFF22c55e)],
+            colors: [AppColors.primary, AppColors.primaryLight],
           ),
           borderRadius: BorderRadius.circular(12),
         ),
@@ -306,13 +328,13 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         Color accentColor;
         IconData icon;
         if (severity == 'warning') {
-          accentColor = const Color(0xFFFF9800);
+          accentColor = AppColors.warning;
           icon = Icons.warning_amber_rounded;
         } else if (severity == 'success') {
-          accentColor = const Color(0xFF4CAF50);
+          accentColor = AppColors.primary;
           icon = Icons.check_circle_outline;
         } else {
-          accentColor = const Color(0xFF1565C0);
+          accentColor = AppColors.chartBlue;
           icon = Icons.auto_awesome;
         }
 
@@ -384,7 +406,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF4CAF50),
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
@@ -422,9 +444,9 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F8E9),
+            color: AppColors.primarySurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFC8E6C9)),
+            border: Border.all(color: AppColors.primaryBorder),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -432,7 +454,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
               Row(
                 children: [
                   const Icon(Icons.restaurant_menu,
-                      color: Color(0xFF4CAF50), size: 18),
+                      color: AppColors.primary, size: 18),
                   const SizedBox(width: 8),
                   const Expanded(
                     child: Text(
@@ -440,7 +462,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E7D32),
+                        color: AppColors.primaryDark,
                       ),
                     ),
                   ),
@@ -477,7 +499,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4CAF50),
+                        backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -523,7 +545,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text('$foodName added!'),
-                              backgroundColor: const Color(0xFF4CAF50),
+                              backgroundColor: AppColors.primary,
                             ),
                           );
                         }
@@ -538,8 +560,8 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                   const SizedBox(width: 8),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF4CAF50),
-                      side: const BorderSide(color: Color(0xFF4CAF50)),
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primary),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -620,14 +642,40 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           // Meal items or empty
           if (meals.isEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Text(
-                'Tap + to add',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey.shade500,
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(
+                children: [
+                  const IllustrationWidget(
+                    assetPath: AppAssets.emptyMealsIllustration,
+                    fallbackIcon: Icons.restaurant_outlined,
+                    height: 80,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Nothing logged yet',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  GestureDetector(
+                    onTap: () => _showMealTypeSheet(type),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      child: Text(
+                        '+ Add $type',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             )
           else
@@ -695,7 +743,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4CAF50),
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -778,7 +826,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                     sections: [
                       PieChartSectionData(
                         value: consumedValue > 0 ? consumedValue : 0.001,
-                        color: const Color(0xFF4CAF50),
+                        color: AppColors.primary,
                         radius: 18,
                         showTitle: false,
                       ),
@@ -800,7 +848,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                       style: const TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF4CAF50),
+                        color: AppColors.primary,
                       ),
                     ),
                     Text(
@@ -822,7 +870,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
               _summaryColumn(
                   'Remaining', '${remaining.toInt()}', Colors.grey.shade600),
               _summaryColumn(
-                  'Consumed', '${consumed.toInt()}', const Color(0xFF4CAF50)),
+                  'Consumed', '${consumed.toInt()}', AppColors.primary),
               _summaryColumn('Target', '${target.toInt()}', Colors.black),
             ],
           ),
@@ -851,36 +899,27 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
   }
 
   Widget _buildMacroBars() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Macros',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          _macroBar('Protein', _totalProtein, _proteinTarget,
-              const Color(0xFFEF9A9A)),
-          const SizedBox(height: 10),
-          _macroBar(
-              'Carbs', _totalCarbs, _carbsTarget, const Color(0xFF90CAF9)),
-          const SizedBox(height: 10),
-          _macroBar('Fat', _totalFats, _fatsTarget, const Color(0xFFFFCC80)),
-        ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: FloatCard(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Macros',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            _macroBar('Protein', _totalProtein, _proteinTarget,
+                const Color(0xFFEF9A9A)),
+            const SizedBox(height: 10),
+            _macroBar(
+                'Carbs', _totalCarbs, _carbsTarget, const Color(0xFF90CAF9)),
+            const SizedBox(height: 10),
+            _macroBar('Fat', _totalFats, _fatsTarget, const Color(0xFFFFCC80)),
+          ],
+        ),
       ),
     );
   }
@@ -923,62 +962,53 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
     final score = _nutritionalScore;
     Color scoreColor;
     if (score >= 70) {
-      scoreColor = const Color(0xFF4CAF50);
+      scoreColor = AppColors.primary;
     } else if (score >= 40) {
-      scoreColor = const Color(0xFFFF9800);
+      scoreColor = AppColors.warning;
     } else {
-      scoreColor = const Color(0xFFF44336);
+      scoreColor = AppColors.error;
     }
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: FloatCard(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Nutrition Score',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "Based on today's intake",
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
+            ),
+            Column(
               children: [
-                const Text(
-                  'Nutrition Score',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 2),
                 Text(
-                  "Based on today's intake",
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  score.toString(),
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: scoreColor,
+                  ),
+                ),
+                Text(
+                  '/100',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                 ),
               ],
             ),
-          ),
-          Column(
-            children: [
-              Text(
-                score.toString(),
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: scoreColor,
-                ),
-              ),
-              Text(
-                '/100',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -987,13 +1017,13 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
     Color color;
     String label;
     if (gi <= 55) {
-      color = const Color(0xFF4CAF50);
+      color = AppColors.primary;
       label = 'LOW';
     } else if (gi <= 69) {
-      color = const Color(0xFFFF9800);
+      color = AppColors.warning;
       label = 'MED';
     } else {
-      color = const Color(0xFFF44336);
+      color = AppColors.error;
       label = 'HIGH';
     }
     return Container(
@@ -1071,8 +1101,8 @@ class _MealTypeBottomSheet extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
             leading: const CircleAvatar(
               radius: 24,
-              backgroundColor: Color(0xFFE8F5E9),
-              child: Icon(Icons.search, color: Color(0xFF4CAF50)),
+              backgroundColor: AppColors.primarySurface,
+              child: Icon(Icons.search, color: AppColors.primary),
             ),
             title: const Text(
               'Search Food',
@@ -1097,7 +1127,7 @@ class _MealTypeBottomSheet extends StatelessWidget {
             leading: const CircleAvatar(
               radius: 24,
               backgroundColor: Color(0xFFFFF3E0),
-              child: Icon(Icons.camera_alt, color: Color(0xFFFF8F00)),
+              child: Icon(Icons.camera_alt, color: AppColors.mealBreakfast),
             ),
             title: const Text(
               'Take a Photo',

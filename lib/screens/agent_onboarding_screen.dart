@@ -2,9 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../agent/agent_scheduler.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
+import '../core/constants/app_colors.dart';
+import '../presentation/widgets/ai_avatar.dart';
 import 'swipe_screen.dart';
 
 /// Chat-style onboarding where the agent asks deeper questions
@@ -235,39 +238,66 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
     }
   }
 
+  double _progressValue() {
+    final total = (_isDiabetic ? 8 : 7).toDouble();
+    return (_currentQuestion / total).clamp(0.0, 1.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
         automaticallyImplyLeading: false,
+        titleSpacing: 16,
         title: Row(
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                color: Color(0xFF4CAF50),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.eco, color: Colors.white, size: 18),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'FitAI Coach',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+            const AiAvatar(size: 36),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'FitAI Coach',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Personalizing your plan',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.shade300),
+          preferredSize: const Size.fromHeight(4),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: _progressValue()),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOut,
+            builder: (context, value, _) => SizedBox(
+              height: 4,
+              child: LinearProgressIndicator(
+                value: value,
+                backgroundColor: AppColors.surfaceVariant,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                minHeight: 4,
+              ),
+            ),
+          ),
         ),
       ),
       body: _isGeneratingPlan ? _buildGeneratingScreen() : _buildChat(),
@@ -283,23 +313,26 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
             width: 64,
             height: 64,
             child: CircularProgressIndicator(
-              color: Color(0xFF4CAF50),
+              color: AppColors.primary,
               strokeWidth: 3,
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'Building your 30-day plan...',
-            style: TextStyle(
+            style: GoogleFonts.inter(
               fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Personalizing meals based on your preferences',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
@@ -338,16 +371,20 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: msg.isUser ? const Color(0xFF4CAF50) : Colors.white,
-          borderRadius: BorderRadius.circular(16).copyWith(
+          gradient: msg.isUser ? AppColors.primaryGradient : null,
+          color: msg.isUser ? null : AppColors.surface,
+          border: msg.isUser
+              ? null
+              : Border.all(color: AppColors.border, width: 0.5),
+          borderRadius: BorderRadius.circular(18).copyWith(
             bottomRight: msg.isUser ? const Radius.circular(4) : null,
-            bottomLeft: !msg.isUser ? const Radius.circular(4) : null,
+            topLeft: !msg.isUser ? const Radius.circular(4) : null,
           ),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
+              color: AppColors.shadow,
+              blurRadius: 6,
+              offset: Offset(0, 2),
             ),
           ],
         ),
@@ -359,19 +396,19 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
                   'FitAI',
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primaryDark,
                   ),
                 ),
               ),
             Text(
               msg.text,
-              style: TextStyle(
+              style: GoogleFonts.inter(
                 fontSize: 14,
-                color: msg.isUser ? Colors.white : Colors.black87,
-                height: 1.4,
+                color: msg.isUser ? Colors.white : AppColors.textPrimary,
+                height: 1.45,
               ),
             ),
           ],
@@ -403,21 +440,33 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
   Widget _buildTextInput() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      color: Colors.white,
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
+      ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               controller: _textController,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: AppColors.textPrimary,
+              ),
               decoration: InputDecoration(
                 hintText: 'Type your answer...',
-                hintStyle: TextStyle(color: Colors.grey.shade400),
+                hintStyle: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: AppColors.textMuted,
+                ),
+                filled: true,
+                fillColor: AppColors.surfaceVariant,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
+                  borderSide: BorderSide.none,
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
               ),
             ),
           ),
@@ -434,7 +483,7 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                color: Color(0xFF4CAF50),
+                gradient: AppColors.primaryGradient,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.send, color: Colors.white, size: 20),
@@ -447,25 +496,38 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
 
   Widget _buildButtonsInput(List<String> options) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
+      ),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: options.map((option) {
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF4CAF50),
-              side: const BorderSide(color: Color(0xFF4CAF50)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+          return Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => _handleAnswer(option),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColors.primarySurface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.primaryBorder),
+                ),
+                child: Text(
+                  option,
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
-            onPressed: () => _handleAnswer(option),
-            child: Text(option, style: const TextStyle(fontSize: 13)),
           );
         }).toList(),
       ),
@@ -474,8 +536,11 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
 
   Widget _buildTimePickerInput() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
+      ),
       child: Column(
         children: [
           Row(
@@ -483,10 +548,17 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.wb_sunny_outlined),
-                  label: Text('Wake: $_wakeTime'),
+                  label: Text(
+                    'Wake: $_wakeTime',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF4CAF50),
-                    side: const BorderSide(color: Color(0xFF4CAF50)),
+                    foregroundColor: AppColors.primary,
+                    side: const BorderSide(color: AppColors.primaryBorder),
+                    backgroundColor: AppColors.primarySurface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -499,10 +571,16 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   icon: const Icon(Icons.nightlight_outlined),
-                  label: Text('Sleep: $_sleepTime'),
+                  label: Text(
+                    'Sleep: $_sleepTime',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF1565C0),
-                    side: const BorderSide(color: Color(0xFF1565C0)),
+                    foregroundColor: AppColors.chartBlue,
+                    side: const BorderSide(color: AppColors.chartBlue),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -516,17 +594,30 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4CAF50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(12),
               ),
-              onPressed: _handleTimePicked,
-              child: const Text('Confirm times',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: _handleTimePicked,
+                child: Text(
+                  'Confirm times',
+                  style: GoogleFonts.inter(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ),
           ),
         ],

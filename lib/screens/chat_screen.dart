@@ -5,7 +5,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
+import '../core/constants/app_assets.dart';
+import '../core/constants/app_colors.dart';
 import '../models/meal_entry.dart';
+import '../presentation/widgets/illustration_widget.dart';
 import '../services/meal_journal_service.dart';
 import 'plan_screen.dart';
 
@@ -120,7 +123,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('\u2713 ${meal.foodName} added to your diary'),
-            backgroundColor: const Color(0xFF4CAF50),
+            backgroundColor: AppColors.primary,
           ),
         );
       }
@@ -175,7 +178,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             ListTile(
               leading:
-                  const Icon(Icons.calendar_month, color: Color(0xFF2E7D32)),
+                  const Icon(Icons.calendar_month, color: AppColors.primaryDark),
               title: const Text('View my plan'),
               onTap: () {
                 Navigator.pop(ctx);
@@ -236,9 +239,21 @@ class _ChatScreenState extends State<ChatScreen> {
 
                     if (isUser) {
                       return _buildUserBubble(content, ts);
-                    } else {
-                      return _buildAgentBubble(content, ts, suggestion);
                     }
+
+                    final isLastAgentMessage =
+                        index == docs.length - 1 && !_isThinking;
+                    final bubble =
+                        _buildAgentBubble(content, ts, suggestion);
+                    if (!isLastAgentMessage) return bubble;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        bubble,
+                        _buildQuickReplies(content),
+                      ],
+                    );
                   },
                 );
               },
@@ -258,7 +273,7 @@ class _ChatScreenState extends State<ChatScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+          colors: [AppColors.primaryDark, AppColors.primaryDark],
         ),
       ),
       child: SafeArea(
@@ -321,7 +336,7 @@ class _ChatScreenState extends State<ChatScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFE8F5E9)),
+          border: Border.all(color: AppColors.primarySurface),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -333,8 +348,11 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.chat_bubble_outline,
-                color: Color(0xFF4CAF50), size: 48),
+            const IllustrationWidget(
+              assetPath: AppAssets.chatIllustration,
+              fallbackIcon: Icons.chat_bubble_outline,
+              height: 140,
+            ),
             const SizedBox(height: 16),
             const Text(
               'Chat with your AI coach',
@@ -369,20 +387,50 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  List<String> _quickRepliesFor(String content) {
+    final lower = content.toLowerCase();
+    if (lower.contains('protein')) {
+      return const ['Show high-protein foods', 'Log protein now'];
+    }
+    if (lower.contains('glycemic') || lower.contains(' gi') ||
+        lower.contains('gi ') || lower.contains('gi.') || lower.contains('gi,')) {
+      return const ["What's my GI today?", 'Show low-GI foods'];
+    }
+    if (lower.contains('plan') || lower.contains('meal plan')) {
+      return const ['View my 7-day plan', 'Adjust today'];
+    }
+    return const ['Tell me more', 'Log a meal'];
+  }
+
+  Widget _buildQuickReplies(String content) {
+    final replies = _quickRepliesFor(content);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(56, 4, 16, 12),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final text in replies) _suggestionChip(text),
+        ],
+      ),
+    );
+  }
+
   Widget _suggestionChip(String text) {
     return GestureDetector(
       onTap: () => _sendMessage(text),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
+          color: AppColors.primarySurface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF4CAF50)),
+          border: Border.all(color: AppColors.primary),
         ),
         child: Text(
           text,
           style: const TextStyle(
             fontSize: 13,
-            color: Color(0xFF2E7D32),
+            color: AppColors.primary,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -407,7 +455,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+                  colors: [AppColors.primaryDark, AppColors.primary],
                 ),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(18),
@@ -417,7 +465,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
+                    color: AppColors.primary.withValues(alpha: 0.2),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -468,7 +516,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+                  colors: [AppColors.primaryDark, AppColors.primaryDark],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -485,7 +533,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF2E7D32),
+                      color: AppColors.primaryDark,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -500,7 +548,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         bottomLeft: Radius.circular(18),
                         bottomRight: Radius.circular(18),
                       ),
-                      border: Border.all(color: const Color(0xFFE8F5E9)),
+                      border: Border.all(color: AppColors.primarySurface),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.05),
@@ -524,7 +572,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         if (suggestion != null) ...[
                           const SizedBox(height: 10),
                           Divider(
-                              height: 1, color: const Color(0xFFE8F5E9)),
+                              height: 1, color: AppColors.primarySurface),
                           const SizedBox(height: 8),
                           _buildInlineSuggestion(suggestion),
                         ],
@@ -565,11 +613,11 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFFE8F5E9),
+                color: AppColors.primarySurface,
                 borderRadius: BorderRadius.circular(18),
               ),
               child: const Icon(Icons.restaurant_outlined,
-                  color: Color(0xFF2E7D32), size: 18),
+                  color: AppColors.primaryDark, size: 18),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -603,7 +651,7 @@ class _ChatScreenState extends State<ChatScreen> {
           height: 38,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4CAF50),
+              backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -641,7 +689,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+                  colors: [AppColors.primaryDark, AppColors.primaryDark],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -660,7 +708,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   bottomLeft: Radius.circular(18),
                   bottomRight: Radius.circular(18),
                 ),
-                border: Border.all(color: const Color(0xFFE8F5E9)),
+                border: Border.all(color: AppColors.primarySurface),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -710,7 +758,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 hintText: 'Ask your coach...',
                 hintStyle: TextStyle(color: Colors.grey.shade400),
                 filled: true,
-                fillColor: const Color(0xFFF5F5F5),
+                fillColor: AppColors.surfaceVariant,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
@@ -733,7 +781,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ? const LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+                        colors: [AppColors.primaryDark, AppColors.primary],
                       )
                     : null,
                 color: _hasText ? null : Colors.grey.shade300,
@@ -741,8 +789,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 boxShadow: _hasText
                     ? [
                         BoxShadow(
-                          color: const Color(0xFF4CAF50)
-                              .withValues(alpha: 0.3),
+                          color: AppColors.primary.withValues(alpha: 0.3),
                           blurRadius: 8,
                         ),
                       ]
@@ -809,7 +856,7 @@ class _ThinkingDotState extends State<_ThinkingDot>
         width: 8,
         height: 8,
         decoration: const BoxDecoration(
-          color: Color(0xFF4CAF50),
+          color: AppColors.primary,
           shape: BoxShape.circle,
         ),
       ),

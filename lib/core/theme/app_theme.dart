@@ -3,9 +3,38 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
 /// Defines the complete Material 3 theme for FitAI.
-/// Uses Inter font via google_fonts and the emerald green palette.
+/// Display/headline/title slots use Nunito for warmer headings; body text uses Inter.
 class AppTheme {
   AppTheme._();
+
+  /// Nunito-based heading styles. Merged on top of Inter body text in [lightTheme]
+  /// so headings render in Nunito while body and labels stay in Inter.
+  static TextTheme get nunitoDisplayTheme => TextTheme(
+        displayLarge: GoogleFonts.nunito(
+          fontSize: 32,
+          fontWeight: FontWeight.w800,
+        ),
+        displayMedium: GoogleFonts.nunito(
+          fontSize: 26,
+          fontWeight: FontWeight.w800,
+        ),
+        displaySmall: GoogleFonts.nunito(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+        ),
+        headlineMedium: GoogleFonts.nunito(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+        titleLarge: GoogleFonts.nunito(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+        titleMedium: GoogleFonts.nunito(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      );
 
   static ThemeData get lightTheme {
     final base = ThemeData(
@@ -15,26 +44,28 @@ class AppTheme {
         brightness: Brightness.light,
         primary: AppColors.primary,
         onPrimary: AppColors.textOnPrimary,
-        surface: AppColors.surface,
+        surface: AppColors.surfaceFloat,
         onSurface: AppColors.textPrimary,
         error: AppColors.error,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.backgroundSoft,
     );
 
     return base.copyWith(
-      textTheme: GoogleFonts.interTextTheme(base.textTheme).apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
-      ),
+      textTheme: GoogleFonts.interTextTheme(base.textTheme)
+          .merge(nunitoDisplayTheme)
+          .apply(
+            bodyColor: AppColors.textPrimary,
+            displayColor: AppColors.textPrimary,
+          ),
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.surface,
         elevation: 0,
         scrolledUnderElevation: 1,
         shadowColor: AppColors.shadow,
-        titleTextStyle: GoogleFonts.inter(
+        titleTextStyle: GoogleFonts.nunito(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           color: AppColors.textPrimary,
         ),
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
@@ -48,9 +79,9 @@ class AppTheme {
             borderRadius: BorderRadius.circular(24),
           ),
           elevation: 0,
-          textStyle: GoogleFonts.inter(
+          textStyle: GoogleFonts.nunito(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -62,9 +93,9 @@ class AppTheme {
             borderRadius: BorderRadius.circular(24),
           ),
           side: const BorderSide(color: AppColors.primary, width: 1.5),
-          textStyle: GoogleFonts.inter(
+          textStyle: GoogleFonts.nunito(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -102,13 +133,13 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: AppColors.surface,
+        color: AppColors.surfaceFloat,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         margin: EdgeInsets.zero,
-        shadowColor: Colors.black.withValues(alpha: 0.04),
+        shadowColor: AppColors.cardShadow,
       ),
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceVariant,

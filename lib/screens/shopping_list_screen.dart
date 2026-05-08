@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../core/constants/app_assets.dart';
 import '../core/constants/app_colors.dart';
+import '../presentation/widgets/illustration_widget.dart';
 
 class ShoppingListScreen extends StatefulWidget {
   const ShoppingListScreen({super.key});
@@ -195,7 +197,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                     )
                   : _totalCount == 0
                       ? _buildEmpty()
-                      : _buildList(),
+                      : (_checkedCount == _totalCount
+                          ? _buildAllDone()
+                          : _buildList()),
             ),
             _buildBottomBar(),
           ],
@@ -318,6 +322,77 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     );
   }
 
+  Widget _buildAllDone() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const IllustrationWidget(
+              assetPath: AppAssets.celebrationIllustration,
+              fallbackIcon: Icons.celebration_rounded,
+              height: 200,
+            )
+                .animate()
+                .scale(
+                  begin: const Offset(0.6, 0.6),
+                  end: const Offset(1, 1),
+                  curve: Curves.elasticOut,
+                  duration: 700.ms,
+                )
+                .fadeIn(duration: 400.ms),
+            const SizedBox(height: 24),
+            Text(
+              'All done! 🛒 ✓',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 26,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+                letterSpacing: -0.5,
+              ),
+            )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 200.ms)
+                .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
+            const SizedBox(height: 8),
+            Text(
+              'You have everything for your 7-day meal plan',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
+            )
+                .animate()
+                .fadeIn(duration: 400.ms, delay: 350.ms)
+                .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
+            const SizedBox(height: 24),
+            GestureDetector(
+              onTap: () => setState(_checked.clear),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 6),
+                child: Text(
+                  'Clear all & start over',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primary,
+                  ),
+                ),
+              ),
+            ).animate().fadeIn(duration: 400.ms, delay: 500.ms),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildList() {
     final sections = <Widget>[];
     var categoryIndex = 0;
@@ -329,11 +404,20 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         _buildSectionHeader(cat, list.length, style)
             .animate()
             .fadeIn(
-                delay: (categoryIndex * 80).ms, duration: 300.ms),
+              duration: 350.ms,
+              delay: (categoryIndex * 60).ms,
+            )
+            .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: 350.ms,
+              delay: (categoryIndex * 60).ms,
+              curve: Curves.easeOut,
+            ),
       );
       for (var i = 0; i < list.length; i++) {
         final ingredient = list[i];
-        final delay = (categoryIndex * 80 + i * 30).ms;
+        final delay = (categoryIndex * 60 + i * 30).ms;
         sections.add(
           _buildItemRow(ingredient, style)
               .animate()

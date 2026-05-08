@@ -23,7 +23,7 @@ class StepBirthday extends StatelessWidget {
 
         return OnboardingScaffold(
           currentStep: provider.currentStep,
-          totalSteps: provider.totalSteps,
+          totalSteps: provider.progressBarSteps,
           question: AppStrings.onboardingTitles[2],
           questionSubtitle: AppStrings.onboardingSubtitles[2],
           illustrationPath: AppAssets.birthdayIllustration,

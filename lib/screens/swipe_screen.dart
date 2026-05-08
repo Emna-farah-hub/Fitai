@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
@@ -160,6 +161,7 @@ class _SwipeScreenState extends State<SwipeScreen>
   }
 
   void _onSwipeComplete(bool liked) {
+    HapticFeedback.lightImpact();
     final meal = _meals[_currentIndex];
 
     // Fire and forget — update preferences + mark meal as shown

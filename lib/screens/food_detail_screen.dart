@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../core/constants/app_colors.dart';
 import '../models/food_item.dart';
 import '../models/meal_entry.dart';
 import '../services/meal_journal_service.dart';
@@ -20,36 +21,17 @@ class FoodDetailScreen extends StatefulWidget {
 }
 
 class _FoodDetailScreenState extends State<FoodDetailScreen> {
-  double _quantity = 100.0;
-  String _selectedServing = '100g';
-  bool _isSaving = false;
-  late TextEditingController _quantityController;
+  static const double _minQuantity = 10.0;
+  static const double _maxQuantity = 500.0;
+  static const List<double> _presets = [50, 100, 150, 200, 300];
 
-  final Map<String, double> _servingOptions = {
-    '50g': 50.0,
-    '100g': 100.0,
-    '150g': 150.0,
-    '200g': 200.0,
-    '300g': 300.0,
-    '1 serving (100g)': 100.0,
-  };
+  double _quantity = 100.0;
+  bool _isSaving = false;
 
   double get _calories => (widget.foodItem.caloriesPer100g * _quantity) / 100;
   double get _protein => (widget.foodItem.protein * _quantity) / 100;
   double get _carbs => (widget.foodItem.carbs * _quantity) / 100;
   double get _fats => (widget.foodItem.fats * _quantity) / 100;
-
-  @override
-  void initState() {
-    super.initState();
-    _quantityController = TextEditingController(text: _quantity.toString());
-  }
-
-  @override
-  void dispose() {
-    _quantityController.dispose();
-    super.dispose();
-  }
 
   Future<void> _addToDiary() async {
     setState(() => _isSaving = true);
@@ -82,7 +64,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('\u2713 ${widget.foodItem.name} added to ${widget.mealType}'),
-          backgroundColor: const Color(0xFF4CAF50),
+          backgroundColor: AppColors.primary,
         ),
       );
 
@@ -161,100 +143,99 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
   Widget _buildServingSection() {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.all(16),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Number of Servings
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Number of Servings',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          Row(
+            children: [
+              Text(
+                'Serving Size',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+              const Spacer(),
+              Text(
+                '${_quantity.toInt()} g',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
-                const SizedBox(height: 6),
-                SizedBox(
-                  width: 100,
-                  height: 48,
-                  child: TextField(
-                    controller: _quantityController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    style: const TextStyle(fontSize: 14, color: Colors.black),
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade400),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.grey.shade400),
-                      ),
-                    ),
-                    onChanged: (value) {
-                      final parsed = double.tryParse(value);
-                      if (parsed != null && parsed > 0) {
-                        setState(() => _quantity = parsed);
-                      }
-                    },
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _presets.map(_buildPresetChip).toList(),
+          ),
+          const SizedBox(height: 8),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              activeTrackColor: AppColors.primary,
+              inactiveTrackColor: AppColors.primarySurface,
+              thumbColor: AppColors.primary,
+              overlayColor: AppColors.primary.withValues(alpha: 0.15),
+              trackHeight: 4,
+              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+              overlayShape:
+                  const RoundSliderOverlayShape(overlayRadius: 20),
+            ),
+            child: Slider(
+              value: _quantity.clamp(_minQuantity, _maxQuantity),
+              min: _minQuantity,
+              max: _maxQuantity,
+              divisions: ((_maxQuantity - _minQuantity) / 5).round(),
+              onChanged: (value) {
+                setState(() => _quantity = value);
+              },
             ),
           ),
-
-          const SizedBox(width: 16),
-
-          // Serving Size Dropdown
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Serving Size',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  '${_minQuantity.toInt()} g',
+                  style:
+                      TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
-                const SizedBox(height: 6),
-                SizedBox(
-                  height: 48,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade400),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: _selectedServing,
-                        isExpanded: true,
-                        style:
-                            const TextStyle(fontSize: 14, color: Colors.black),
-                        items: _servingOptions.keys
-                            .map((key) => DropdownMenuItem(
-                                  value: key,
-                                  child: Text(key),
-                                ))
-                            .toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              _selectedServing = value;
-                              _quantity = _servingOptions[value]!;
-                              _quantityController.text = _quantity.toString();
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
+                Text(
+                  '${_maxQuantity.toInt()} g',
+                  style:
+                      TextStyle(fontSize: 11, color: Colors.grey.shade500),
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPresetChip(double value) {
+    final isActive = (_quantity - value).abs() < 0.5;
+    return GestureDetector(
+      onTap: () => setState(() => _quantity = value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.primary : AppColors.primarySurface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? AppColors.primary : AppColors.primaryBorder,
+          ),
+        ),
+        child: Text(
+          '${value.toInt()}g',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isActive ? Colors.white : AppColors.primary,
+          ),
+        ),
       ),
     );
   }
@@ -266,12 +247,17 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
         children: [
-          Text(
-            _calories.toInt().toString(),
-            style: const TextStyle(
-              fontSize: 52,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF4CAF50),
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: _calories, end: _calories),
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+            builder: (context, value, _) => Text(
+              value.toInt().toString(),
+              style: const TextStyle(
+                fontSize: 52,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
             ),
           ),
           const Text(
@@ -353,7 +339,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
         height: 52,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF4CAF50),
+            backgroundColor: AppColors.primary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),

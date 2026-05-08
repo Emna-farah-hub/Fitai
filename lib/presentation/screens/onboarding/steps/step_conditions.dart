@@ -22,7 +22,7 @@ class StepConditions extends StatelessWidget {
     return Consumer<OnboardingProvider>(
       builder: (context, provider, _) => OnboardingScaffold(
         currentStep: provider.currentStep,
-        totalSteps: provider.totalSteps,
+        totalSteps: provider.progressBarSteps,
         question: AppStrings.onboardingTitles[8],
         questionSubtitle: AppStrings.onboardingSubtitles[8],
         illustrationPath: AppAssets.conditionsIllustration,

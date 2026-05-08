@@ -60,6 +60,35 @@ class AppColors {
   static const Color streak = Color(0xFFf59e0b);         // amber/gold
   static const Color streakSurface = Color(0xFFfffbeb);
 
+  // Chart colors
+  static const Color chartBlue = Color(0xFF3B82F6);
+  static const Color chartPurple = Color(0xFF8B5CF6);
+
+  // Meal section colors
+  static const Color mealBreakfast = Color(0xFFF97316); // orange
+  static const Color mealLunch = Color(0xFF16A34A);     // green
+  static const Color mealDinner = Color(0xFF3B82F6);    // blue
+  static const Color mealSnack = Color(0xFF8B5CF6);     // purple
+
+  // Upgraded primary - slightly warmer green
+  static const Color primaryWarm = Color(0xFF12A35A);
+
+  // New semantic palette
+  static const Color sage = Color(0xFF84A98C);
+  static const Color cream = Color(0xFFFEFCE8);
+  static const Color blush = Color(0xFFFCE7F3);
+  static const Color midnight = Color(0xFF0F1923);
+
+  // Improved card shadow (colored, not pure black)
+  static const Color cardShadow = Color(0x14169A4A); // green-tinted shadow
+
+  // Better surface colors
+  static const Color surfaceFloat = Color(0xFFFFFFFF);   // Level 1 cards
+  static const Color surfaceTint = Color(0xFFF0FDF4);    // Level 2 cards
+
+  // Soft background (replacing plain #fafafa)
+  static const Color backgroundSoft = Color(0xFFF7FBF8); // warm mint white
+
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
+import '../core/constants/app_colors.dart';
 import '../models/food_item.dart';
 import '../services/food_search_service.dart';
 import '../services/meal_journal_service.dart';
@@ -157,7 +158,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: const Color(0xFFF5F5F5),
+              color: AppColors.surfaceVariant,
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
@@ -188,9 +189,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           // Tab bar
           TabBar(
             controller: _tabController,
-            labelColor: const Color(0xFF4CAF50),
+            labelColor: AppColors.primary,
             unselectedLabelColor: Colors.grey,
-            indicatorColor: const Color(0xFF4CAF50),
+            indicatorColor: AppColors.primary,
             tabs: const [
               Tab(text: 'SEARCH'),
               Tab(text: 'RECENT'),
@@ -370,7 +371,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: const Color(0xFFE8F5E9),
+          color: AppColors.primarySurface,
           borderRadius: BorderRadius.circular(4),
         ),
         child: const Text(
@@ -378,7 +379,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF4CAF50),
+            color: AppColors.primary,
           ),
         ),
       );
@@ -388,7 +389,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: const Color(0xFFF5F5F5),
+          color: AppColors.surfaceVariant,
           borderRadius: BorderRadius.circular(4),
         ),
         child: const Text(
@@ -414,7 +415,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1565C0),
+            color: AppColors.chartBlue,
           ),
         ),
       );
@@ -476,7 +477,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
                       width: 36,
                       height: 36,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF4CAF50),
+                        color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(

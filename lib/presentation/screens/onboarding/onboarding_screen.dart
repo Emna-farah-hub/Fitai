@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../providers/user_provider.dart';
+import 'onboarding_bridge_screen.dart';
 import 'steps/step_welcome.dart';
 import 'steps/step_name.dart';
 import 'steps/step_birthday.dart';
@@ -46,6 +48,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _nextStep() {
+    HapticFeedback.selectionClick();
     final provider = context.read<OnboardingProvider>();
     provider.nextStep();
     final step = provider.currentStep;
@@ -67,11 +70,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   Future<void> _completeOnboarding() async {
+    debugPrint('[ONBOARDING] _completeOnboarding START');
     final authProvider = context.read<AuthProvider>();
     final onboardingProvider = context.read<OnboardingProvider>();
     final userProvider = context.read<UserProvider>();
 
     final uid = authProvider.currentUser?.uid;
+    debugPrint('[ONBOARDING] uid=$uid');
     if (uid == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -83,16 +88,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       return;
     }
 
+    debugPrint('[ONBOARDING] calling saveProfile...');
     final success = await onboardingProvider.saveProfile(uid);
+    debugPrint('[ONBOARDING] saveProfile returned success=$success '
+        'error=${onboardingProvider.errorMessage}');
     if (!mounted) return;
 
     if (success) {
+      debugPrint('[ONBOARDING] loading profile...');
       // Sync the in-memory profile so the router redirect sees onboardingComplete=true.
       await userProvider.loadProfile(uid);
+      debugPrint('[ONBOARDING] profile loaded — pushing bridge');
       if (!mounted) return;
-      // Skip the agent chat — go straight to the meal-swipe taste profiling.
-      context.go('/swipe', extra: true);
+
+      final fullName = onboardingProvider.name.trim();
+      final firstName =
+          fullName.isEmpty ? 'there' : fullName.split(' ').first;
+
+      Navigator.of(context).push(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 250),
+          pageBuilder: (_, _, _) => OnboardingBridgeScreen(
+            firstName: firstName,
+            onContinue: () {
+              if (!mounted) return;
+              context.go('/swipe', extra: true);
+            },
+          ),
+          transitionsBuilder: (_, animation, _, child) =>
+              FadeTransition(opacity: animation, child: child),
+        ),
+      );
     } else {
+      debugPrint('[ONBOARDING] saveProfile FAILED: '
+          '${onboardingProvider.errorMessage}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

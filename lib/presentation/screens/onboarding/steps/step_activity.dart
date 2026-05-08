@@ -46,7 +46,7 @@ class StepActivity extends StatelessWidget {
     return Consumer<OnboardingProvider>(
       builder: (context, provider, _) => OnboardingScaffold(
         currentStep: provider.currentStep,
-        totalSteps: provider.totalSteps,
+        totalSteps: provider.progressBarSteps,
         question: AppStrings.onboardingTitles[6],
         questionSubtitle: AppStrings.onboardingSubtitles[6],
         illustrationPath: AppAssets.activityIllustration,

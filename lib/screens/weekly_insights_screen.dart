@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../agent/tools/agent_tools.dart';
 import '../core/constants/app_colors.dart';
+import '../presentation/widgets/skeleton_loader.dart';
 
 class WeeklyInsightsScreen extends StatefulWidget {
   const WeeklyInsightsScreen({super.key});
@@ -156,15 +157,16 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
       backgroundColor: const Color(0xFFFAFAFA),
       body: SafeArea(
         bottom: false,
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: AppColors.primary))
-            : Column(
-                children: [
-                  _buildAppBar(),
-                  Expanded(child: _buildBody()),
-                ],
-              ),
+        child: Column(
+          children: [
+            _buildAppBar(),
+            Expanded(
+              child: _isLoading
+                  ? const SkeletonInsightsPage()
+                  : _buildBody(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -232,8 +234,14 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
           swappedMeals: stats.swapped,
         )
             .animate()
-            .fadeIn(duration: 400.ms, delay: 0.ms)
-            .slideY(begin: 0.05, end: 0),
+            .fadeIn(duration: 350.ms, delay: 0.ms)
+            .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: 350.ms,
+              delay: 0.ms,
+              curve: Curves.easeOut,
+            ),
         const SizedBox(height: 12),
         _calorieSection(
           avgCal: avgCal,
@@ -242,26 +250,50 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
           adapted: calorieAdaptCount > 0,
         )
             .animate()
-            .fadeIn(duration: 400.ms, delay: 100.ms)
-            .slideY(begin: 0.05, end: 0),
+            .fadeIn(duration: 350.ms, delay: 80.ms)
+            .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: 350.ms,
+              delay: 80.ms,
+              curve: Curves.easeOut,
+            ),
         const SizedBox(height: 12),
         _mealPatternsSection(
           confirmedByType: stats.confirmedByType,
           mostSkipped: mostSkipped,
         )
             .animate()
-            .fadeIn(duration: 400.ms, delay: 200.ms)
-            .slideY(begin: 0.05, end: 0),
+            .fadeIn(duration: 350.ms, delay: 160.ms)
+            .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: 350.ms,
+              delay: 160.ms,
+              curve: Curves.easeOut,
+            ),
         const SizedBox(height: 12),
         _tasteProfileSection()
             .animate()
-            .fadeIn(duration: 400.ms, delay: 300.ms)
-            .slideY(begin: 0.05, end: 0),
+            .fadeIn(duration: 350.ms, delay: 240.ms)
+            .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: 350.ms,
+              delay: 240.ms,
+              curve: Curves.easeOut,
+            ),
         const SizedBox(height: 12),
         _agentActivitySection()
             .animate()
-            .fadeIn(duration: 400.ms, delay: 400.ms)
-            .slideY(begin: 0.05, end: 0),
+            .fadeIn(duration: 350.ms, delay: 320.ms)
+            .slideY(
+              begin: 0.12,
+              end: 0,
+              duration: 350.ms,
+              delay: 320.ms,
+              curve: Curves.easeOut,
+            ),
         const SizedBox(height: 32),
       ],
     );

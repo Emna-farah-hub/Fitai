@@ -39,7 +39,7 @@ class _StepHeightState extends State<StepHeight> {
 
         return OnboardingScaffold(
           currentStep: provider.currentStep,
-          totalSteps: provider.totalSteps,
+          totalSteps: provider.progressBarSteps,
           question: AppStrings.onboardingTitles[3],
           questionSubtitle: AppStrings.onboardingSubtitles[3],
           illustrationPath: AppAssets.heightIllustration,

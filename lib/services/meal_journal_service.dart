@@ -1,11 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
 import '../models/meal_entry.dart';
 
+typedef MealLoggedCallback = void Function(String foodName, double calories);
+
 class MealJournalService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  static MealLoggedCallback? onMealLogged;
 
   Future<void> addMeal(String uid, MealEntry meal) async {
     final docRef = _firestore
@@ -17,6 +22,10 @@ class MealJournalService {
         .doc(meal.id);
     await docRef.set(meal.toMap());
 
+    try {
+      HapticFeedback.mediumImpact();
+    } catch (_) {}
+
     // Notify agent that a meal was logged
     try {
       AgentOrchestrator().handle(AgentEvent.now(
@@ -24,6 +33,10 @@ class MealJournalService {
         uid: uid,
         payload: {'meal': meal, 'foodName': meal.foodName},
       ));
+    } catch (_) {}
+
+    try {
+      onMealLogged?.call(meal.foodName, meal.calories);
     } catch (_) {}
   }
 

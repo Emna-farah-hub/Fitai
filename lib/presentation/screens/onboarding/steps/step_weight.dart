@@ -35,7 +35,7 @@ class _StepWeightState extends State<StepWeight> {
 
         return OnboardingScaffold(
           currentStep: provider.currentStep,
-          totalSteps: provider.totalSteps,
+          totalSteps: provider.progressBarSteps,
           question: AppStrings.onboardingTitles[4],
           questionSubtitle: AppStrings.onboardingSubtitles[4],
           illustrationPath: AppAssets.weightIllustration,

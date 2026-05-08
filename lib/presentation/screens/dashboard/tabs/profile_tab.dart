@@ -150,8 +150,14 @@ class ProfileTab extends StatelessWidget {
                   ),
                 )
                     .animate()
-                    .fadeIn(duration: 400.ms, delay: 100.ms)
-                    .slideY(begin: 0.05, end: 0),
+                    .fadeIn(duration: 350.ms, delay: 0.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      duration: 350.ms,
+                      delay: 0.ms,
+                      curve: Curves.easeOut,
+                    ),
 
                 const SizedBox(height: 20),
 
@@ -178,8 +184,14 @@ class ProfileTab extends StatelessWidget {
                   ),
                 )
                     .animate()
-                    .fadeIn(duration: 400.ms, delay: 200.ms)
-                    .slideY(begin: 0.05, end: 0),
+                    .fadeIn(duration: 350.ms, delay: 80.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      duration: 350.ms,
+                      delay: 80.ms,
+                      curve: Curves.easeOut,
+                    ),
 
                 const SizedBox(height: 16),
 
@@ -240,8 +252,14 @@ class ProfileTab extends StatelessWidget {
                   ),
                 )
                     .animate()
-                    .fadeIn(duration: 400.ms, delay: 300.ms)
-                    .slideY(begin: 0.05, end: 0),
+                    .fadeIn(duration: 350.ms, delay: 160.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      duration: 350.ms,
+                      delay: 160.ms,
+                      curve: Curves.easeOut,
+                    ),
 
                 const SizedBox(height: 24),
 
@@ -346,7 +364,14 @@ class ProfileTab extends StatelessWidget {
                   ),
                 )
                     .animate()
-                    .fadeIn(duration: 400.ms, delay: 400.ms),
+                    .fadeIn(duration: 350.ms, delay: 240.ms)
+                    .slideY(
+                      begin: 0.12,
+                      end: 0,
+                      duration: 350.ms,
+                      delay: 240.ms,
+                      curve: Curves.easeOut,
+                    ),
 
                 const SizedBox(height: 32),
               ],

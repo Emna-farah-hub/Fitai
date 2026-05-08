@@ -41,7 +41,7 @@ class _StepNameState extends State<StepName> {
     return Consumer<OnboardingProvider>(
       builder: (context, provider, _) => OnboardingScaffold(
         currentStep: provider.currentStep,
-        totalSteps: provider.totalSteps,
+        totalSteps: provider.progressBarSteps,
         question: AppStrings.onboardingTitles[1],
         questionSubtitle: AppStrings.onboardingSubtitles[1],
         illustrationPath: AppAssets.nameIllustration,

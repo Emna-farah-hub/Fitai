@@ -77,35 +77,30 @@ class OnboardingScaffold extends StatelessWidget {
                     else
                       const SizedBox(width: 40),
                     const SizedBox(width: 12),
-                    // Thin progress bar
+                    // Segmented pill progress bar
                     Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(2),
-                        child: TweenAnimationBuilder<double>(
-                          tween: Tween(
-                            begin: currentStep / totalSteps,
-                            end: (currentStep + 1) / totalSteps,
-                          ),
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeInOut,
-                          builder: (context, value, _) => LinearProgressIndicator(
-                            value: value,
-                            backgroundColor: AppColors.border,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
+                      child: Row(
+                        children: [
+                          for (int i = 0; i < totalSteps; i++) ...[
+                            Expanded(
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 350),
+                                curve: Curves.easeOut,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: i < currentStep
+                                      ? AppColors.primary
+                                      : i == currentStep
+                                          ? AppColors.primary
+                                              .withValues(alpha: 0.4)
+                                          : AppColors.border,
+                                  borderRadius: BorderRadius.circular(3),
+                                ),
+                              ),
                             ),
-                            minHeight: 4,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      '${currentStep + 1}/$totalSteps',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: AppColors.textMuted,
-                        fontWeight: FontWeight.w500,
+                            if (i < totalSteps - 1) const SizedBox(width: 4),
+                          ],
+                        ],
                       ),
                     ),
                   ],

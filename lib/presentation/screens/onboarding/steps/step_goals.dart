@@ -29,7 +29,7 @@ class StepGoals extends StatelessWidget {
     return Consumer<OnboardingProvider>(
       builder: (context, provider, _) => OnboardingScaffold(
         currentStep: provider.currentStep,
-        totalSteps: provider.totalSteps,
+        totalSteps: provider.progressBarSteps,
         question: AppStrings.onboardingTitles[9],
         questionSubtitle: AppStrings.onboardingSubtitles[9],
         illustrationPath: AppAssets.goalsIllustration,

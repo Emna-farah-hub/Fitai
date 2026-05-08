@@ -32,6 +32,9 @@ class OnboardingProvider extends ChangeNotifier {
   // Getters
   int get currentStep => _currentStep;
   int get totalSteps => 12;
+  // Steps shown in the progress bar (excludes the final personalizing screen
+  // which has its own full-screen UI).
+  int get progressBarSteps => totalSteps - 1;
   String get name => _name;
   DateTime get birthday => _birthday;
   double get heightCm => _heightCm;

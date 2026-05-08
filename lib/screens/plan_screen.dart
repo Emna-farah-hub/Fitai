@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../agent/orchestrator.dart';
+import '../core/constants/app_assets.dart';
 import '../core/constants/app_colors.dart';
+import '../presentation/widgets/app_card.dart';
+import '../presentation/widgets/illustration_widget.dart';
+import '../presentation/widgets/skeleton_loader.dart';
 import 'shopping_list_screen.dart';
 
 class PlanScreen extends StatefulWidget {
@@ -106,11 +111,26 @@ class _PlanScreenState extends State<PlanScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary))
+          ? _buildSkeleton()
           : _plan == null
               ? _buildEmpty()
               : _buildContent(),
+    );
+  }
+
+  Widget _buildSkeleton() {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      children: const [
+        SkeletonHeroCard(),
+        SizedBox(height: 20),
+        SkeletonDaySelector(),
+        SizedBox(height: 20),
+        SkeletonMealCard(margin: EdgeInsets.only(bottom: 14)),
+        SkeletonMealCard(margin: EdgeInsets.only(bottom: 14)),
+        SkeletonMealCard(margin: EdgeInsets.only(bottom: 14)),
+        SkeletonMealCard(),
+      ],
     );
   }
 
@@ -119,8 +139,11 @@ class _PlanScreenState extends State<PlanScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.calendar_today_outlined,
-              size: 64, color: AppColors.textMuted),
+          const IllustrationWidget(
+            assetPath: AppAssets.planIllustration,
+            fallbackIcon: Icons.calendar_today_outlined,
+            height: 160,
+          ),
           const SizedBox(height: 16),
           Text(
             'No plan generated yet',
@@ -293,7 +316,16 @@ class _PlanScreenState extends State<PlanScreen> {
           ),
         ],
       ),
-    ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.05, end: 0);
+    )
+        .animate()
+        .fadeIn(duration: 350.ms, delay: 0.ms)
+        .slideY(
+          begin: 0.12,
+          end: 0,
+          duration: 350.ms,
+          delay: 0.ms,
+          curve: Curves.easeOut,
+        );
   }
 
   Widget _heroStat(String value, String label) {
@@ -392,7 +424,16 @@ class _PlanScreenState extends State<PlanScreen> {
           );
         },
       ),
-    );
+    )
+        .animate()
+        .fadeIn(duration: 350.ms, delay: 80.ms)
+        .slideY(
+          begin: 0.12,
+          end: 0,
+          duration: 350.ms,
+          delay: 80.ms,
+          curve: Curves.easeOut,
+        );
   }
 
   Widget _buildTimeline(Map<String, dynamic> dayData) {
@@ -499,8 +540,14 @@ class _PlanScreenState extends State<PlanScreen> {
       ),
     )
         .animate()
-        .fadeIn(delay: (index * 80).ms, duration: 400.ms)
-        .slideX(begin: 0.05, end: 0);
+        .fadeIn(duration: 350.ms, delay: (index * 80).ms)
+        .slideY(
+          begin: 0.12,
+          end: 0,
+          duration: 350.ms,
+          delay: (index * 80).ms,
+          curve: Curves.easeOut,
+        );
   }
 
   Widget _buildMealCard(
@@ -546,6 +593,7 @@ class _PlanScreenState extends State<PlanScreen> {
     final protein = meal['protein'] ?? 0;
     final carbs = meal['carbs'] ?? 0;
     final fats = meal['fats'] ?? 0;
+    final finalScore = (meal['finalScore'] as num?)?.toDouble();
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -559,6 +607,21 @@ class _PlanScreenState extends State<PlanScreen> {
         children: [
           Row(
             children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: style.border),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  style.emoji,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              const SizedBox(width: 8),
               Text(
                 mealType.toUpperCase(),
                 style: GoogleFonts.inter(
@@ -606,6 +669,10 @@ class _PlanScreenState extends State<PlanScreen> {
                     ),
                   ),
                 ),
+              ],
+              if (finalScore != null) ...[
+                const SizedBox(width: 6),
+                _scoreBadge(finalScore),
               ],
             ],
           ),
@@ -701,6 +768,42 @@ class _PlanScreenState extends State<PlanScreen> {
     );
   }
 
+  Widget _scoreBadge(double score) {
+    final percent = (score * 100).clamp(0, 100).round();
+    Color bg;
+    if (percent >= 75) {
+      bg = AppColors.primary;
+    } else if (percent >= 50) {
+      bg = AppColors.warning;
+    } else {
+      bg = AppColors.error;
+    }
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: bg,
+        shape: BoxShape.circle,
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '$percent',
+        style: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
   Widget _tagPill(String label, {required Color bg, required Color fg}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -720,20 +823,8 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget _buildDailyTotalCard(Map<String, dynamic> total) {
-    return Container(
+    return FloatCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -789,6 +880,7 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Future<void> _markEaten(String mealType) async {
+    HapticFeedback.mediumImpact();
     try {
       final planDoc = await _db.collection('meal_plan').doc(_uid).get();
       if (!planDoc.exists) return;
