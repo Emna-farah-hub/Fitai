@@ -1,13 +1,16 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
 import '../core/constants/app_assets.dart';
 import '../core/constants/app_colors.dart';
 import '../models/meal_entry.dart';
+import '../presentation/widgets/ai_avatar.dart';
 import '../presentation/widgets/illustration_widget.dart';
 import '../services/meal_journal_service.dart';
 import 'plan_screen.dart';
@@ -76,11 +79,13 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
 
     try {
-      await _orchestrator.handle(AgentEvent.now(
-        type: AgentEventType.userMessage,
-        uid: _uid,
-        payload: {'message': trimmed},
-      ));
+      await _orchestrator.handle(
+        AgentEvent.now(
+          type: AgentEventType.userMessage,
+          uid: _uid,
+          payload: {'message': trimmed},
+        ),
+      );
     } catch (_) {}
 
     if (mounted) setState(() => _isThinking = false);
@@ -129,9 +134,9 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add meal')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to add meal')));
       }
     }
   }
@@ -139,8 +144,11 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _clearChat() async {
     try {
       final batch = _db.batch();
-      final snap =
-          await _db.collection('chat').doc(_uid).collection('messages').get();
+      final snap = await _db
+          .collection('chat')
+          .doc(_uid)
+          .collection('messages')
+          .get();
       for (final doc in snap.docs) {
         batch.delete(doc.reference);
       }
@@ -177,8 +185,10 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
             ListTile(
-              leading:
-                  const Icon(Icons.calendar_month, color: AppColors.primaryDark),
+              leading: const Icon(
+                Icons.calendar_month,
+                color: AppColors.primaryDark,
+              ),
               title: const Text('View my plan'),
               onTap: () {
                 Navigator.pop(ctx);
@@ -214,6 +224,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 final docs = snapshot.data?.docs ?? [];
+                String? lastAgentDocId;
+                for (final doc in docs.reversed) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  if (data['role'] == 'agent') {
+                    lastAgentDocId = doc.id;
+                    break;
+                  }
+                }
 
                 if (docs.isEmpty && !_isThinking) {
                   return _buildWelcomeState();
@@ -241,18 +259,20 @@ class _ChatScreenState extends State<ChatScreen> {
                       return _buildUserBubble(content, ts);
                     }
 
-                    final isLastAgentMessage =
-                        index == docs.length - 1 && !_isThinking;
-                    final bubble =
-                        _buildAgentBubble(content, ts, suggestion);
-                    if (!isLastAgentMessage) return bubble;
+                    final isLastAgentMessage = docs[index].id == lastAgentDocId;
+                    final shouldTypewrite = isLastAgentMessage && !_isThinking;
+                    final bubble = _buildAgentBubble(
+                      content,
+                      ts,
+                      suggestion,
+                      docs[index].id,
+                      shouldTypewrite,
+                    );
+                    if (!isLastAgentMessage || _isThinking) return bubble;
 
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        bubble,
-                        _buildQuickReplies(content),
-                      ],
+                      children: [bubble, _buildQuickReplies(content)],
                     );
                   },
                 );
@@ -289,8 +309,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   color: Colors.white.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.eco_rounded,
-                    color: Colors.white, size: 22),
+                child: const Icon(
+                  Icons.eco_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -392,8 +415,11 @@ class _ChatScreenState extends State<ChatScreen> {
     if (lower.contains('protein')) {
       return const ['Show high-protein foods', 'Log protein now'];
     }
-    if (lower.contains('glycemic') || lower.contains(' gi') ||
-        lower.contains('gi ') || lower.contains('gi.') || lower.contains('gi,')) {
+    if (lower.contains('glycemic') ||
+        lower.contains(' gi') ||
+        lower.contains('gi ') ||
+        lower.contains('gi.') ||
+        lower.contains('gi,')) {
       return const ["What's my GI today?", 'Show low-GI foods'];
     }
     if (lower.contains('plan') || lower.contains('meal plan')) {
@@ -409,9 +435,7 @@ class _ChatScreenState extends State<ChatScreen> {
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
-        children: [
-          for (final text in replies) _suggestionChip(text),
-        ],
+        children: [for (final text in replies) _suggestionChip(text)],
       ),
     );
   }
@@ -442,56 +466,61 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildUserBubble(String content, Timestamp? ts) {
     return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        margin: const EdgeInsets.only(left: 72, right: 16, bottom: 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primaryDark, AppColors.primary],
-                ),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(18),
-                  topRight: Radius.circular(4),
-                  bottomLeft: Radius.circular(18),
-                  bottomRight: Radius.circular(18),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
+          alignment: Alignment.centerRight,
+          child: Container(
+            margin: const EdgeInsets.only(left: 72, right: 16, bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
                   ),
-                ],
-              ),
-              child: Text(
-                content,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  height: 1.4,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.primaryDark, AppColors.primary],
+                    ),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(18),
+                      topRight: Radius.circular(4),
+                      bottomLeft: Radius.circular(18),
+                      bottomRight: Radius.circular(18),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    content,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
                 ),
-              ),
+                if (ts != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, right: 4),
+                    child: Text(
+                      DateFormat('h:mm a').format(ts.toDate()),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            if (ts != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4, right: 4),
-                child: Text(
-                  DateFormat('h:mm a').format(ts.toDate()),
-                  style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
-                ),
-              ),
-          ],
-        ),
-      ),
-    )
+          ),
+        )
         .animate()
         .fadeIn(duration: 300.ms)
         .slideX(begin: 0.3, end: 0, duration: 300.ms, curve: Curves.easeOut);
@@ -500,105 +529,128 @@ class _ChatScreenState extends State<ChatScreen> {
   // ─── AGENT BUBBLE ─────────────────────────────────────
 
   Widget _buildAgentBubble(
-      String content, Timestamp? ts, Map<String, dynamic>? suggestion) {
+    String content,
+    Timestamp? ts,
+    Map<String, dynamic>? suggestion,
+    String messageId,
+    bool shouldTypewrite,
+  ) {
     return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(left: 16, right: 72, bottom: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Agent avatar
-            Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primaryDark, AppColors.primaryDark],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.eco_rounded,
-                  color: Colors.white, size: 16),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'FitAI',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryDark,
+          alignment: Alignment.centerLeft,
+          child: Container(
+            margin: const EdgeInsets.only(left: 16, right: 72, bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Agent avatar
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.primaryDark, AppColors.primaryDark],
                     ),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(4),
-                        topRight: Radius.circular(18),
-                        bottomLeft: Radius.circular(18),
-                        bottomRight: Radius.circular(18),
-                      ),
-                      border: Border.all(color: AppColors.primarySurface),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                  child: const Icon(
+                    Icons.eco_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'FitAI',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryDark,
                         ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          content,
-                          style: const TextStyle(
-                            color: Color(0xFF1A1A1A),
-                            fontSize: 14,
-                            height: 1.5,
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(4),
+                            topRight: Radius.circular(18),
+                            bottomLeft: Radius.circular(18),
+                            bottomRight: Radius.circular(18),
+                          ),
+                          border: Border.all(color: AppColors.primarySurface),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.05),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            shouldTypewrite
+                                ? TypewriterText(
+                                    key: ValueKey('typewriter-$messageId'),
+                                    text: content,
+                                    style: const TextStyle(
+                                      color: Color(0xFF1A1A1A),
+                                      fontSize: 14,
+                                      height: 1.5,
+                                    ),
+                                  )
+                                : Text(
+                                    content,
+                                    style: const TextStyle(
+                                      color: Color(0xFF1A1A1A),
+                                      fontSize: 14,
+                                      height: 1.5,
+                                    ),
+                                  ),
+                            // Inline suggestion card
+                            if (suggestion != null) ...[
+                              const SizedBox(height: 10),
+                              Divider(
+                                height: 1,
+                                color: AppColors.primarySurface,
+                              ),
+                              const SizedBox(height: 8),
+                              _buildInlineSuggestion(suggestion),
+                            ],
+                          ],
+                        ),
+                      ),
+                      if (ts != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4, left: 4),
+                          child: Text(
+                            DateFormat('h:mm a').format(ts.toDate()),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500,
+                            ),
                           ),
                         ),
-                        // Inline suggestion card
-                        if (suggestion != null) ...[
-                          const SizedBox(height: 10),
-                          Divider(
-                              height: 1, color: AppColors.primarySurface),
-                          const SizedBox(height: 8),
-                          _buildInlineSuggestion(suggestion),
-                        ],
-                      ],
-                    ),
+                    ],
                   ),
-                  if (ts != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4, left: 4),
-                      child: Text(
-                        DateFormat('h:mm a').format(ts.toDate()),
-                        style: TextStyle(
-                            fontSize: 10, color: Colors.grey.shade500),
-                      ),
-                    ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    )
+          ),
+        )
         .animate()
         .fadeIn(duration: 300.ms)
-        .slideX(
-            begin: -0.3, end: 0, duration: 300.ms, curve: Curves.easeOut);
+        .slideX(begin: -0.3, end: 0, duration: 300.ms, curve: Curves.easeOut);
   }
 
   // ─── INLINE SUGGESTION CARD ───────────────────────────
@@ -616,8 +668,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: AppColors.primarySurface,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: const Icon(Icons.restaurant_outlined,
-                  color: AppColors.primaryDark, size: 18),
+              child: const Icon(
+                Icons.restaurant_outlined,
+                color: AppColors.primaryDark,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -637,8 +692,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     'P:${(suggestion['protein'] ?? 0).toInt()}g '
                     'C:${(suggestion['carbs'] ?? 0).toInt()}g '
                     'F:${(suggestion['fats'] ?? 0).toInt()}g',
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -682,52 +736,67 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primaryDark, AppColors.primaryDark],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.eco_rounded,
-                  color: Colors.white, size: 16),
-            ),
+            const AiAvatar(size: 32),
             const SizedBox(width: 8),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(4),
-                  topRight: Radius.circular(18),
-                  bottomLeft: Radius.circular(18),
-                  bottomRight: Radius.circular(18),
-                ),
-                border: Border.all(color: AppColors.primarySurface),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
                   ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _ThinkingDot(delay: Duration.zero),
-                  const SizedBox(width: 4),
-                  _ThinkingDot(delay: const Duration(milliseconds: 200)),
-                  const SizedBox(width: 4),
-                  _ThinkingDot(delay: const Duration(milliseconds: 400)),
-                ],
-              ),
-            ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      topRight: Radius.circular(18),
+                      bottomLeft: Radius.circular(18),
+                      bottomRight: Radius.circular(18),
+                    ),
+                    border: Border.all(color: AppColors.primarySurface),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _ThinkingDot(delay: Duration.zero),
+                          const SizedBox(width: 4),
+                          _ThinkingDot(
+                            delay: const Duration(milliseconds: 200),
+                          ),
+                          const SizedBox(width: 4),
+                          _ThinkingDot(
+                            delay: const Duration(milliseconds: 400),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'FitAI is thinking...',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                        ),
+                      ).animate().fadeIn(delay: 300.ms, duration: 300.ms),
+                    ],
+                  ),
+                )
+                .animate(
+                  onPlay: (controller) => controller.repeat(reverse: true),
+                )
+                .scaleXY(
+                  begin: 1.0,
+                  end: 1.03,
+                  duration: 800.ms,
+                  curve: Curves.easeInOut,
+                ),
           ],
         ),
       ),
@@ -745,7 +814,11 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
       padding: EdgeInsets.fromLTRB(
-          8, 8, 8, MediaQuery.of(context).viewInsets.bottom + 8),
+        8,
+        8,
+        8,
+        MediaQuery.of(context).viewInsets.bottom + 8,
+      ),
       child: Row(
         children: [
           Expanded(
@@ -763,8 +836,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 10,
+                ),
               ),
               onSubmitted: _sendMessage,
             ),
@@ -810,6 +885,115 @@ class _ChatScreenState extends State<ChatScreen> {
 
 // ─── THINKING DOT ─────────────────────────────────────────
 
+class TypewriterText extends StatefulWidget {
+  final String text;
+  final Duration perCharacter;
+  final TextStyle? style;
+
+  const TypewriterText({
+    super.key,
+    required this.text,
+    this.perCharacter = const Duration(milliseconds: 18),
+    this.style,
+  });
+
+  @override
+  State<TypewriterText> createState() => _TypewriterTextState();
+}
+
+class _TypewriterTextState extends State<TypewriterText> {
+  static final Set<String> _completedAnimations = <String>{};
+
+  Timer? _typeTimer;
+  Timer? _cursorTimer;
+  late String _animationId;
+  late List<String> _characters;
+  int _visibleCharacters = 0;
+  bool _showCursor = true;
+  bool _isDone = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _configureAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant TypewriterText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.text != oldWidget.text || widget.key != oldWidget.key) {
+      _cancelTimers();
+      _configureAnimation();
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancelTimers();
+    super.dispose();
+  }
+
+  void _configureAnimation() {
+    _animationId = widget.key?.toString() ?? widget.text;
+    _characters = widget.text.runes.map(String.fromCharCode).toList();
+
+    if (widget.text.length > 180 ||
+        _completedAnimations.contains(_animationId)) {
+      _visibleCharacters = _characters.length;
+      _isDone = true;
+      _showCursor = false;
+      _completedAnimations.add(_animationId);
+      return;
+    }
+
+    _visibleCharacters = 0;
+    _isDone = false;
+    _showCursor = true;
+    _startTyping();
+    _startCursorBlink();
+  }
+
+  void _startTyping() {
+    _typeTimer = Timer.periodic(widget.perCharacter, (timer) {
+      if (!mounted) return;
+      if (_visibleCharacters >= _characters.length) {
+        timer.cancel();
+        _cursorTimer?.cancel();
+        setState(() {
+          _isDone = true;
+          _showCursor = false;
+        });
+        _completedAnimations.add(_animationId);
+        return;
+      }
+      setState(() => _visibleCharacters++);
+    });
+  }
+
+  void _startCursorBlink() {
+    _cursorTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
+      if (mounted && !_isDone) {
+        setState(() => _showCursor = !_showCursor);
+      }
+    });
+  }
+
+  void _cancelTimers() {
+    _typeTimer?.cancel();
+    _cursorTimer?.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isDone) {
+      return Text(widget.text, style: widget.style);
+    }
+
+    final visibleText = _characters.take(_visibleCharacters).join();
+    return Text('$visibleText${_showCursor ? '|' : ''}', style: widget.style);
+  }
+}
+
 class _ThinkingDot extends StatefulWidget {
   final Duration delay;
   const _ThinkingDot({required this.delay});
@@ -830,9 +1014,10 @@ class _ThinkingDotState extends State<_ThinkingDot>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _opacity = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _opacity = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     Future.delayed(widget.delay, () {
       if (mounted) _controller.repeat(reverse: true);
     });
@@ -848,10 +1033,8 @@ class _ThinkingDotState extends State<_ThinkingDot>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _opacity,
-      builder: (context, child) => Opacity(
-        opacity: _opacity.value,
-        child: child,
-      ),
+      builder: (context, child) =>
+          Opacity(opacity: _opacity.value, child: child),
       child: Container(
         width: 8,
         height: 8,

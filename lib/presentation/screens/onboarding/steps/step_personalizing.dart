@@ -57,7 +57,8 @@ class StepPersonalizingState extends State<StepPersonalizing>
     );
 
     _progressController.addListener(() {
-      final newIndex = (_progressAnimation.value * (_messages.length - 1)).floor();
+      final newIndex = (_progressAnimation.value * (_messages.length - 1))
+          .floor();
       if (newIndex != _currentMessageIndex && mounted) {
         setState(() => _currentMessageIndex = newIndex);
       }
@@ -85,6 +86,13 @@ class StepPersonalizingState extends State<StepPersonalizing>
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<OnboardingProvider>();
+    if (provider.currentStep == 11 && !_started) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) startAnimation();
+      });
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
@@ -115,8 +123,11 @@ class StepPersonalizingState extends State<StepPersonalizing>
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.auto_awesome,
-                        color: Colors.white, size: 48),
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      color: Colors.white,
+                      size: 48,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -173,8 +184,8 @@ class StepPersonalizingState extends State<StepPersonalizing>
                 const SizedBox(height: 48),
                 // Saving indicator
                 Consumer<OnboardingProvider>(
-                  builder: (context, provider, _) {
-                    if (provider.isSaving) {
+                  builder: (context, onboardingProvider, _) {
+                    if (onboardingProvider.isSaving) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_assets.dart';
@@ -148,8 +149,7 @@ class _HistoryTabState extends State<_HistoryTab> {
 
     // Load calorie target
     try {
-      final userDoc =
-          await _firestore.collection('users').doc(uid).get();
+      final userDoc = await _firestore.collection('users').doc(uid).get();
       if (userDoc.exists) {
         final t = (userDoc.data()!['dailyCalorieGoal'] ?? 1800).toDouble();
         _dailyCalorieTarget = t > 0 ? t : 1800;
@@ -196,8 +196,7 @@ class _HistoryTabState extends State<_HistoryTab> {
   int get _daysTracked =>
       _grouped.values.where((list) => list.isNotEmpty).length;
 
-  int get _totalMeals =>
-      _grouped.values.fold(0, (s, list) => s + list.length);
+  int get _totalMeals => _grouped.values.fold(0, (s, list) => s + list.length);
 
   int get _avgCalPerDay {
     if (_daysTracked == 0) return 0;
@@ -229,27 +228,29 @@ class _HistoryTabState extends State<_HistoryTab> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary))
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : !_hasAnyMeals
-              ? _buildEmptyState()
-              : RefreshIndicator(
-                  onRefresh: _loadAll,
-                  child: ListView(
-                    padding: const EdgeInsets.only(bottom: 32),
-                    children: [
-                      _buildSummaryCard(),
-                      for (int i = 0; i < _dateKeys.length; i++) ...[
-                        _buildDateSection(_dateKeys[i]),
-                        if (i < _dateKeys.length - 1)
-                          Divider(
-                              height: 1,
-                              indent: 16,
-                              endIndent: 16,
-                              color: Colors.grey.shade200),
-                      ],
-                    ],
-                  ),
-                ),
+          ? _buildEmptyState()
+          : RefreshIndicator(
+              onRefresh: _loadAll,
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 32),
+                children: [
+                  _buildSummaryCard(),
+                  for (int i = 0; i < _dateKeys.length; i++) ...[
+                    _buildDateSection(_dateKeys[i]),
+                    if (i < _dateKeys.length - 1)
+                      Divider(
+                        height: 1,
+                        indent: 16,
+                        endIndent: 16,
+                        color: Colors.grey.shade200,
+                      ),
+                  ],
+                ],
+              ),
+            ),
     );
   }
 
@@ -288,21 +289,25 @@ class _HistoryTabState extends State<_HistoryTab> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        const FoodSearchScreen(mealType: 'Lunch'),
+                    builder: (_) => const FoodSearchScreen(mealType: 'Lunch'),
                   ),
                 );
               },
               child: const Text(
                 'Log your first meal',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -331,11 +336,7 @@ class _HistoryTabState extends State<_HistoryTab> {
       child: Row(
         children: [
           Expanded(
-            child: _statColumn(
-              'This Week',
-              '$_daysTracked days tracked',
-              null,
-            ),
+            child: _statColumn('This Week', '$_daysTracked days tracked', null),
           ),
           Expanded(
             child: _statColumn(
@@ -384,17 +385,25 @@ class _HistoryTabState extends State<_HistoryTab> {
     final meals = _grouped[dateKey] ?? [];
     final dayCal = meals.fold(0.0, (s, m) => s + m.calories);
 
-    Color calColor;
-    if (meals.isEmpty) {
-      calColor = Colors.grey;
-    } else if ((dayCal - _dailyCalorieTarget).abs() <=
-        _dailyCalorieTarget * 0.1) {
-      calColor = AppColors.primary;
-    } else if (dayCal > _dailyCalorieTarget) {
-      calColor = AppColors.error;
-    } else {
-      calColor = Colors.grey.shade700;
-    }
+    final withinTarget =
+        meals.isNotEmpty &&
+        (dayCal - _dailyCalorieTarget).abs() <= _dailyCalorieTarget * 0.1;
+    final overTarget = meals.isNotEmpty && dayCal > _dailyCalorieTarget;
+    final pillBackground = withinTarget
+        ? AppColors.primarySurface
+        : overTarget
+        ? AppColors.warningSurface
+        : AppColors.surfaceVariant;
+    final pillColor = withinTarget
+        ? AppColors.primaryDark
+        : overTarget
+        ? AppColors.warning
+        : AppColors.textMuted;
+    final pillBorderColor = withinTarget
+        ? AppColors.primary.withValues(alpha: 0.28)
+        : overTarget
+        ? AppColors.warning.withValues(alpha: 0.30)
+        : AppColors.border;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -410,26 +419,39 @@ class _HistoryTabState extends State<_HistoryTab> {
                   children: [
                     Text(
                       DateFormat('EEEE').format(date),
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                      style: GoogleFonts.nunito(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     Text(
                       DateFormat('d MMMM').format(date),
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
               ),
-              Text(
-                meals.isEmpty ? '0 kcal' : '${dayCal.toInt()} kcal',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: calColor,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  color: pillBackground,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: pillBorderColor),
+                ),
+                child: Text(
+                  meals.isEmpty ? '0 kcal' : '${dayCal.toInt()} kcal',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: pillColor,
+                  ),
                 ),
               ),
             ],
@@ -451,14 +473,23 @@ class _HistoryTabState extends State<_HistoryTab> {
             )
           else
             for (final section in _historyMealSections)
-              _buildHistoryMealSection(section.$1, section.$2, section.$3, meals),
+              _buildHistoryMealSection(
+                section.$1,
+                section.$2,
+                section.$3,
+                meals,
+              ),
         ],
       ),
     );
   }
 
   Widget _buildHistoryMealSection(
-      String type, IconData icon, Color color, List<MealEntry> allMeals) {
+    String type,
+    IconData icon,
+    Color color,
+    List<MealEntry> allMeals,
+  ) {
     final meals = allMeals
         .where((m) => m.mealType.toLowerCase() == type.toLowerCase())
         .toList();
@@ -501,8 +532,7 @@ class _HistoryTabState extends State<_HistoryTab> {
           // Meal rows
           for (int i = 0; i < meals.length; i++) ...[
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
                   Expanded(
@@ -522,7 +552,9 @@ class _HistoryTabState extends State<_HistoryTab> {
                           'C:${meals[i].carbs.toStringAsFixed(0)}g '
                           'F:${meals[i].fats.toStringAsFixed(0)}g',
                           style: TextStyle(
-                              fontSize: 11, color: Colors.grey.shade600),
+                            fontSize: 11,
+                            color: Colors.grey.shade600,
+                          ),
                         ),
                       ],
                     ),
@@ -541,7 +573,9 @@ class _HistoryTabState extends State<_HistoryTab> {
                       Text(
                         DateFormat('h:mm a').format(meals[i].timestamp),
                         style: TextStyle(
-                            fontSize: 11, color: Colors.grey.shade500),
+                          fontSize: 11,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
                     ],
                   ),
@@ -550,10 +584,11 @@ class _HistoryTabState extends State<_HistoryTab> {
             ),
             if (i < meals.length - 1)
               Divider(
-                  height: 1,
-                  indent: 12,
-                  endIndent: 12,
-                  color: Colors.grey.shade200),
+                height: 1,
+                indent: 12,
+                endIndent: 12,
+                color: Colors.grey.shade200,
+              ),
           ],
         ],
       ),

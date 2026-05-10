@@ -90,6 +90,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
+                Center(
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      color: AppColors.midnight,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.midnight.withValues(alpha: 0.30),
+                          blurRadius: 22,
+                          offset: const Offset(0, 9),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.eco_rounded,
+                      color: Colors.white,
+                      size: 36,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 Text(
                   'Create account',
@@ -98,6 +121,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     fontWeight: FontWeight.w800,
                     color: AppColors.textPrimary,
                     letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Your AI nutrition coach',
+                  style: GoogleFonts.nunito(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.sage,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -120,11 +152,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
                           labelText: 'Email',
-                          prefixIcon: Icon(Icons.email_outlined,
-                              color: AppColors.textMuted),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: AppColors.textMuted,
+                          ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Email is required';
+                          if (v == null || v.isEmpty) {
+                            return 'Email is required';
+                          }
                           if (!v.contains('@')) return 'Enter a valid email';
                           return null;
                         },
@@ -137,8 +173,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
                           labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outlined,
-                              color: AppColors.textMuted),
+                          prefixIcon: const Icon(
+                            Icons.lock_outlined,
+                            color: AppColors.textMuted,
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
@@ -147,11 +185,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: AppColors.textMuted,
                             ),
                             onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword),
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Password is required';
+                          if (v == null || v.isEmpty) {
+                            return 'Password is required';
+                          }
                           if (v.length < 6) {
                             return 'Password must be at least 6 characters';
                           }
@@ -167,8 +208,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         onFieldSubmitted: (_) => _register(),
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
-                          prefixIcon: const Icon(Icons.lock_outlined,
-                              color: AppColors.textMuted),
+                          prefixIcon: const Icon(
+                            Icons.lock_outlined,
+                            color: AppColors.textMuted,
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscureConfirm
@@ -177,7 +220,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               color: AppColors.textMuted,
                             ),
                             onPressed: () => setState(
-                                () => _obscureConfirm = !_obscureConfirm),
+                              () => _obscureConfirm = !_obscureConfirm,
+                            ),
                           ),
                         ),
                         validator: (v) {

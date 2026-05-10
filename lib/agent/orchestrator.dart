@@ -84,7 +84,9 @@ class AgentOrchestrator {
       suggestMealType = 'Breakfast';
     } else if (hour >= 11 && hour < 14 && !_mealTypeLogged(dailyLog, 'Lunch')) {
       suggestMealType = 'Lunch';
-    } else if (hour >= 17 && hour < 21 && !_mealTypeLogged(dailyLog, 'Dinner')) {
+    } else if (hour >= 17 &&
+        hour < 21 &&
+        !_mealTypeLogged(dailyLog, 'Dinner')) {
       suggestMealType = 'Dinner';
     } else if (mealCount > 0 && hour >= 14 && hour < 17) {
       suggestMealType = 'Snack';
@@ -110,7 +112,8 @@ class AgentOrchestrator {
   bool _mealTypeLogged(Map<String, dynamic> dailyLog, String type) {
     final meals = dailyLog['meals'] as List<dynamic>? ?? [];
     return meals.any(
-        (m) => (m['mealType'] as String?)?.toLowerCase() == type.toLowerCase());
+      (m) => (m['mealType'] as String?)?.toLowerCase() == type.toLowerCase(),
+    );
   }
 
   // ─── MEAL LOGGED ────────────────────────────────────────
@@ -185,10 +188,10 @@ class AgentOrchestrator {
       'observation': analysis.summary,
       'decision': 'Sent morning briefing',
       'action': 'pinned_message_with_suggestion',
-        'outcome': suggestion == null
-            ? 'No safe breakfast suggestion available'
-            : 'Breakfast suggestion: ${suggestion.foodName}',
-      });
+      'outcome': suggestion == null
+          ? 'No safe breakfast suggestion available'
+          : 'Breakfast suggestion: ${suggestion.foodName}',
+    });
   }
 
   // ─── MIDDAY CHECK ──────────────────────────────────────
@@ -272,8 +275,9 @@ class AgentOrchestrator {
       'type': 'evening_summary',
       'trigger': 'scheduled',
       'observation': analysis.summary,
-      'decision':
-          analysis.planAdjustmentNeeded ? 'Plan adaptation triggered' : 'No changes',
+      'decision': analysis.planAdjustmentNeeded
+          ? 'Plan adaptation triggered'
+          : 'No changes',
       'action': 'pinned_summary',
       'outcome': message,
     });
@@ -297,13 +301,14 @@ class AgentOrchestrator {
     final adherenceText = adaptationConstraints.containsKey('calorie_low')
         ? 'tu as mangé moins que prévu'
         : adaptationConstraints.containsKey('calorie_high')
-            ? 'tu as dépassé ton objectif calorique'
-            : 'tu as bien suivi ton plan';
+        ? 'tu as dépassé ton objectif calorique'
+        : 'tu as bien suivi ton plan';
 
     final message = await _coach.generateMessage(
       analysis: analysis,
       profile: profile,
-      context: 'weekly_review: $adherenceText. '
+      context:
+          'weekly_review: $adherenceText. '
           'Adaptations appliquées: ${adaptationConstraints.keys.join(', ')}. '
           'Tags préférés: ${(prefTags['liked'] ?? []).take(3).join(', ')}',
     );
@@ -320,8 +325,11 @@ class AgentOrchestrator {
     final target = (profile['dailyCalorieGoal'] ?? 2000).toInt();
     if (avgCal > 0 && (avgCal - target).abs() > target * 0.20) {
       final newTarget = ((avgCal + target) / 2).round();
-      await _tools.updateCalorieTarget(uid, newTarget,
-          'Weekly review: avg ${avgCal.toInt()} vs target $target');
+      await _tools.updateCalorieTarget(
+        uid,
+        newTarget,
+        'Weekly review: avg ${avgCal.toInt()} vs target $target',
+      );
     }
 
     await _tools.logAgentAction(uid, {
@@ -371,7 +379,8 @@ class AgentOrchestrator {
       );
       await _tools.pinToDashboard(uid, {
         'type': 'meal_reminder',
-        'message': "It's been $hoursSince hours since your last meal. Time for $mealType?",
+        'message':
+            "It's been $hoursSince hours since your last meal. Time for $mealType?",
         'severity': 'info',
         'foodSuggestion': suggestion?.toJson(),
       });
@@ -429,7 +438,8 @@ class AgentOrchestrator {
 
     // 5. Detect meal suggestion intent
     final lowerText = messageText.toLowerCase();
-    final wantsSuggestion = lowerText.contains('what should i eat') ||
+    final wantsSuggestion =
+        lowerText.contains('what should i eat') ||
         lowerText.contains('suggest') ||
         lowerText.contains('hungry') ||
         lowerText.contains('meal idea');
@@ -511,8 +521,9 @@ class AgentOrchestrator {
         final flexibleKey = 'prefer_flexible_${mealType.toLowerCase()}';
         if (adaptationConstraints.containsKey(flexibleKey)) {
           final flexible = filtered
-              .where((m) =>
-                  ((m['flexibilityScore'] as num?)?.toInt() ?? 0) >= 4)
+              .where(
+                (m) => ((m['flexibilityScore'] as num?)?.toInt() ?? 0) >= 4,
+              )
               .toList();
           if (flexible.isNotEmpty) {
             filtered = flexible;
@@ -583,8 +594,10 @@ class AgentOrchestrator {
           rankedMeals: breakfastRanked,
           usedIds: usedIds,
           previousProteinSources: previousProteinSources,
-          targetCalories:
-              _slotTargetCalories('Breakfast', adaptationConstraints),
+          targetCalories: _slotTargetCalories(
+            'Breakfast',
+            adaptationConstraints,
+          ),
           dayIndex: i,
         );
         final lunch = _selectPlannedMeal(
@@ -617,8 +630,9 @@ class AgentOrchestrator {
         ]);
 
         days['$i'] = {
-          'date': DateFormat('yyyy-MM-dd')
-              .format(now.add(Duration(days: i - 1))),
+          'date': DateFormat(
+            'yyyy-MM-dd',
+          ).format(now.add(Duration(days: i - 1))),
           'breakfast': breakfast,
           'lunch': lunch,
           'dinner': dinner,
@@ -695,8 +709,11 @@ class AgentOrchestrator {
         .where((meal) => meal['mealType'] == mealType)
         .toList();
     final pool = typedMeals
-        .where((meal) =>
-            !eatenToday.contains((meal['name']?.toString() ?? '').toLowerCase()))
+        .where(
+          (meal) => !eatenToday.contains(
+            (meal['name']?.toString() ?? '').toLowerCase(),
+          ),
+        )
         .toList();
     final recommendationPool = pool.isNotEmpty ? pool : typedMeals;
     if (recommendationPool.isEmpty) return null;
@@ -710,8 +727,7 @@ class AgentOrchestrator {
     if (rankedMeals.isEmpty) return null;
 
     final primary = rankedMeals.first;
-    final alternative =
-        rankedMeals.length > 1 ? rankedMeals[1].meal : null;
+    final alternative = rankedMeals.length > 1 ? rankedMeals[1].meal : null;
     final suggestion = _rankedMealToSuggestionCard(
       rankedMeal: primary,
       goalProfile: goalProfile,
@@ -823,17 +839,17 @@ class AgentOrchestrator {
           .doc(uid)
           .collection('events')
           .add({
-        'createdAt': Timestamp.now(),
-        'mealType': mealType,
-        'source': source,
-        'goalProfile': goalProfile,
-        'foodName': rankedMeal.meal['name'],
-        'mealId': rankedMeal.meal['id'],
-        'goalCompatibilityScore': rankedMeal.goalCompatibilityScore,
-        'preferenceScore': rankedMeal.preferenceScore,
-        'finalScore': rankedMeal.finalScore,
-        'meal': rankedMeal.meal,
-      });
+            'createdAt': Timestamp.now(),
+            'mealType': mealType,
+            'source': source,
+            'goalProfile': goalProfile,
+            'foodName': rankedMeal.meal['name'],
+            'mealId': rankedMeal.meal['id'],
+            'goalCompatibilityScore': rankedMeal.goalCompatibilityScore,
+            'preferenceScore': rankedMeal.preferenceScore,
+            'finalScore': rankedMeal.finalScore,
+            'meal': rankedMeal.meal,
+          });
     } catch (_) {}
   }
 
@@ -846,7 +862,9 @@ class AgentOrchestrator {
   }) {
     if (rankedMeals.isEmpty) return null;
 
-    final shortlist = rankedMeals.take(rankedMeals.length < 6 ? rankedMeals.length : 6).toList();
+    final shortlist = rankedMeals
+        .take(rankedMeals.length < 6 ? rankedMeals.length : 6)
+        .toList();
     RankedMeal<Map<String, dynamic>>? best;
     var bestScore = -9999.0;
 
@@ -857,16 +875,23 @@ class AgentOrchestrator {
       if (id.isNotEmpty && usedIds.contains(id)) continue;
 
       final proteinSources = _proteinSourcesForMeal(meal);
-      final hasRepeatedProtein =
-          proteinSources.intersection(previousProteinSources).isNotEmpty;
+      final hasRepeatedProtein = proteinSources
+          .intersection(previousProteinSources)
+          .isNotEmpty;
       final calories = (meal['calories'] as num?)?.toDouble() ?? targetCalories;
       final caloriePenalty = targetCalories <= 0
           ? 0.0
-          : ((calories - targetCalories).abs() / targetCalories).clamp(0.0, 1.0);
+          : ((calories - targetCalories).abs() / targetCalories).clamp(
+              0.0,
+              1.0,
+            );
       final rotationBonus = i == (dayIndex % shortlist.length) ? 0.02 : 0.0;
       final varietyPenalty = hasRepeatedProtein ? 0.18 : 0.0;
       final candidateScore =
-          candidate.finalScore - (caloriePenalty * 0.08) - varietyPenalty + rotationBonus;
+          candidate.finalScore -
+          (caloriePenalty * 0.08) -
+          varietyPenalty +
+          rotationBonus;
 
       if (candidateScore > bestScore) {
         best = candidate;
@@ -874,23 +899,21 @@ class AgentOrchestrator {
       }
     }
 
-    best ??= rankedMeals.firstWhere(
-      (candidate) {
-        final id = candidate.meal['id']?.toString() ?? '';
-        return id.isEmpty || !usedIds.contains(id);
-      },
-      orElse: () => rankedMeals.first,
-    );
+    best ??= rankedMeals.firstWhere((candidate) {
+      final id = candidate.meal['id']?.toString() ?? '';
+      return id.isEmpty || !usedIds.contains(id);
+    }, orElse: () => rankedMeals.first);
 
     final selected = Map<String, dynamic>.from(best.meal);
     selected['confirmed'] = false;
     selected['swapped'] = false;
-    selected['goalCompatibilityScore'] =
-        double.parse(best.goalCompatibilityScore.toStringAsFixed(3));
-    selected['preferenceScore'] =
-        double.parse(best.preferenceScore.toStringAsFixed(3));
-    selected['finalScore'] =
-        double.parse(best.finalScore.toStringAsFixed(3));
+    selected['goalCompatibilityScore'] = double.parse(
+      best.goalCompatibilityScore.toStringAsFixed(3),
+    );
+    selected['preferenceScore'] = double.parse(
+      best.preferenceScore.toStringAsFixed(3),
+    );
+    selected['finalScore'] = double.parse(best.finalScore.toStringAsFixed(3));
 
     final id = selected['id']?.toString() ?? '';
     if (id.isNotEmpty) {
@@ -1043,16 +1066,20 @@ class AgentOrchestrator {
     final allSwipeHistory = List<Map<String, dynamic>>.from(
       preferenceDoc.data()?['swipeHistory'] ?? const [],
     );
-    final recentSwipes = allSwipeHistory.where((swipe) {
-      final ts = swipe['timestamp'];
-      if (ts is! Timestamp) return false;
-      return ts.toDate().isAfter(weekAgo);
-    }).map((swipe) => Map<String, dynamic>.from(swipe)).toList();
+    final recentSwipes = allSwipeHistory
+        .where((swipe) {
+          final ts = swipe['timestamp'];
+          if (ts is! Timestamp) return false;
+          return ts.toDate().isAfter(weekAgo);
+        })
+        .map((swipe) => Map<String, dynamic>.from(swipe))
+        .toList();
 
     var eatenRecommendations = 0;
     for (int i = 0; i < 7; i++) {
-      final dateKey = DateFormat('yyyy-MM-dd')
-          .format(DateTime.now().subtract(Duration(days: i)));
+      final dateKey = DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.now().subtract(Duration(days: i)));
       final entries = await _db
           .collection('meals')
           .doc(uid)
@@ -1062,7 +1089,8 @@ class AgentOrchestrator {
           .get();
       for (final entry in entries.docs) {
         final inputMethod = entry.data()['inputMethod']?.toString() ?? '';
-        if (inputMethod == 'agent_suggestion' || inputMethod == 'plan_confirmed') {
+        if (inputMethod == 'agent_suggestion' ||
+            inputMethod == 'plan_confirmed') {
           eatenRecommendations++;
         }
       }
@@ -1134,7 +1162,9 @@ class AgentOrchestrator {
 
     final usedIds = <String>{};
 
-    Map<String, dynamic>? pickMeal(List<RankedMeal<Map<String, dynamic>>> ranked) {
+    Map<String, dynamic>? pickMeal(
+      List<RankedMeal<Map<String, dynamic>>> ranked,
+    ) {
       if (ranked.isEmpty) return null;
       for (final candidate in ranked) {
         final id = candidate.meal['id']?.toString() ?? '';
@@ -1142,12 +1172,15 @@ class AgentOrchestrator {
           final meal = Map<String, dynamic>.from(candidate.meal);
           meal['confirmed'] = false;
           meal['swapped'] = false;
-          meal['goalCompatibilityScore'] =
-              double.parse(candidate.goalCompatibilityScore.toStringAsFixed(3));
-          meal['preferenceScore'] =
-              double.parse(candidate.preferenceScore.toStringAsFixed(3));
-          meal['finalScore'] =
-              double.parse(candidate.finalScore.toStringAsFixed(3));
+          meal['goalCompatibilityScore'] = double.parse(
+            candidate.goalCompatibilityScore.toStringAsFixed(3),
+          );
+          meal['preferenceScore'] = double.parse(
+            candidate.preferenceScore.toStringAsFixed(3),
+          );
+          meal['finalScore'] = double.parse(
+            candidate.finalScore.toStringAsFixed(3),
+          );
           if (id.isNotEmpty) usedIds.add(id);
           return meal;
         }
@@ -1157,7 +1190,9 @@ class AgentOrchestrator {
 
     final days = <String, dynamic>{};
     for (int i = 1; i <= 7; i++) {
-      final date = DateFormat('yyyy-MM-dd').format(now.add(Duration(days: i - 1)));
+      final date = DateFormat(
+        'yyyy-MM-dd',
+      ).format(now.add(Duration(days: i - 1)));
       final b = pickMeal(breakfastRanked);
       final l = pickMeal(lunchRanked);
       final d = pickMeal(dinnerRanked);
@@ -1323,12 +1358,15 @@ class AgentOrchestrator {
       );
       return ranked.take(3).map((rankedMeal) {
         final meal = Map<String, dynamic>.from(rankedMeal.meal);
-        meal['goalCompatibilityScore'] =
-            double.parse(rankedMeal.goalCompatibilityScore.toStringAsFixed(3));
-        meal['preferenceScore'] =
-            double.parse(rankedMeal.preferenceScore.toStringAsFixed(3));
-        meal['finalScore'] =
-            double.parse(rankedMeal.finalScore.toStringAsFixed(3));
+        meal['goalCompatibilityScore'] = double.parse(
+          rankedMeal.goalCompatibilityScore.toStringAsFixed(3),
+        );
+        meal['preferenceScore'] = double.parse(
+          rankedMeal.preferenceScore.toStringAsFixed(3),
+        );
+        meal['finalScore'] = double.parse(
+          rankedMeal.finalScore.toStringAsFixed(3),
+        );
         return meal;
       }).toList();
     } catch (e) {
@@ -1397,11 +1435,6 @@ class AgentOrchestrator {
     }
   }
 
-  Map<String, Map<String, dynamic>> _buildMealIndex(
-      List<Map<String, dynamic>> meals) {
-    return {for (final m in meals) m['id'] as String: m};
-  }
-
   Future<Map<String, List<String>>> _getPreferenceTags(String uid) async {
     try {
       final prefs = await _db.collection('preferences').doc(uid).get();
@@ -1432,7 +1465,8 @@ class AgentOrchestrator {
   }
 
   Future<Map<String, String>> _calculateAdaptationConstraints(
-      String uid) async {
+    String uid,
+  ) async {
     try {
       final constraints = <String, String>{};
       final planDoc = await _db.collection('meal_plan').doc(uid).get();
@@ -1444,13 +1478,13 @@ class AgentOrchestrator {
         'breakfast': 0,
         'lunch': 0,
         'dinner': 0,
-        'snack': 0
+        'snack': 0,
       };
       final skippedCount = {
         'breakfast': 0,
         'lunch': 0,
         'dinner': 0,
-        'snack': 0
+        'snack': 0,
       };
       double totalPlannedCal = 0;
       double totalActualCal = 0;
@@ -1532,13 +1566,4 @@ class AgentOrchestrator {
 
   String _capitalize(String s) =>
       s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
-
-  String _cleanJson(String text) {
-    var cleaned = text.trim();
-    if (cleaned.startsWith('```')) {
-      cleaned = cleaned.replaceFirst(RegExp(r'^```\w*\n?'), '');
-      cleaned = cleaned.replaceFirst(RegExp(r'\n?```$'), '');
-    }
-    return cleaned.trim();
-  }
 }

@@ -1,6 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,6 +25,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   bool _isLoading = true;
   Map<String, List<_Ingredient>> _grouped = {};
   final Set<String> _checked = <String>{};
+  bool _hasTriggeredAllDone = false;
 
   static const List<String> _categoryOrder = [
     'Meat & Fish',
@@ -67,33 +71,118 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
 
   static const Map<String, List<String>> _keywordMap = {
     'Meat & Fish': [
-      'poulet', 'chicken', 'boeuf', 'beef', 'agneau', 'lamb', 'merguez',
-      'thon', 'tuna', 'fish', 'poisson', 'sardine', 'viande', 'meat',
-      'dinde', 'turkey', 'saumon', 'salmon',
+      'poulet',
+      'chicken',
+      'boeuf',
+      'beef',
+      'agneau',
+      'lamb',
+      'merguez',
+      'thon',
+      'tuna',
+      'fish',
+      'poisson',
+      'sardine',
+      'viande',
+      'meat',
+      'dinde',
+      'turkey',
+      'saumon',
+      'salmon',
     ],
     'Dairy & Eggs': [
-      'lait', 'milk', 'fromage', 'cheese', 'yaourt', 'yogurt', 'oeuf',
-      'egg', 'beurre', 'butter', 'crème', 'cream', 'ricotta', 'feta',
+      'lait',
+      'milk',
+      'fromage',
+      'cheese',
+      'yaourt',
+      'yogurt',
+      'oeuf',
+      'egg',
+      'beurre',
+      'butter',
+      'crème',
+      'cream',
+      'ricotta',
+      'feta',
       'mozzarella',
     ],
     'Grains & Carbs': [
-      'pain', 'bread', 'riz', 'rice', 'pâtes', 'pasta', 'couscous',
-      'semoule', 'farine', 'flour', 'avoine', 'oat', 'quinoa',
-      'pomme de terre', 'potato',
+      'pain',
+      'bread',
+      'riz',
+      'rice',
+      'pâtes',
+      'pasta',
+      'couscous',
+      'semoule',
+      'farine',
+      'flour',
+      'avoine',
+      'oat',
+      'quinoa',
+      'pomme de terre',
+      'potato',
     ],
     'Sauces & Condiments': [
-      'huile', 'oil', 'vinaigre', 'vinegar', 'sauce', 'harissa',
-      'concentré', 'moutarde', 'mustard', 'sel', 'salt', 'poivre',
-      'pepper', 'cumin', 'paprika', 'curcuma', 'safran', 'menthe',
-      'mint', 'épice', 'spice',
+      'huile',
+      'oil',
+      'vinaigre',
+      'vinegar',
+      'sauce',
+      'harissa',
+      'concentré',
+      'moutarde',
+      'mustard',
+      'sel',
+      'salt',
+      'poivre',
+      'pepper',
+      'cumin',
+      'paprika',
+      'curcuma',
+      'safran',
+      'menthe',
+      'mint',
+      'épice',
+      'spice',
     ],
     'Vegetables & Fruits': [
-      'tomate', 'tomato', 'oignon', 'onion', 'ail', 'garlic', 'carotte',
-      'courgette', 'poivron', 'salade', 'laitue', 'lettuce', 'pomme',
-      'apple', 'orange', 'banane', 'banana', 'légume', 'concombre',
-      'cucumber', 'pois chiche', 'chickpea', 'haricot', 'bean',
-      'lentille', 'lentil', 'persil', 'parsley', 'coriandre', 'cilantro',
-      'olive', 'citron', 'lemon', 'aubergine', 'eggplant',
+      'tomate',
+      'tomato',
+      'oignon',
+      'onion',
+      'ail',
+      'garlic',
+      'carotte',
+      'courgette',
+      'poivron',
+      'salade',
+      'laitue',
+      'lettuce',
+      'pomme',
+      'apple',
+      'orange',
+      'banane',
+      'banana',
+      'légume',
+      'concombre',
+      'cucumber',
+      'pois chiche',
+      'chickpea',
+      'haricot',
+      'bean',
+      'lentille',
+      'lentil',
+      'persil',
+      'parsley',
+      'coriandre',
+      'cilantro',
+      'olive',
+      'citron',
+      'lemon',
+      'aubergine',
+      'eggplant',
     ],
   };
 
@@ -148,7 +237,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         grouped.putIfAbsent(cat, () => []).add(ingredient);
       }
       for (final list in grouped.values) {
-        list.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        list.sort(
+          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        );
       }
 
       if (!mounted) return;
@@ -181,6 +272,24 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
 
   int get _checkedCount => _checked.length;
 
+  void _toggleChecked(String id) {
+    final wasAllDone = _totalCount > 0 && _checkedCount == _totalCount;
+    setState(() {
+      if (_checked.contains(id)) {
+        _checked.remove(id);
+      } else {
+        _checked.add(id);
+      }
+      final isAllDone = _totalCount > 0 && _checked.length == _totalCount;
+      if (!isAllDone) {
+        _hasTriggeredAllDone = false;
+      } else if (!wasAllDone && !_hasTriggeredAllDone) {
+        _hasTriggeredAllDone = true;
+        HapticFeedback.mediumImpact();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,14 +301,15 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
             Expanded(
               child: _isLoading
                   ? const Center(
-                      child:
-                          CircularProgressIndicator(color: AppColors.primary),
+                      child: CircularProgressIndicator(
+                        color: AppColors.primary,
+                      ),
                     )
                   : _totalCount == 0
-                      ? _buildEmpty()
-                      : (_checkedCount == _totalCount
-                          ? _buildAllDone()
-                          : _buildList()),
+                  ? _buildEmpty()
+                  : (_checkedCount == _totalCount
+                        ? _buildAllDoneUpgraded()
+                        : _buildList()),
             ),
             _buildBottomBar(),
           ],
@@ -219,19 +329,35 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back,
-                    color: AppColors.textPrimary),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: AppColors.textPrimary,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 8,
-                    backgroundColor: AppColors.surfaceVariant,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.primary),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 400),
+                    decoration: BoxDecoration(
+                      boxShadow: progress >= 1
+                          ? [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.4),
+                                blurRadius: 12,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 8,
+                      backgroundColor: AppColors.surfaceVariant,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -322,6 +448,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildAllDone() {
     return Center(
       child: Padding(
@@ -330,10 +457,10 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const IllustrationWidget(
-              assetPath: AppAssets.celebrationIllustration,
-              fallbackIcon: Icons.celebration_rounded,
-              height: 200,
-            )
+                  assetPath: AppAssets.celebrationIllustration,
+                  fallbackIcon: Icons.celebration_rounded,
+                  height: 200,
+                )
                 .animate()
                 .scale(
                   begin: const Offset(0.6, 0.6),
@@ -344,28 +471,28 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                 .fadeIn(duration: 400.ms),
             const SizedBox(height: 24),
             Text(
-              'All done! 🛒 ✓',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
-                letterSpacing: -0.5,
-              ),
-            )
+                  'All done! 🛒 ✓',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.5,
+                  ),
+                )
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 200.ms)
                 .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
             const SizedBox(height: 8),
             Text(
-              'You have everything for your 7-day meal plan',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
-            )
+                  'You have everything for your 7-day meal plan',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                )
                 .animate()
                 .fadeIn(duration: 400.ms, delay: 350.ms)
                 .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
@@ -374,7 +501,9 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
               onTap: () => setState(_checked.clear),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6),
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 child: Text(
                   'Clear all & start over',
                   style: GoogleFonts.inter(
@@ -393,6 +522,114 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     );
   }
 
+  Widget _buildAllDoneUpgraded() {
+    return Stack(
+      children: [
+        const _ConfettiBurst(),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const IllustrationWidget(
+                      assetPath: AppAssets.celebrationIllustration,
+                      fallbackIcon: Icons.celebration_rounded,
+                      height: 200,
+                    )
+                    .animate()
+                    .scale(
+                      begin: const Offset(0.5, 0.5),
+                      end: const Offset(1, 1),
+                      curve: Curves.elasticOut,
+                      duration: 400.ms,
+                    )
+                    .fadeIn(duration: 400.ms),
+                const SizedBox(height: 24),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 7,
+                  children: [
+                    for (final entry in [
+                      'All',
+                      'done!',
+                      '🛒',
+                      '✓',
+                    ].asMap().entries)
+                      Text(
+                            entry.value,
+                            style: GoogleFonts.inter(
+                              fontSize: 26,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                              letterSpacing: -0.5,
+                            ),
+                          )
+                          .animate()
+                          .fadeIn(
+                            duration: 280.ms,
+                            delay: (400 + entry.key * 80).ms,
+                          )
+                          .slideY(
+                            begin: 0.35,
+                            end: 0,
+                            duration: 280.ms,
+                            delay: (400 + entry.key * 80).ms,
+                            curve: Curves.easeOut,
+                          )
+                          .scale(
+                            begin: const Offset(0.85, 0.85),
+                            end: const Offset(1, 1),
+                            delay: (400 + entry.key * 80).ms,
+                            duration: 400.ms,
+                            curve: Curves.elasticOut,
+                          ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                      'You have everything for your 7-day meal plan',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: AppColors.textSecondary,
+                        height: 1.4,
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 720.ms)
+                    .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: () => setState(() {
+                    _checked.clear();
+                    _hasTriggeredAllDone = false;
+                  }),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    child: Text(
+                      'Clear all & start over',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ).animate().fadeIn(duration: 400.ms, delay: 800.ms),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildList() {
     final sections = <Widget>[];
     var categoryIndex = 0;
@@ -403,10 +640,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
       sections.add(
         _buildSectionHeader(cat, list.length, style)
             .animate()
-            .fadeIn(
-              duration: 350.ms,
-              delay: (categoryIndex * 60).ms,
-            )
+            .fadeIn(duration: 350.ms, delay: (categoryIndex * 60).ms)
             .slideY(
               begin: 0.12,
               end: 0,
@@ -435,8 +669,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     );
   }
 
-  Widget _buildSectionHeader(
-      String name, int count, _CategoryStyle style) {
+  Widget _buildSectionHeader(String name, int count, _CategoryStyle style) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 12, 4, 10),
       child: Row(
@@ -478,13 +711,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     final isChecked = _checked.contains(id);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => setState(() {
-        if (isChecked) {
-          _checked.remove(id);
-        } else {
-          _checked.add(id);
-        }
-      }),
+      onTap: () => _toggleChecked(id),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: Row(
@@ -562,9 +789,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: AppColors.border, width: 0.5),
-        ),
+        border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
       ),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: SizedBox(
@@ -582,10 +807,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
           onPressed: () => Navigator.pop(context),
           child: Text(
             'Continue',
-            style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-            ),
+            style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -623,4 +845,56 @@ class _CategoryStyle {
   final String emoji;
   final Color bg;
   final Color accent;
+}
+
+class _ConfettiBurst extends StatelessWidget {
+  const _ConfettiBurst();
+
+  static const _colors = [
+    AppColors.primary,
+    AppColors.warning,
+    AppColors.mealBreakfast,
+    AppColors.mealSnack,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final random = math.Random(7);
+    final width = MediaQuery.of(context).size.width;
+
+    return IgnorePointer(
+      child: Stack(
+        children: List.generate(12, (index) {
+          final size = 8.0 + random.nextDouble() * 4.0;
+          final left = random.nextDouble() * width;
+          final drift = -24.0 + random.nextDouble() * 48.0;
+          final duration = (400 + random.nextInt(401)).ms;
+          final color = _colors[index % _colors.length];
+          final isCircle = index.isEven;
+
+          return Positioned(
+            top: 0,
+            left: left,
+            child:
+                Container(
+                      width: size,
+                      height: size,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
+                        borderRadius: isCircle
+                            ? null
+                            : BorderRadius.circular(2),
+                      ),
+                    )
+                    .animate(delay: (200 + index * 30).ms)
+                    .moveY(begin: -20, end: 300, duration: duration)
+                    .moveX(begin: 0, end: drift, duration: duration)
+                    .rotate(begin: 0, end: 0.5, duration: duration)
+                    .fadeOut(delay: 500.ms, duration: 220.ms),
+          );
+        }),
+      ),
+    );
+  }
 }

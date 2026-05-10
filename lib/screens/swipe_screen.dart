@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,11 +17,7 @@ class SwipeScreen extends StatefulWidget {
   final bool isOnboarding;
   final VoidCallback? onComplete;
 
-  const SwipeScreen({
-    super.key,
-    this.isOnboarding = false,
-    this.onComplete,
-  });
+  const SwipeScreen({super.key, this.isOnboarding = false, this.onComplete});
 
   @override
   State<SwipeScreen> createState() => _SwipeScreenState();
@@ -38,6 +36,9 @@ class _SwipeScreenState extends State<SwipeScreen>
   bool _isLoading = true;
   bool _hasError = false;
   bool _isComplete = false;
+  bool _stackAnimated = false;
+  bool _isFloating = true;
+  Timer? _floatResumeTimer;
 
   double _dragX = 0;
   double _dragY = 0;
@@ -45,6 +46,8 @@ class _SwipeScreenState extends State<SwipeScreen>
   late Animation<double> _returnAnimation;
   late AnimationController _exitController;
   late Animation<double> _exitAnimation;
+  late AnimationController _floatController;
+  late Animation<double> _floatAnimation;
   bool _isAnimatingExit = false;
   bool _exitToRight = false;
 
@@ -70,8 +73,10 @@ class _SwipeScreenState extends State<SwipeScreen>
       vsync: this,
       duration: const Duration(milliseconds: 350),
     );
-    _exitAnimation =
-        CurvedAnimation(parent: _exitController, curve: Curves.easeIn);
+    _exitAnimation = CurvedAnimation(
+      parent: _exitController,
+      curve: Curves.easeIn,
+    );
     _exitController.addListener(() => setState(() {}));
     _exitController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -79,13 +84,24 @@ class _SwipeScreenState extends State<SwipeScreen>
       }
     });
 
+    _floatController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+    _floatAnimation = Tween<double>(begin: 0, end: -6).animate(
+      CurvedAnimation(parent: _floatController, curve: Curves.easeInOut),
+    );
+    _floatController.repeat(reverse: true);
+
     _loadMeals();
   }
 
   @override
   void dispose() {
+    _floatResumeTimer?.cancel();
     _returnController.dispose();
     _exitController.dispose();
+    _floatController.dispose();
     super.dispose();
   }
 
@@ -121,7 +137,12 @@ class _SwipeScreenState extends State<SwipeScreen>
         setState(() {
           _meals = filteredMeals;
           _isLoading = false;
+          _stackAnimated = false;
+          _isFloating = true;
           if (_meals.isEmpty) _isComplete = true;
+        });
+        Future.delayed(const Duration(milliseconds: 520), () {
+          if (mounted) setState(() => _stackAnimated = true);
         });
         debugPrint('[SWIPE] loaded ${filteredMeals.length} meals');
       }
@@ -138,6 +159,10 @@ class _SwipeScreenState extends State<SwipeScreen>
 
   void _onPanUpdate(DragUpdateDetails details) {
     if (_isAnimatingExit) return;
+    _floatResumeTimer?.cancel();
+    if (_isFloating) {
+      setState(() => _isFloating = false);
+    }
     setState(() {
       _dragX += details.delta.dx;
       _dragY += details.delta.dy;
@@ -151,13 +176,26 @@ class _SwipeScreenState extends State<SwipeScreen>
       _triggerExit(_dragX > 0);
     } else {
       _returnController.forward(from: 0);
+      _scheduleFloatResume();
     }
   }
 
   void _triggerExit(bool liked) {
+    _floatResumeTimer?.cancel();
+    if (_isFloating) setState(() => _isFloating = false);
     _exitToRight = liked;
     _isAnimatingExit = true;
     _exitController.forward(from: 0);
+  }
+
+  void _scheduleFloatResume() {
+    _floatResumeTimer?.cancel();
+    _floatResumeTimer = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      if (_dragX == 0 && _dragY == 0 && !_isAnimatingExit) {
+        setState(() => _isFloating = true);
+      }
+    });
   }
 
   void _onSwipeComplete(bool liked) {
@@ -176,6 +214,7 @@ class _SwipeScreenState extends State<SwipeScreen>
       _isAnimatingExit = false;
       _exitController.reset();
       _currentIndex++;
+      _isFloating = true;
       if (_currentIndex >= _meals.length) {
         _isComplete = true;
         _handleComplete();
@@ -209,10 +248,10 @@ class _SwipeScreenState extends State<SwipeScreen>
           child: _isLoading
               ? _buildLoading()
               : _hasError
-                  ? _buildError()
-                  : _isComplete
-                      ? _buildComplete()
-                      : _buildSwipeUI(),
+              ? _buildError()
+              : _isComplete
+              ? _buildComplete()
+              : _buildSwipeUI(),
         ),
       ),
     );
@@ -280,8 +319,10 @@ class _SwipeScreenState extends State<SwipeScreen>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 14,
+                ),
               ),
               child: Text(
                 'Retry',
@@ -306,21 +347,25 @@ class _SwipeScreenState extends State<SwipeScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 80,
-              height: 80,
-              decoration: const BoxDecoration(
-                color: AppColors.primarySurface,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.check_rounded,
-                  size: 48, color: AppColors.primary),
-            )
+                  width: 80,
+                  height: 80,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primarySurface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    size: 48,
+                    color: AppColors.primary,
+                  ),
+                )
                 .animate()
                 .scale(
-                    begin: const Offset(0, 0),
-                    end: const Offset(1, 1),
-                    duration: 500.ms,
-                    curve: Curves.elasticOut)
+                  begin: const Offset(0, 0),
+                  end: const Offset(1, 1),
+                  duration: 500.ms,
+                  curve: Curves.elasticOut,
+                )
                 .fadeIn(duration: 300.ms),
             const SizedBox(height: 24),
             Text(
@@ -357,8 +402,11 @@ class _SwipeScreenState extends State<SwipeScreen>
                 color: AppColors.primarySurface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.thumb_up_rounded,
-                  size: 40, color: AppColors.primary),
+              child: const Icon(
+                Icons.thumb_up_rounded,
+                size: 40,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(height: 24),
             Text(
@@ -387,8 +435,10 @@ class _SwipeScreenState extends State<SwipeScreen>
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 14,
+                ),
               ),
               child: Text(
                 'Back to Dashboard',
@@ -424,8 +474,10 @@ class _SwipeScreenState extends State<SwipeScreen>
                       onTap: () => Navigator.pop(context),
                       child: const Padding(
                         padding: EdgeInsets.only(right: 12),
-                        child: Icon(Icons.arrow_back,
-                            color: AppColors.textPrimary),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                     ),
                   Expanded(
@@ -440,7 +492,9 @@ class _SwipeScreenState extends State<SwipeScreen>
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 5),
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primarySurface,
                       borderRadius: BorderRadius.circular(12),
@@ -471,7 +525,8 @@ class _SwipeScreenState extends State<SwipeScreen>
                   value: progress,
                   backgroundColor: AppColors.border,
                   valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.primary),
+                    AppColors.primary,
+                  ),
                   minHeight: 4,
                 ),
               ),
@@ -486,25 +541,90 @@ class _SwipeScreenState extends State<SwipeScreen>
     );
   }
 
+  Widget _withEntranceAnimation({
+    required Widget child,
+    required int stackPosition,
+  }) {
+    if (_stackAnimated) return child;
+
+    final delay = switch (stackPosition) {
+      3 => 0.ms,
+      2 => 100.ms,
+      _ => 200.ms,
+    };
+    final beginX = switch (stackPosition) {
+      3 => 80.0,
+      2 => 50.0,
+      _ => 30.0,
+    };
+    return child
+        .animate()
+        .fade(
+          begin: 0,
+          end: 1,
+          delay: delay,
+          duration: 300.ms,
+          curve: Curves.easeOut,
+        )
+        .moveX(
+          begin: beginX,
+          end: 0,
+          delay: delay,
+          duration: 300.ms,
+          curve: Curves.easeOut,
+        );
+  }
+
   Widget _buildCardStack() {
     if (_currentIndex >= _meals.length) return const SizedBox.shrink();
 
     return Stack(
       alignment: Alignment.center,
       children: [
-        if (_currentIndex + 1 < _meals.length)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36),
-            child: Transform.scale(
-              scale: 0.95,
-              child: Opacity(
-                opacity: 0.6,
-                child:
-                    _buildMealCard(_meals[_currentIndex + 1], isBackground: true),
+        if (_currentIndex + 2 < _meals.length)
+          _withEntranceAnimation(
+            stackPosition: 3,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              child: Transform.translate(
+                offset: const Offset(0, 22),
+                child: Transform.scale(
+                  scale: 0.9,
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: _buildMealCard(
+                      _meals[_currentIndex + 2],
+                      isBackground: true,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        _buildDraggableCard(_meals[_currentIndex]),
+        if (_currentIndex + 1 < _meals.length)
+          _withEntranceAnimation(
+            stackPosition: 2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36),
+              child: Transform.translate(
+                offset: const Offset(0, 12),
+                child: Transform.scale(
+                  scale: 0.95,
+                  child: Opacity(
+                    opacity: 0.8,
+                    child: _buildMealCard(
+                      _meals[_currentIndex + 1],
+                      isBackground: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        _withEntranceAnimation(
+          stackPosition: 1,
+          child: _buildDraggableCard(_meals[_currentIndex]),
+        ),
       ],
     );
   }
@@ -526,12 +646,21 @@ class _SwipeScreenState extends State<SwipeScreen>
     final rotation = swipeProgress * 0.21;
     final likeOpacity = swipeProgress.clamp(0.0, 1.0);
     final nopeOpacity = (-swipeProgress).clamp(0.0, 1.0);
+    final shouldFloat =
+        _isFloating && _dragX == 0 && _dragY == 0 && !_isAnimatingExit;
 
     return GestureDetector(
       onPanUpdate: _onPanUpdate,
       onPanEnd: _onPanEnd,
-      child: Transform.translate(
-        offset: Offset(offsetX, offsetY),
+      child: AnimatedBuilder(
+        animation: _floatAnimation,
+        builder: (context, child) {
+          final floatOffset = shouldFloat ? _floatAnimation.value : 0.0;
+          return Transform.translate(
+            offset: Offset(offsetX, offsetY + floatOffset),
+            child: child,
+          );
+        },
         child: Transform.rotate(
           angle: rotation,
           child: Padding(
@@ -549,18 +678,25 @@ class _SwipeScreenState extends State<SwipeScreen>
                         angle: -0.2,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: AppColors.primary, width: 3),
+                              color: AppColors.primary,
+                              width: 3,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white.withValues(alpha: 0.85),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.favorite_rounded,
-                                  color: AppColors.primary, size: 26),
+                              const Icon(
+                                Icons.favorite_rounded,
+                                color: AppColors.primary,
+                                size: 26,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'LIKE',
@@ -586,18 +722,25 @@ class _SwipeScreenState extends State<SwipeScreen>
                         angle: 0.2,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
-                            border:
-                                Border.all(color: AppColors.error, width: 3),
+                            border: Border.all(
+                              color: AppColors.error,
+                              width: 3,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white.withValues(alpha: 0.85),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.close_rounded,
-                                  color: AppColors.error, size: 26),
+                              const Icon(
+                                Icons.close_rounded,
+                                color: AppColors.error,
+                                size: 26,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'NOPE',
@@ -643,10 +786,7 @@ class _SwipeScreenState extends State<SwipeScreen>
         borderRadius: BorderRadius.circular(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildImageSection(meal),
-            _buildContentSection(meal),
-          ],
+          children: [_buildImageSection(meal), _buildContentSection(meal)],
         ),
       ),
     );
@@ -684,7 +824,9 @@ class _SwipeScreenState extends State<SwipeScreen>
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(12),
@@ -700,7 +842,9 @@ class _SwipeScreenState extends State<SwipeScreen>
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 6),
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(12),
@@ -827,14 +971,26 @@ class _SwipeScreenState extends State<SwipeScreen>
           const SizedBox(height: 12),
           Row(
             children: [
-              _macroPill('P', meal.protein, const Color(0xFFEDE7F6),
-                  const Color(0xFF5E35B1)),
+              _macroPill(
+                'P',
+                meal.protein,
+                const Color(0xFFEDE7F6),
+                const Color(0xFF5E35B1),
+              ),
               const SizedBox(width: 8),
-              _macroPill('C', meal.carbs, const Color(0xFFFFF3E0),
-                  const Color(0xFFE65100)),
+              _macroPill(
+                'C',
+                meal.carbs,
+                const Color(0xFFFFF3E0),
+                const Color(0xFFE65100),
+              ),
               const SizedBox(width: 8),
-              _macroPill('F', meal.fats, const Color(0xFFFFFDE7),
-                  const Color(0xFFF9A825)),
+              _macroPill(
+                'F',
+                meal.fats,
+                const Color(0xFFFFFDE7),
+                const Color(0xFFF9A825),
+              ),
             ],
           ),
           if (meal.mainIngredients.isNotEmpty) ...[
@@ -859,7 +1015,9 @@ class _SwipeScreenState extends State<SwipeScreen>
                 final colors = _tagColors(tag);
                 return Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.$1,
                     borderRadius: BorderRadius.circular(8),
@@ -907,7 +1065,11 @@ class _SwipeScreenState extends State<SwipeScreen>
   }
 
   Widget _macroPill(
-      String label, double value, Color bgColor, Color textColor) {
+    String label,
+    double value,
+    Color bgColor,
+    Color textColor,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -966,8 +1128,11 @@ class _SwipeScreenState extends State<SwipeScreen>
                   ),
                 ],
               ),
-              child: const Icon(Icons.close_rounded,
-                  size: 28, color: AppColors.error),
+              child: const Icon(
+                Icons.close_rounded,
+                size: 28,
+                color: AppColors.error,
+              ),
             ),
           ),
           // Green filled heart
@@ -987,8 +1152,11 @@ class _SwipeScreenState extends State<SwipeScreen>
                   ),
                 ],
               ),
-              child: const Icon(Icons.favorite_rounded,
-                  size: 28, color: Colors.white),
+              child: const Icon(
+                Icons.favorite_rounded,
+                size: 28,
+                color: Colors.white,
+              ),
             ),
           ),
         ],

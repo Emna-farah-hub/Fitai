@@ -47,7 +47,10 @@ class OnboardingScaffold extends StatelessWidget {
             children: [
               // Top bar: back + progress
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     if (currentStep > 0)
@@ -91,9 +94,8 @@ class OnboardingScaffold extends StatelessWidget {
                                   color: i < currentStep
                                       ? AppColors.primary
                                       : i == currentStep
-                                          ? AppColors.primary
-                                              .withValues(alpha: 0.4)
-                                          : AppColors.border,
+                                      ? AppColors.primary.withValues(alpha: 0.4)
+                                      : AppColors.border,
                                   borderRadius: BorderRadius.circular(3),
                                 ),
                               ),
@@ -126,38 +128,37 @@ class OnboardingScaffold extends StatelessWidget {
 
                       // Title
                       Text(
-                        question,
-                        style: GoogleFonts.inter(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -0.5,
-                        ),
-                      )
+                            question,
+                            style: GoogleFonts.inter(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                              letterSpacing: -0.5,
+                            ),
+                          )
                           .animate()
                           .fadeIn(duration: 400.ms, delay: 100.ms)
                           .slideY(begin: 0.1, end: 0),
 
                       if (questionSubtitle != null) ...[
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text(
-                          questionSubtitle!,
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
-                            height: 1.5,
-                          ),
-                        )
+                              questionSubtitle!,
+                              style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.textSecondary,
+                                height: 1.5,
+                              ),
+                            )
                             .animate()
-                            .fadeIn(duration: 400.ms, delay: 150.ms),
+                            .fadeIn(duration: 400.ms, delay: 150.ms)
+                            .slideY(begin: 0.08, end: 0),
                       ],
 
                       const SizedBox(height: 24),
 
                       // Step-specific input content
-                      content
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 200.ms),
+                      content.animate().fadeIn(duration: 400.ms, delay: 200.ms),
 
                       const SizedBox(height: 20),
                     ],

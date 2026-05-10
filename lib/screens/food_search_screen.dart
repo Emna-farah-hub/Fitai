@@ -71,8 +71,9 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
             return FoodItem(
               id: entry.id,
               name: entry.foodName,
-              caloriesPer100g:
-                  factor > 0 ? entry.calories / factor : entry.calories,
+              caloriesPer100g: factor > 0
+                  ? entry.calories / factor
+                  : entry.calories,
               protein: factor > 0 ? entry.protein / factor : entry.protein,
               carbs: factor > 0 ? entry.carbs / factor : entry.carbs,
               fats: factor > 0 ? entry.fats / factor : entry.fats,
@@ -122,10 +123,8 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => FoodDetailScreen(
-          foodItem: item,
-          mealType: widget.mealType,
-        ),
+        builder: (_) =>
+            FoodDetailScreen(foodItem: item, mealType: widget.mealType),
       ),
     );
   }
@@ -142,10 +141,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
         ),
         title: const Text(
           'Add Food',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -168,20 +164,16 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Search foods...',
-                hintStyle:
-                    TextStyle(color: Colors.grey.shade500, fontSize: 15),
-                prefixIcon:
-                    Icon(Icons.search, color: Colors.grey.shade500),
+                hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
+                prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.close,
-                            color: Colors.grey.shade500),
+                        icon: Icon(Icons.close, color: Colors.grey.shade500),
                         onPressed: _clearSearch,
                       )
                     : null,
                 border: InputBorder.none,
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
           ),
@@ -202,10 +194,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                _buildSearchBody(),
-                _buildRecentBody(),
-              ],
+              children: [_buildSearchBody(), _buildRecentBody()],
             ),
           ),
         ],
@@ -225,7 +214,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       itemCount: 6,
-      itemBuilder: (_, __) => Padding(
+      itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: Shimmer.fromColors(
           baseColor: Colors.grey.shade300,
@@ -280,8 +269,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
     final local = _results
         .where((f) => !f.isTunisian && f.source != 'openfoodfacts')
         .toList();
-    final api =
-        _results.where((f) => f.source == 'openfoodfacts').toList();
+    final api = _results.where((f) => f.source == 'openfoodfacts').toList();
 
     final items = <Widget>[
       _sectionHeader("RESULTS FOR '${_query.toUpperCase()}'"),

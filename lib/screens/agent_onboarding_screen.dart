@@ -8,6 +8,7 @@ import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
 import '../core/constants/app_colors.dart';
 import '../presentation/widgets/ai_avatar.dart';
+import '../presentation/widgets/mascot_bubble.dart';
 import 'swipe_screen.dart';
 
 /// Chat-style onboarding where the agent asks deeper questions
@@ -205,10 +206,12 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
             isOnboarding: true,
             onComplete: () {
               // After swipes are done, generate plan and go to dashboard
-              AgentOrchestrator().handle(AgentEvent.now(
-                type: AgentEventType.onboardingComplete,
-                uid: uid,
-              ));
+              AgentOrchestrator().handle(
+                AgentEvent.now(
+                  type: AgentEventType.onboardingComplete,
+                  uid: uid,
+                ),
+              );
               try {
                 AgentScheduler().start(uid);
               } catch (_) {}
@@ -292,8 +295,9 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
               child: LinearProgressIndicator(
                 value: value,
                 backgroundColor: AppColors.surfaceVariant,
-                valueColor:
-                    const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  AppColors.primary,
+                ),
                 minHeight: 4,
               ),
             ),
@@ -420,21 +424,52 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
   Widget _buildInputArea() {
     if (_currentQuestion >= _questions.length) return const SizedBox.shrink();
 
-    final question = _questions[
-        _currentQuestion >= 7 && _isDiabetic ? 7 : _currentQuestion.clamp(0, _questions.length - 1)];
+    final question =
+        _questions[_currentQuestion >= 7 && _isDiabetic
+            ? 7
+            : _currentQuestion.clamp(0, _questions.length - 1)];
 
+    late final Widget input;
     // Time picker question
     if (question.type == _QType.timePicker) {
-      return _buildTimePickerInput();
+      input = _buildTimePickerInput();
+    } else if (question.type == _QType.buttons && question.options != null) {
+      input = _buildButtonsInput(question.options!);
+    } else {
+      input = _buildTextInput();
     }
 
-    // Button options
-    if (question.type == _QType.buttons && question.options != null) {
-      return _buildButtonsInput(question.options!);
-    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+          child: MascotBubble(explanation: _questionExplanation(question)),
+        ),
+        input,
+      ],
+    );
+  }
 
-    // Free text
-    return _buildTextInput();
+  String _questionExplanation(_Question question) {
+    final index = _questions.indexOf(question);
+    return switch (index) {
+      0 =>
+        'Your favorite foods help me build a plan you actually want to follow.',
+      1 =>
+        'Avoids and allergies keep your plan comfortable, safe, and realistic.',
+      2 =>
+        'Cooking comfort changes how simple or adventurous your meals should be.',
+      3 =>
+        'Meal frequency helps me distribute calories and macros across your day.',
+      4 =>
+        'Budget keeps suggestions practical with ingredients that fit your routine.',
+      5 => 'Your hardest meal is where a small plan upgrade can help the most.',
+      6 => 'Your wake and sleep rhythm helps time meals around your real day.',
+      7 =>
+        'Blood sugar context helps me tune meal choices for steadier energy.',
+      _ => 'This helps me personalize your nutrition plan with better context.',
+    };
   }
 
   Widget _buildTextInput() {
@@ -465,8 +500,10 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 12,
+                ),
               ),
             ),
           ),
@@ -512,7 +549,9 @@ class _AgentOnboardingScreenState extends State<AgentOnboardingScreen> {
               onTap: () => _handleAnswer(option),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 10),
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primarySurface,
                   borderRadius: BorderRadius.circular(20),
@@ -647,26 +686,29 @@ const _questions = [
     "Are there any foods you dislike, are allergic to, or want to avoid completely?",
     _QType.freeText,
   ),
-  _Question(
-    "How comfortable are you with cooking?",
-    _QType.buttons,
-    ["I don't cook", "Basic meals only", "Comfortable", "I love cooking"],
-  ),
-  _Question(
-    "How many meals do you typically eat per day?",
-    _QType.buttons,
-    ["2 meals", "3 meals", "4 meals", "5+ meals"],
-  ),
-  _Question(
-    "How would you describe your weekly food budget?",
-    _QType.buttons,
-    ["Low \u2014 simple affordable foods", "Medium \u2014 balanced", "High \u2014 no restrictions"],
-  ),
-  _Question(
-    "Which meal do you struggle with the most?",
-    _QType.buttons,
-    ["Breakfast", "Lunch", "Dinner", "Snacks"],
-  ),
+  _Question("How comfortable are you with cooking?", _QType.buttons, [
+    "I don't cook",
+    "Basic meals only",
+    "Comfortable",
+    "I love cooking",
+  ]),
+  _Question("How many meals do you typically eat per day?", _QType.buttons, [
+    "2 meals",
+    "3 meals",
+    "4 meals",
+    "5+ meals",
+  ]),
+  _Question("How would you describe your weekly food budget?", _QType.buttons, [
+    "Low \u2014 simple affordable foods",
+    "Medium \u2014 balanced",
+    "High \u2014 no restrictions",
+  ]),
+  _Question("Which meal do you struggle with the most?", _QType.buttons, [
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snacks",
+  ]),
   _Question(
     "What time do you usually wake up and go to sleep?",
     _QType.timePicker,

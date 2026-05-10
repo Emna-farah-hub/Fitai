@@ -3,10 +3,6 @@ import '../../models/meal_entry.dart';
 import '../tools/agent_tools.dart';
 import 'coach_agent.dart';
 import 'analyst_agent.dart';
-import 'dart:convert';
-import 'package:google_generative_ai/google_generative_ai.dart';
-import '../tools/agent_tools.dart';
-import '../../core/constants/api_key.dart';
 
 /// The Guardian Agent: pure logic, no Gemini. Monitors glycemic safety.
 class GuardianAgent {
@@ -57,8 +53,7 @@ class GuardianAgent {
       if (glycemicLevel == 'red') {
         final analysis = AnalysisResult(
           status: 'glycemic_risk',
-          summary:
-              '${meal.foodName} has a high glycemic index of $gi.',
+          summary: '${meal.foodName} has a high glycemic index of $gi.',
           gaps: [],
           risks: ['High GI food logged: ${meal.foodName} (GI: $gi)'],
           priority: 'Glycemic management',
@@ -115,15 +110,10 @@ class GuardianAgent {
       }
 
       if (count > 0) {
-        await _db
-            .collection('meals')
-            .doc(uid)
-            .collection('logs')
-            .doc(date)
-            .set({
-          'averageGI': totalGI / count,
-          'mealCount': count,
-        }, SetOptions(merge: true));
+        await _db.collection('meals').doc(uid).collection('logs').doc(date).set(
+          {'averageGI': totalGI / count, 'mealCount': count},
+          SetOptions(merge: true),
+        );
       }
     } catch (_) {}
   }

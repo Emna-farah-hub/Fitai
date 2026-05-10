@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../agent/orchestrator.dart';
 import '../core/constants/app_assets.dart';
 import '../core/constants/app_colors.dart';
+import '../presentation/widgets/animated_check_button.dart';
 import '../presentation/widgets/app_card.dart';
 import '../presentation/widgets/illustration_widget.dart';
 import '../presentation/widgets/skeleton_loader.dart';
@@ -55,12 +56,12 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   String _planTitle() {
-    final goals = List<String>.from(_user?['goals'] ?? const [])
-        .map((e) => e.toLowerCase())
-        .toList();
-    final conditions = List<String>.from(_user?['conditions'] ?? const [])
-        .map((e) => e.toLowerCase())
-        .toList();
+    final goals = List<String>.from(
+      _user?['goals'] ?? const [],
+    ).map((e) => e.toLowerCase()).toList();
+    final conditions = List<String>.from(
+      _user?['conditions'] ?? const [],
+    ).map((e) => e.toLowerCase()).toList();
     if (conditions.any((c) => c.contains('diabet'))) {
       return 'Diabetes-Friendly Plan';
     }
@@ -70,7 +71,8 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   ({int confirmed, int total, int eaten}) _computeStats(
-      Map<String, dynamic> days) {
+    Map<String, dynamic> days,
+  ) {
     var confirmed = 0;
     var total = 0;
     for (final entry in days.values) {
@@ -83,6 +85,21 @@ class _PlanScreenState extends State<PlanScreen> {
       }
     }
     return (confirmed: confirmed, total: total, eaten: confirmed);
+  }
+
+  Color _mealTypeColor(String mealType) {
+    switch (mealType) {
+      case 'breakfast':
+        return AppColors.mealBreakfast;
+      case 'lunch':
+        return AppColors.mealLunch;
+      case 'dinner':
+        return AppColors.mealDinner;
+      case 'snack':
+        return AppColors.mealSnack;
+      default:
+        return AppColors.primary;
+    }
   }
 
   @override
@@ -113,8 +130,8 @@ class _PlanScreenState extends State<PlanScreen> {
       body: _isLoading
           ? _buildSkeleton()
           : _plan == null
-              ? _buildEmpty()
-              : _buildContent(),
+          ? _buildEmpty()
+          : _buildContent(),
     );
   }
 
@@ -156,10 +173,7 @@ class _PlanScreenState extends State<PlanScreen> {
           const SizedBox(height: 6),
           Text(
             'Complete the agent onboarding to get your plan',
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              color: AppColors.textMuted,
-            ),
+            style: GoogleFonts.inter(fontSize: 13, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -197,126 +211,133 @@ class _PlanScreenState extends State<PlanScreen> {
           _buildTimeline(dayData),
           const SizedBox(height: 20),
           if (dayData['dailyTotal'] != null)
-            _buildDailyTotalCard(
-                dayData['dailyTotal'] as Map<String, dynamic>),
+            _buildDailyTotalCard(dayData['dailyTotal'] as Map<String, dynamic>),
         ],
       ],
     );
   }
 
   Widget _buildHeroCard(
-      dynamic version, dynamic calorieTarget, int adherence, int eaten) {
+    dynamic version,
+    dynamic calorieTarget,
+    int adherence,
+    int eaten,
+  ) {
     final name = _user?['name']?.toString() ?? 'You';
     return Container(
-      decoration: BoxDecoration(
-        gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadowMedium,
-            blurRadius: 16,
-            offset: Offset(0, 6),
+          decoration: BoxDecoration(
+            gradient: AppColors.primaryGradient,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.28),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+          padding: const EdgeInsets.all(22),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'PERSONALIZED FOR ${name.toUpperCase()}',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white.withOpacity(0.85),
-                      ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'PERSONALIZED FOR ${name.toUpperCase()}',
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white.withValues(alpha: 0.85),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _planTitle(),
+                          style: GoogleFonts.inter(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          '~$calorieTarget kcal/day · 7 days',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: Colors.white.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _planTitle(),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'v$version',
                       style: GoogleFonts.inter(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 11,
                         color: Colors.white,
-                        letterSpacing: -0.4,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '~$calorieTarget kcal/day · 7 days',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _heroStat('$adherence%', 'Adherence'),
+                  const SizedBox(width: 16),
+                  _heroStat('$eaten', 'Eaten'),
+                  const Spacer(),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.primaryDark,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ShoppingListScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      '🛒 Shopping',
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: Colors.white.withOpacity(0.9),
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.25),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  'v$version',
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
                   ),
-                ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _heroStat('$adherence%', 'Adherence'),
-              const SizedBox(width: 16),
-              _heroStat('$eaten', 'Eaten'),
-              const Spacer(),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: AppColors.primaryDark,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ShoppingListScreen(),
-                    ),
-                  );
-                },
-                child: Text(
-                  '🛒 Shopping',
-                  style: GoogleFonts.inter(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(duration: 350.ms, delay: 0.ms)
         .slideY(
@@ -344,7 +365,7 @@ class _PlanScreenState extends State<PlanScreen> {
           label,
           style: GoogleFonts.inter(
             fontSize: 11,
-            color: Colors.white.withOpacity(0.85),
+            color: Colors.white.withValues(alpha: 0.85),
           ),
         ),
       ],
@@ -353,78 +374,78 @@ class _PlanScreenState extends State<PlanScreen> {
 
   Widget _buildDaySelector(Map<String, dynamic> days) {
     return SizedBox(
-      height: 64,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          final dayNum = index + 1;
-          final day = days['$dayNum'] as Map<String, dynamic>?;
-          final isSelected = dayNum == _selectedDay;
-          var label = 'D$dayNum';
-          if (day != null && day['date'] is String) {
-            try {
-              label =
-                  DateFormat('EEE').format(DateTime.parse(day['date'])).toUpperCase();
-            } catch (_) {}
-          }
+          height: 64,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 7,
+            itemBuilder: (context, index) {
+              final dayNum = index + 1;
+              final day = days['$dayNum'] as Map<String, dynamic>?;
+              final isSelected = dayNum == _selectedDay;
+              var label = 'D$dayNum';
+              if (day != null && day['date'] is String) {
+                try {
+                  label = DateFormat(
+                    'EEE',
+                  ).format(DateTime.parse(day['date'])).toUpperCase();
+                } catch (_) {}
+              }
 
-          return GestureDetector(
-            onTap: () => setState(() => _selectedDay = dayNum),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 52,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  width: 0.5,
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.border,
-                ),
-                boxShadow: isSelected
-                    ? const [
-                        BoxShadow(
-                          color: AppColors.shadow,
-                          blurRadius: 8,
-                          offset: Offset(0, 4),
+              return GestureDetector(
+                onTap: () => setState(() => _selectedDay = dayNum),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 52,
+                  margin: const EdgeInsets.only(right: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.primary : Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      width: 0.5,
+                      color: isSelected ? AppColors.primary : AppColors.border,
+                    ),
+                    boxShadow: isSelected
+                        ? const [
+                            BoxShadow(
+                              color: AppColors.shadow,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        label,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.6,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textSecondary,
                         ),
-                      ]
-                    : null,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    label,
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.6,
-                      color: isSelected
-                          ? Colors.white
-                          : AppColors.textSecondary,
-                    ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '$dayNum',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '$dayNum',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color:
-                          isSelected ? Colors.white : AppColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    )
+                ),
+              );
+            },
+          ),
+        )
         .animate()
         .fadeIn(duration: 350.ms, delay: 80.ms)
         .slideY(
@@ -442,18 +463,21 @@ class _PlanScreenState extends State<PlanScreen> {
     for (var i = 0; i < order.length; i++) {
       final type = order[i];
       final meal = dayData[type] as Map<String, dynamic>?;
-      items.add(_buildTimelineRow(
-        mealType: type,
-        meal: meal,
-        isLast: i == order.length - 1,
-        index: i,
-      ));
+      items.add(
+        _buildTimelineRow(
+          mealType: type,
+          meal: meal,
+          isLast: i == order.length - 1,
+          index: i,
+        ),
+      );
     }
     return Column(children: items);
   }
 
   ({Color bg, Color accent, Color border, String emoji}) _styleFor(
-      String mealType) {
+    String mealType,
+  ) {
     switch (mealType) {
       case 'breakfast':
         return (
@@ -496,49 +520,46 @@ class _PlanScreenState extends State<PlanScreen> {
     final style = _styleFor(mealType);
 
     return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: style.border, width: 2),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: AppColors.shadow,
-                      blurRadius: 8,
-                      offset: Offset(0, 3),
+              Column(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: style.border, width: 2),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: AppColors.shadow,
+                          blurRadius: 8,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child:
-                    Text(style.emoji, style: const TextStyle(fontSize: 18)),
-              ),
-              if (!isLast)
-                Expanded(
-                  child: Container(
-                    width: 1,
-                    color: style.border,
+                    alignment: Alignment.center,
+                    child: Text(
+                      style.emoji,
+                      style: const TextStyle(fontSize: 18),
+                    ),
                   ),
+                  if (!isLast)
+                    Expanded(child: Container(width: 1, color: style.border)),
+                ],
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: isLast ? 0 : 14),
+                  child: _buildMealCard(mealType, meal, style),
                 ),
+              ),
             ],
           ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : 14),
-              child: _buildMealCard(mealType, meal, style),
-            ),
-          ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(duration: 350.ms, delay: (index * 80).ms)
         .slideY(
@@ -555,13 +576,22 @@ class _PlanScreenState extends State<PlanScreen> {
     Map<String, dynamic>? meal,
     ({Color bg, Color accent, Color border, String emoji}) style,
   ) {
+    final mealLabelColor = _mealTypeColor(mealType);
+
     if (meal == null) {
       return Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: style.bg,
-          border: Border.all(color: style.border),
-          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: mealLabelColor.withValues(alpha: 0.24)),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: mealLabelColor.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -570,7 +600,7 @@ class _PlanScreenState extends State<PlanScreen> {
               style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: style.accent,
+                color: mealLabelColor,
                 letterSpacing: 0.5,
               ),
             ),
@@ -599,8 +629,15 @@ class _PlanScreenState extends State<PlanScreen> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: style.bg,
-        border: Border.all(color: style.border),
-        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: mealLabelColor.withValues(alpha: 0.24)),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: mealLabelColor.withValues(alpha: 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -616,10 +653,7 @@ class _PlanScreenState extends State<PlanScreen> {
                   border: Border.all(color: style.border),
                 ),
                 alignment: Alignment.center,
-                child: Text(
-                  style.emoji,
-                  style: const TextStyle(fontSize: 16),
-                ),
+                child: Text(style.emoji, style: const TextStyle(fontSize: 16)),
               ),
               const SizedBox(width: 8),
               Text(
@@ -627,15 +661,17 @@ class _PlanScreenState extends State<PlanScreen> {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: style.accent,
+                  color: mealLabelColor,
                   letterSpacing: 0.5,
                 ),
               ),
               const Spacer(),
               if (isConfirmed)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primarySurface,
                     borderRadius: BorderRadius.circular(10),
@@ -653,8 +689,10 @@ class _PlanScreenState extends State<PlanScreen> {
               if (isSwapped) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFF3E0),
                     borderRadius: BorderRadius.circular(10),
@@ -720,33 +758,22 @@ class _PlanScreenState extends State<PlanScreen> {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () => _markEaten(mealType),
-                    child: Text(
-                      'I ate this',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                  child: AnimatedCheckButton(
+                    isConfirmed: isConfirmed,
+                    onConfirm: () => _markEaten(mealType),
                   ),
                 ),
                 const SizedBox(width: 10),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: style.accent,
-                    side: BorderSide(color: style.accent.withOpacity(0.4)),
+                    side: BorderSide(
+                      color: style.accent.withValues(alpha: 0.4),
+                    ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -841,14 +868,26 @@ class _PlanScreenState extends State<PlanScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _totalStat('${total['calories'] ?? 0}', 'kcal',
-                  AppColors.primary),
-              _totalStat('${total['protein'] ?? 0}g', 'protein',
-                  const Color(0xFFEF4444)),
-              _totalStat('${total['carbs'] ?? 0}g', 'carbs',
-                  const Color(0xFF3B82F6)),
-              _totalStat('${total['fats'] ?? 0}g', 'fats',
-                  const Color(0xFFF59E0B)),
+              _totalStat(
+                '${total['calories'] ?? 0}',
+                'kcal',
+                AppColors.primary,
+              ),
+              _totalStat(
+                '${total['protein'] ?? 0}g',
+                'protein',
+                const Color(0xFFEF4444),
+              ),
+              _totalStat(
+                '${total['carbs'] ?? 0}g',
+                'carbs',
+                const Color(0xFF3B82F6),
+              ),
+              _totalStat(
+                '${total['fats'] ?? 0}g',
+                'fats',
+                const Color(0xFFF59E0B),
+              ),
             ],
           ),
         ],
@@ -880,7 +919,6 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Future<void> _markEaten(String mealType) async {
-    HapticFeedback.mediumImpact();
     try {
       final planDoc = await _db.collection('meal_plan').doc(_uid).get();
       if (!planDoc.exists) return;
@@ -896,6 +934,9 @@ class _PlanScreenState extends State<PlanScreen> {
       await _db.collection('meal_plan').doc(_uid).update({'days': days});
 
       if (!mounted) return;
+      await _loadAll();
+      if (!mounted) return;
+      HapticFeedback.mediumImpact();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -910,12 +951,11 @@ class _PlanScreenState extends State<PlanScreen> {
           margin: const EdgeInsets.all(16),
         ),
       );
-      _loadAll();
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to confirm meal')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to confirm meal')));
     }
   }
 
@@ -1085,8 +1125,11 @@ class _SwapSheetState extends State<_SwapSheet> {
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: const Icon(Icons.check_circle_outline,
-                  color: AppColors.primary, size: 28),
+              child: const Icon(
+                Icons.check_circle_outline,
+                color: AppColors.primary,
+                size: 28,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -1119,83 +1162,87 @@ class _SwapSheetState extends State<_SwapSheet> {
     final carbs = meal['carbs'] ?? 0;
     final fats = meal['fats'] ?? 0;
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            meal['name']?.toString() ?? '',
-            style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.16),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '$calories kcal · P:${protein}g C:${carbs}g F:${fats}g',
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          if (meal['cuisine'] == 'tunisian') ...[
-            const SizedBox(height: 8),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFEE2E2),
-                borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
-              child: Text(
-                '🇹🇳 Tunisian',
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                meal['name']?.toString() ?? '',
                 style: GoogleFonts.inter(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF991B1B),
-                ),
-              ),
-            ),
-          ],
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: _isSwapping ? null : () => _choose(meal),
-              child: Text(
-                'Choose this',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
                 ),
               ),
-            ),
+              const SizedBox(height: 4),
+              Text(
+                '$calories kcal · P:${protein}g C:${carbs}g F:${fats}g',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              if (meal['cuisine'] == 'tunisian') ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEE2E2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '🇹🇳 Tunisian',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF991B1B),
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: _isSwapping ? null : () => _choose(meal),
+                  child: Text(
+                    'Choose this',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    )
+        )
         .animate()
         .fadeIn(delay: (index * 60).ms, duration: 350.ms)
         .slideY(begin: 0.05, end: 0);

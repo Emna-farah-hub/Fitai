@@ -76,16 +76,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Logo
                 Center(
                   child: Container(
-                    width: 72,
-                    height: 72,
+                    width: 80,
+                    height: 80,
                     decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      borderRadius: BorderRadius.circular(20),
+                      color: AppColors.midnight,
+                      borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
+                          color: AppColors.midnight.withValues(alpha: 0.30),
+                          blurRadius: 22,
+                          offset: const Offset(0, 9),
                         ),
                       ],
                     ),
@@ -96,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
                 Text(
                   'Welcome back',
                   style: GoogleFonts.inter(
@@ -104,6 +104,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontWeight: FontWeight.w800,
                     color: AppColors.textPrimary,
                     letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Your AI nutrition coach',
+                  style: GoogleFonts.nunito(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.sage,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -126,11 +135,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
                           labelText: 'Email',
-                          prefixIcon: Icon(Icons.email_outlined,
-                              color: AppColors.textMuted),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: AppColors.textMuted,
+                          ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Email is required';
+                          if (v == null || v.isEmpty) {
+                            return 'Email is required';
+                          }
                           if (!v.contains('@')) return 'Enter a valid email';
                           return null;
                         },
@@ -144,8 +157,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         onFieldSubmitted: (_) => _signIn(),
                         decoration: InputDecoration(
                           labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outlined,
-                              color: AppColors.textMuted),
+                          prefixIcon: const Icon(
+                            Icons.lock_outlined,
+                            color: AppColors.textMuted,
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword
@@ -154,11 +169,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: AppColors.textMuted,
                             ),
                             onPressed: () => setState(
-                                () => _obscurePassword = !_obscurePassword),
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                           ),
                         ),
                         validator: (v) {
-                          if (v == null || v.isEmpty) return 'Password is required';
+                          if (v == null || v.isEmpty) {
+                            return 'Password is required';
+                          }
                           return null;
                         },
                       ),

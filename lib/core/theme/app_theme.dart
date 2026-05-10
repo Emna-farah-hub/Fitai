@@ -10,31 +10,19 @@ class AppTheme {
   /// Nunito-based heading styles. Merged on top of Inter body text in [lightTheme]
   /// so headings render in Nunito while body and labels stay in Inter.
   static TextTheme get nunitoDisplayTheme => TextTheme(
-        displayLarge: GoogleFonts.nunito(
-          fontSize: 32,
-          fontWeight: FontWeight.w800,
-        ),
-        displayMedium: GoogleFonts.nunito(
-          fontSize: 26,
-          fontWeight: FontWeight.w800,
-        ),
-        displaySmall: GoogleFonts.nunito(
-          fontSize: 22,
-          fontWeight: FontWeight.w700,
-        ),
-        headlineMedium: GoogleFonts.nunito(
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-        ),
-        titleLarge: GoogleFonts.nunito(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        titleMedium: GoogleFonts.nunito(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-      );
+    displayLarge: GoogleFonts.nunito(fontSize: 32, fontWeight: FontWeight.w800),
+    displayMedium: GoogleFonts.nunito(
+      fontSize: 26,
+      fontWeight: FontWeight.w800,
+    ),
+    displaySmall: GoogleFonts.nunito(fontSize: 22, fontWeight: FontWeight.w700),
+    headlineMedium: GoogleFonts.nunito(
+      fontSize: 20,
+      fontWeight: FontWeight.w700,
+    ),
+    titleLarge: GoogleFonts.nunito(fontSize: 18, fontWeight: FontWeight.w700),
+    titleMedium: GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w600),
+  );
 
   static ThemeData get lightTheme {
     final base = ThemeData(
@@ -102,7 +90,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.border),
@@ -127,17 +118,12 @@ class AppTheme {
           color: AppColors.textSecondary,
           fontSize: 14,
         ),
-        hintStyle: GoogleFonts.inter(
-          color: AppColors.textMuted,
-          fontSize: 14,
-        ),
+        hintStyle: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 14),
       ),
       cardTheme: CardThemeData(
         color: AppColors.surfaceFloat,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         margin: EdgeInsets.zero,
         shadowColor: AppColors.cardShadow,
       ),
@@ -146,7 +132,10 @@ class AppTheme {
         selectedColor: AppColors.primarySurface,
         side: const BorderSide(color: AppColors.border),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        labelStyle: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w500),
+        labelStyle: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       ),
       dividerTheme: const DividerThemeData(
@@ -156,16 +145,25 @@ class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: AppColors.textPrimary,
-        contentTextStyle: GoogleFonts.inter(color: Colors.white, fontSize: 14),
+        backgroundColor: AppColors.midnight,
+        contentTextStyle: GoogleFonts.nunito(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textMuted,
+        selectedIconTheme: const IconThemeData(size: 26),
+        unselectedIconTheme: const IconThemeData(size: 22),
         type: BottomNavigationBarType.fixed,
         elevation: 8,
-        selectedLabelStyle: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600),
+        selectedLabelStyle: GoogleFonts.inter(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
         unselectedLabelStyle: GoogleFonts.inter(fontSize: 11),
       ),
     );
