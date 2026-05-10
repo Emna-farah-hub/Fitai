@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../agent/agent_scheduler.dart';
-import '../../agent/core/agent_event.dart';
-import '../../agent/orchestrator.dart';
 import '../../core/constants/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
@@ -82,35 +78,8 @@ class _SplashScreenState extends State<SplashScreen>
       return;
     }
 
-    // Check if agent onboarding is done
-    try {
-      final uid = authProvider.currentUser!.uid;
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
-      final agentDone = doc.data()?['agentOnboardingComplete'] ?? false;
-      if (!mounted) return;
-      debugPrint('[SPLASH] agentOnboardingComplete=$agentDone');
-      if (agentDone == true) {
-        debugPrint('[SPLASH] → /dashboard');
-        try {
-          AgentScheduler().start(uid);
-          AgentOrchestrator().handle(AgentEvent.now(
-            type: AgentEventType.appOpened,
-            uid: uid,
-          ));
-        } catch (_) {}
-        context.go('/dashboard');
-      } else {
-        debugPrint('[SPLASH] → /agent-onboarding');
-        context.go('/agent-onboarding');
-      }
-    } catch (e) {
-      debugPrint('[SPLASH] Error checking agent onboarding: $e');
-      if (!mounted) return;
-      context.go('/dashboard');
-    }
+    debugPrint('[SPLASH] → /dashboard');
+    context.go('/dashboard');
   }
 
   @override
