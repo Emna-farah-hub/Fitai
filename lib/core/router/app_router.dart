@@ -6,25 +6,29 @@ import '../../presentation/providers/user_provider.dart';
 import '../../presentation/screens/splash_screen.dart';
 import '../../presentation/screens/auth/login_screen.dart';
 import '../../presentation/screens/auth/register_screen.dart';
-import '../../presentation/screens/onboarding/onboarding_screen.dart';
+import '../../presentation/screens/welcome_screen.dart';
+import '../../presentation/screens/onboarding/onboarding_flow_controller.dart';
 import '../../presentation/screens/dashboard/dashboard_screen.dart';
 import '../../screens/agent_onboarding_screen.dart';
 import '../../screens/chat_screen.dart';
 import '../../screens/plan_screen.dart';
+import '../../screens/shopping_list_screen.dart';
 import '../../screens/swipe_screen.dart';
 
 /// GoRouter configuration for FitAI.
 ///
 /// Route structure:
 ///   /splash      → SplashScreen (entry point)
+///   /welcome     → WelcomeScreen (sage-green intro after splash)
 ///   /login       → LoginScreen
 ///   /register    → RegisterScreen
-///   /onboarding  → OnboardingScreen
+///   /onboarding  → OnboardingFlowController
 ///   /dashboard   → DashboardScreen
 ///
 /// Guards:
-///   - Unauthenticated users are redirected to /login
-///   - Authenticated users without completed onboarding go to /onboarding
+///   - Unauthenticated users on protected routes are redirected to /welcome
+///   - Authenticated users hitting /welcome or auth screens are routed to
+///     /onboarding (if incomplete) or /dashboard
 class AppRouter {
   static GoRouter createRouter(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -34,22 +38,26 @@ class AppRouter {
       initialLocation: '/splash',
       redirect: (context, state) {
         final isLoggedIn = authProvider.isAuthenticated;
-        final isAuthRoute = state.matchedLocation == '/login' ||
+        final isAuthRoute =
+            state.matchedLocation == '/login' ||
             state.matchedLocation == '/register';
         final isSplash = state.matchedLocation == '/splash';
+        final isWelcome = state.matchedLocation == '/welcome';
 
-        debugPrint('[ROUTER] redirect: path=${state.matchedLocation}, '
-            'isLoggedIn=$isLoggedIn, isAuthRoute=$isAuthRoute, '
-            'onboardingComplete=${userProvider.onboardingComplete}');
+        debugPrint(
+          '[ROUTER] redirect: path=${state.matchedLocation}, '
+          'isLoggedIn=$isLoggedIn, isAuthRoute=$isAuthRoute, '
+          'onboardingComplete=${userProvider.onboardingComplete}',
+        );
 
         // Always allow splash screen to run its own routing logic
         if (isSplash) return null;
 
-        // Not logged in → force to login
-        if (!isLoggedIn && !isAuthRoute) return '/login';
+        // Not logged in → allow welcome/login/register, otherwise → /welcome
+        if (!isLoggedIn && !isAuthRoute && !isWelcome) return '/welcome';
 
-        // Logged in trying to access auth screens → go to appropriate screen
-        if (isLoggedIn && isAuthRoute) {
+        // Logged in trying to access welcome/auth screens → go to appropriate screen
+        if (isLoggedIn && (isAuthRoute || isWelcome)) {
           if (!userProvider.onboardingComplete) return '/onboarding';
           return '/dashboard';
         }
@@ -62,6 +70,10 @@ class AppRouter {
           builder: (context, state) => const SplashScreen(),
         ),
         GoRoute(
+          path: '/welcome',
+          builder: (context, state) => const WelcomeScreen(),
+        ),
+        GoRoute(
           path: '/login',
           builder: (context, state) => const LoginScreen(),
         ),
@@ -71,7 +83,7 @@ class AppRouter {
         ),
         GoRoute(
           path: '/onboarding',
-          builder: (context, state) => const OnboardingScreen(),
+          builder: (context, state) => const OnboardingFlowController(),
         ),
         GoRoute(
           path: '/agent-onboarding',
@@ -81,13 +93,11 @@ class AppRouter {
           path: '/dashboard',
           builder: (context, state) => const DashboardScreen(),
         ),
+        GoRoute(path: '/chat', builder: (context, state) => const ChatScreen()),
+        GoRoute(path: '/plan', builder: (context, state) => const PlanScreen()),
         GoRoute(
-          path: '/chat',
-          builder: (context, state) => const ChatScreen(),
-        ),
-        GoRoute(
-          path: '/plan',
-          builder: (context, state) => const PlanScreen(),
+          path: '/groceries',
+          builder: (context, state) => const ShoppingListScreen(),
         ),
         GoRoute(
           path: '/swipe',

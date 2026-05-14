@@ -1,0 +1,2467 @@
+[
+  {
+    "id": "ew_valentine_s_day_party_board",
+    "name": "Valentine's Day Party Board",
+    "description": "Show your love this Valentine's Day with this beautiful Valentine's Day party board. It's full of sweet and savory treats from nuts to prosciutto-wrapped dates. And, of course, it includes the classic combo of chocolate and strawberries. Just grab your favorite platter and fill it with these easy, beautiful bites. Your loved ones will thank you!",
+    "calories": 269.4,
+    "protein": 7.1,
+    "carbs": 37.1,
+    "fats": 13.4,
+    "glycemicIndex": 60,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "45 min",
+    "difficulty": "medium",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [],
+    "suitableFor": [
+      "balanced"
+    ],
+    "tags": [
+      "american",
+      "fruit",
+      "high_calorie",
+      "high_fat",
+      "needs_cooking",
+      "nuts",
+      "plant_protein",
+      "sweet"
+    ],
+    "ingredients": [
+      {
+        "name": "unsalted roasted whole almonds",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "unsalted roasted pistachios in shells",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "strawberries",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "raspberries",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "blackberries",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "dried",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "thin slices prosciutto",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "blood oranges",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "pomegranate arils",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "bar bittersweet chocolate",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "honey",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_crispy_roast_chicken_carrot",
+    "name": "Crispy Roast Chicken & Carrots",
+    "description": "Nothing says comfort like a roasted whole chicken, but it can take a while to cook. Using parts instead puts this easy roast chicken on the weeknight menu. Fresh herbs, lemon juice and capers in this Italian salsa verde sauce brighten things up.",
+    "calories": 262.8,
+    "protein": 29.7,
+    "carbs": 11.1,
+    "fats": 10.7,
+    "glycemicIndex": 46,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "italian",
+    "prepTime": "50 min",
+    "difficulty": "medium",
+    "flexibilityScore": 2,
+    "availability": "low",
+    "dietTags": [
+      "high_protein",
+      "low_carb"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "muscle_gain",
+      "weight_loss"
+    ],
+    "tags": [
+      "chicken",
+      "filling",
+      "fish",
+      "fruit",
+      "high_protein",
+      "italian",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "meat",
+      "needs_cooking",
+      "savory",
+      "seafood",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "bone-in chicken parts or one 4- to 5-pound whole chicken",
+        "quantity": 4,
+        "unit": "lb",
+        "substitutes": []
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "garlic",
+        "quantity": 4,
+        "unit": "clove",
+        "substitutes": []
+      },
+      {
+        "name": "kosher salt",
+        "quantity": 0.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": 0.75,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "small carrots",
+        "quantity": 2,
+        "unit": "lb",
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh herbs",
+        "quantity": 1,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "capers",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "anchovy paste",
+        "quantity": 1,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "water",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_quinoa_black_bean_salad",
+    "name": "Quinoa-Black Bean Salad",
+    "description": "Enjoy this quinoa and black bean salad as a delicious and quick vegetarian main dish or as a side for grilled chicken or steak. And don't forget the leftovers! They make an easy lunch on the go.",
+    "calories": 458.3,
+    "protein": 13.8,
+    "carbs": 46.5,
+    "fats": 26,
+    "glycemicIndex": 44,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "20 min",
+    "difficulty": "medium",
+    "flexibilityScore": 2,
+    "availability": "low",
+    "dietTags": [
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "balanced"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "filling",
+      "fruit",
+      "grain",
+      "high_fat",
+      "high_fiber",
+      "legume",
+      "low_gi",
+      "needs_cooking",
+      "plant_protein",
+      "quick_prep",
+      "salad",
+      "savory",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "ears corn",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "zucchini",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "lime juice",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "ground cumin",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "cooked quinoa see associated recipes",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "baby arugula",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "no salt added black beans",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "pico de gallo",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh cilantro",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "crumbled cotija cheese",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "avocado",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_chopped_salad_with_shrimp_a",
+    "name": "Chopped Salad with Shrimp, Apples & Pecans",
+    "description": "Sweet and crunchy apples and celery combine with savory shrimp and nutty pecans in this easy, colorful dinner salad.",
+    "calories": 228.6,
+    "protein": 12.5,
+    "carbs": 10.3,
+    "fats": 15.9,
+    "glycemicIndex": 33,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "30 min",
+    "difficulty": "hard",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "low_carb"
+    ],
+    "suitableFor": [
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "creamy",
+      "fruit",
+      "high_protein",
+      "low_calorie",
+      "low_carb",
+      "low_gi",
+      "needs_cooking",
+      "nuts",
+      "salad",
+      "savory",
+      "seafood",
+      "sweet",
+      "tangy",
+      "vegetable",
+      "yogurt"
+    ],
+    "ingredients": [
+      {
+        "name": "reduced-fat sour cream or plain Greek yogurt",
+        "quantity": 5,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 3,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "cider vinegar",
+        "quantity": 3,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh cilantro",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "finely chopped shallot",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "clove",
+        "substitutes": []
+      },
+      {
+        "name": "dry mustard",
+        "quantity": 0.75,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "chopped romaine lettuce",
+        "quantity": 5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "cooked shrimp",
+        "quantity": 1,
+        "unit": "lb",
+        "substitutes": []
+      },
+      {
+        "name": "medium red apple",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped radicchio",
+        "quantity": 1,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "chopped celery",
+        "quantity": 1,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "toasted chopped pecans",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "shredded carrot",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_avocado_egg_salad",
+    "name": "Avocado Egg Salad",
+    "description": "This quick recipe takes classic egg salad to the next level with the addition of creamy avocado. Serve it on a piece of toasted whole-grain bread or inside a tender lettuce leaf. Avocados brown quickly, so plan on making it no more than two hours before you plan to serve it.",
+    "calories": 223.9,
+    "protein": 10.6,
+    "carbs": 6.1,
+    "fats": 18,
+    "glycemicIndex": 34,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "creamy",
+      "eggs",
+      "fruit",
+      "low_calorie",
+      "low_carb",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "salad",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "hard-boiled eggs",
+        "quantity": 6,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "medium avocado",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "finely chopped celery",
+        "quantity": 0.333,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh chives",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_shrimp_nic_oise_meal_prep_b",
+    "name": "Shrimp Niç\"oise Meal-Prep Bowls",
+    "description": "This low-carb meal-prep version of the classic composed salad comes together in about 10 minutes thanks to a handful of shortcut ingredients, like pretrimmed green beans and prepared olive tapenade. With a whopping 41 grams of protein per serving, these bowls will keep hunger at bay all afternoon. To switch things up, feel free to swap in canned tuna or leftover roasted salmon for the shrimp. We love going to Trader Joe's for fast shortcut ingredients--see Tip (below) for our product recommendations.",
+    "calories": 305.1,
+    "protein": 40.8,
+    "carbs": 13.2,
+    "fats": 10.3,
+    "glycemicIndex": 37,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "high_protein",
+      "low_carb"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "muscle_gain",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "eggs",
+      "filling",
+      "fruit",
+      "high_fiber",
+      "high_protein",
+      "legume",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "needs_cooking",
+      "plant_protein",
+      "quick_prep",
+      "seafood",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "trimmed haricot verts",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "thin green beans",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "peeled hard boiled eggs",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "olive tapenade",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "basket cherry tomatoes",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "frozen peeled and deveined cooked large shrimp",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "lemon",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_chicken_cabbage_salad_bowls",
+    "name": "Chicken & Cabbage Salad Bowls with Sesame Dressing",
+    "description": "Everything you need (just 4 ingredients!) to prepare a week's worth of healthy, low-carb lunches can be found at your neighborhood grocery store. A bag of prechopped red and green cabbage serves as the crunchy low-carb base in these chicken salad bowls, which only require 10 minutes to assemble. Top with sesame-flavored almonds and a sesame dressing and you have one irresistible lunch you'll look forward to all week. Shopping at Trader Joe's? See Tip (below) for our product recommendations.",
+    "calories": 330.4,
+    "protein": 22.7,
+    "carbs": 13.6,
+    "fats": 21.6,
+    "glycemicIndex": 49,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "high_protein",
+      "low_carb"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "chicken",
+      "filling",
+      "high_fat",
+      "high_protein",
+      "low_calorie",
+      "low_carb",
+      "low_gi",
+      "meat",
+      "no_cook",
+      "nuts",
+      "plant_protein",
+      "quick_prep",
+      "salad",
+      "savory",
+      "sweet",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "seasoned cooked chicken strips",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sesame dressing",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "shredded coleslaw mix",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sesame honey flavored almonds",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_grilled_vegetable_salads_wi",
+    "name": "Grilled Vegetable Salads with Goat Cheese",
+    "description": "Prepare a week's worth of lunches in about 10 minutes using a handful of ingredients from your local specialty grocery store. To save time, we're using a bag of frozen grilled and marinated vegetables, then adding big flavor with marinated goat cheese. If you want to bump up the protein, leftover chicken breast or salmon pair perfectly with this hearty salad.",
+    "calories": 347,
+    "protein": 8.8,
+    "carbs": 22.7,
+    "fats": 26,
+    "glycemicIndex": 46,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "high_fat",
+      "low_calorie",
+      "low_gi",
+      "needs_cooking",
+      "quick_prep",
+      "savory",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": ",,,P0DT0H10M,1 (10 ounce) package Tuscan kale",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "marinated or herb-coated goat cheese",
+        "quantity": 4,
+        "unit": "oz",
+        "substitutes": []
+      },
+      {
+        "name": "unsalted roasted sunflower seeds",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "balsamic & fig dressing",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "package frozen marinated grilled vegetables",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_chopped_veggie_grain_bowls_",
+    "name": "Chopped Veggie Grain Bowls with Turmeric Dressing",
+    "description": "In about 10 minutes, you can prep a week's worth of lunches using 4 simple ingredients from your local specialty grocery store. To minimize prep, we're taking advantage of prechopped fresh veggie mix and frozen quinoa (which heats in the microwave in under 5 minutes). These crunchy chopped salad bowls are high in fiber but lower in calories, making them perfect for those following a reduced-calorie diet.",
+    "calories": 305.9,
+    "protein": 11.9,
+    "carbs": 47.7,
+    "fats": 7.4,
+    "glycemicIndex": 41,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "medium",
+    "dietTags": [],
+    "suitableFor": [
+      "balanced"
+    ],
+    "tags": [
+      "american",
+      "creamy",
+      "grain",
+      "high_fiber",
+      "legume",
+      "low_calorie",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "plant_protein",
+      "quick_prep",
+      "salad"
+    ],
+    "ingredients": [
+      {
+        "name": "packages cooked quinoa",
+        "quantity": 2,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "container chopped veggie mix",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "can chickpeas",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "creamy turmeric salad dressing",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_buffalo_style_bistro_lunch_",
+    "name": "Buffalo-Style Bistro Lunch Box",
+    "description": "These tailgate-inspired lunch bowls can be assembled in about 15 minutes using just a handful of ingredients from your local specialty grocery store, like pregrilled chicken and spicy Buffalo-flavored hummus. We're packing these up with crunchy veggie sticks and blue cheese so you can savor all the game-day flavors, but for a fraction of the calories.",
+    "calories": 300.6,
+    "protein": 27.7,
+    "carbs": 25.7,
+    "fats": 9.5,
+    "glycemicIndex": 40,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "15 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "high_protein"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "muscle_gain",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "chicken",
+      "creamy",
+      "filling",
+      "high_protein",
+      "low_calorie",
+      "low_fat",
+      "low_gi",
+      "meat",
+      "no_cook",
+      "quick_prep",
+      "savory",
+      "spicy"
+    ],
+    "ingredients": [
+      {
+        "name": "package seasoned cooked chicken strips",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "celery",
+        "quantity": 1,
+        "unit": "bunch",
+        "substitutes": []
+      },
+      {
+        "name": "carrots",
+        "quantity": 1,
+        "unit": "lb",
+        "substitutes": []
+      },
+      {
+        "name": "container Buffalo-style hummus",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "crumbled blue cheese",
+        "quantity": 2,
+        "unit": "oz",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_sweet_potato_kale_chicken_s",
+    "name": "Sweet Potato, Kale & Chicken Salad with Peanut Dressing",
+    "description": "These hearty kale salads hold up well for 4 days, making them perfect for meal-prep lunches. To keep the ingredients from getting soggy, dress this salad and top it with peanuts just before serving. For a delicious vegan option, swap in roasted tofu for the chicken breast (see Associated Recipes).",
+    "calories": 392.8,
+    "protein": 30.4,
+    "carbs": 31.9,
+    "fats": 15.4,
+    "glycemicIndex": 40,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "45 min",
+    "difficulty": "medium",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "high_protein"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "muscle_gain",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "chicken",
+      "filling",
+      "high_protein",
+      "low_calorie",
+      "low_gi",
+      "meat",
+      "needs_cooking",
+      "plant_protein",
+      "potato",
+      "salad",
+      "savory",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "sweet potatoes",
+        "quantity": 1,
+        "unit": "lb",
+        "substitutes": []
+      },
+      {
+        "name": "extra-virgin olive oil",
+        "quantity": 1.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "kosher salt",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": 0.125,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "Peanut Dressing",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "chopped curly kale",
+        "quantity": 6,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "shredded cooked chicken breast",
+        "quantity": 2,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "chopped unsalted peanuts",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_taji_n_waffle_fries_with_cr",
+    "name": "Tají\"n Waffle Fries with Creamy Cilantro-Lime Dipping Sauce",
+    "description": "The Mexican seasoning Tají; \"n, with its mild spiciness and tangy undertones, pairs beautifully with sweet potatoes. Waffle-shaped fries are the perfect vessel for capturing the flavor. A creamy dipping sauce completes the experience.",
+    "calories": 176.4,
+    "protein": 2.4,
+    "carbs": 20.3,
+    "fats": 10.1,
+    "glycemicIndex": 49,
+    "mealType": "Breakfast",
+    "mealRole": "main",
+    "cuisine": "mexican",
+    "prepTime": "35 min",
+    "difficulty": "medium",
+    "flexibilityScore": 3,
+    "availability": "high",
+    "dietTags": [
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "creamy",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_fat",
+      "low_gi",
+      "mexican",
+      "needs_cooking",
+      "potato",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "sweet potatoes 1 1 2 pounds",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "taj n seasoning",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sour cream",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped cilantro",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "lime juice",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_turkey_cheddar_lettuce_wrap",
+    "name": "Turkey & Cheddar Lettuce Wraps",
+    "description": "Crispy green lettuce leaves hold the filling inside this low-carb turkey wrap. It's perfect for lunch or a quick, easy dinner on the go.",
+    "calories": 324.1,
+    "protein": 20.7,
+    "carbs": 2.8,
+    "fats": 21.8,
+    "glycemicIndex": 33,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "15 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "high_protein",
+      "low_carb"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "filling",
+      "grain",
+      "high_fat",
+      "high_protein",
+      "low_calorie",
+      "low_carb",
+      "low_gi",
+      "meat",
+      "no_cook",
+      "quick_prep",
+      "savory",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": ",,,P0DT0H15M,¼ cup mayonnaise",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped dill pickle",
+        "quantity": 3,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "whole-grain mustard",
+        "quantity": 2,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "large green-leaf lettuce leaves",
+        "quantity": 8,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sliced deli turkey",
+        "quantity": 12,
+        "unit": "oz",
+        "substitutes": []
+      },
+      {
+        "name": "sliced deli sharp Cheddar cheese",
+        "quantity": 4,
+        "unit": "oz",
+        "substitutes": []
+      },
+      {
+        "name": "tomato",
+        "quantity": 8,
+        "unit": "slice",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_instant_pot_brown_rice",
+    "name": "Instant Pot Brown Rice",
+    "description": "Ever wondered how to cook brown rice quickly and easily? Cook it in your Instant Pot (or other pressure cooker)! This Instant Pot brown rice recipe is as basic as it gets. Cooking brown rice in an Instant Pot is easy, and you get the same toothsome texture and nutty flavor you get by cooking it on your stove--without the fuss.",
+    "calories": 190.6,
+    "protein": 4.3,
+    "carbs": 39.6,
+    "fats": 1.5,
+    "glycemicIndex": 57,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "45 min",
+    "difficulty": "medium",
+    "flexibilityScore": 3,
+    "availability": "high",
+    "dietTags": [],
+    "suitableFor": [
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "grain",
+      "light",
+      "low_fat",
+      "needs_cooking",
+      "rice",
+      "savory"
+    ],
+    "ingredients": [
+      {
+        "name": ",,,P0DT0H45M,1 ¼ cups water",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "brown rice or brown basmati rice",
+        "quantity": 1,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_crab_wontons_with_brie",
+    "name": "Crab Wontons with Brie",
+    "description": "In this riff on crab Rangoon, we bake this wonton recipe instead of frying to lighten things up. Preheating the pan and coating the bites with cooking spray ensures they still get crispy.",
+    "calories": 121.4,
+    "protein": 5.3,
+    "carbs": 9.5,
+    "fats": 6.7,
+    "glycemicIndex": 40,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "40 min",
+    "difficulty": "medium",
+    "flexibilityScore": 3,
+    "availability": "medium",
+    "dietTags": [
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "needs_cooking",
+      "savory",
+      "seafood",
+      "spicy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "lump crabmeat",
+        "quantity": 4,
+        "unit": "oz",
+        "substitutes": []
+      },
+      {
+        "name": "Brie cheese",
+        "quantity": 4,
+        "unit": "oz",
+        "substitutes": []
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "minced jalapeño pepper",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "minced fresh chives",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": 0.125,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "wonton wrappers",
+        "quantity": 24,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_quick_meatball_banh_mi_sand",
+    "name": "Quick Meatball Banh Mi Sandwich",
+    "description": "Quick-pickled vegetables and an easy Sriracha-mayo sauce lend Vietnamese flavors to this meatball sandwich recipe. If you can't find long whole-wheat sandwich rolls, you can use 5-inch slices of a soft whole-wheat baguette from the bakery.",
+    "calories": 474.1,
+    "protein": 34,
+    "carbs": 47.1,
+    "fats": 17.5,
+    "glycemicIndex": 58,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "30 min",
+    "difficulty": "medium",
+    "flexibilityScore": 1,
+    "availability": "medium",
+    "dietTags": [
+      "high_protein"
+    ],
+    "suitableFor": [
+      "balanced",
+      "muscle_gain"
+    ],
+    "tags": [
+      "american",
+      "creamy",
+      "filling",
+      "grain",
+      "high_protein",
+      "meat",
+      "needs_cooking",
+      "rice",
+      "savory",
+      "spicy",
+      "sweet",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "rice vinegar",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "honey",
+        "quantity": 0.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": 0.125,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "cucumber",
+        "quantity": 0.5,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "medium carrot",
+        "quantity": 0.5,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "mayonnaise",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "Sriracha",
+        "quantity": 1,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "Baked Turkey Meatballs",
+        "quantity": 10,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "100%-whole-wheat 5-inch sandwich rolls",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "cilantro leaves",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_brussels_sprouts_salad_with",
+    "name": "Brussels Sprouts Salad with Crunchy Chickpeas",
+    "description": "This healthy high-fiber salad comes together in just 10 minutes. Serve it right away or pack it in individual servings for four super-satisfying high-fiber lunches for the week ahead. To cut down on prep time, we're using preshredded Brussels sprouts from the produce department and store-bought roasted chickpeas. Look for roasted chickpea snacks with the healthy snacks or nuts at your grocery store.",
+    "calories": 336.6,
+    "protein": 11.9,
+    "carbs": 30.6,
+    "fats": 20.2,
+    "glycemicIndex": 31,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "medium",
+    "dietTags": [],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "fruit",
+      "high_fat",
+      "high_fiber",
+      "legume",
+      "low_calorie",
+      "low_gi",
+      "needs_cooking",
+      "plant_protein",
+      "quick_prep",
+      "salad",
+      "savory",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "package shredded or shaved Brussels sprouts",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped kale",
+        "quantity": 4,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "Tahini Sauce with Lemon & Garlic",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "roasted chickpea snacks with sea salt",
+        "quantity": 1,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "medium avocado",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_greek_inspired_burgers_with",
+    "name": "Greek-Inspired Burgers with Herb-Feta Sauce",
+    "description": "These healthy burgers get a Mediterranean twist with a yogurt sauce seasoned with oregano, lemon and feta cheese. If you can't find ground lamb, ask the butcher to grind some for you.",
+    "calories": 374.5,
+    "protein": 29.8,
+    "carbs": 23.5,
+    "fats": 18.1,
+    "glycemicIndex": 47,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "mediterranean",
+    "prepTime": "25 min",
+    "difficulty": "medium",
+    "flexibilityScore": 2,
+    "availability": "low",
+    "dietTags": [
+      "high_protein"
+    ],
+    "suitableFor": [
+      "balanced",
+      "muscle_gain",
+      "weight_loss"
+    ],
+    "tags": [
+      "cheese",
+      "creamy",
+      "filling",
+      "fruit",
+      "grain",
+      "high_protein",
+      "low_calorie",
+      "low_gi",
+      "meat",
+      "mediterranean",
+      "needs_cooking",
+      "savory",
+      "tangy",
+      "vegetable",
+      "yogurt"
+    ],
+    "ingredients": [
+      {
+        "name": "nonfat plain greek yogurt",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "crumbled feta cheese",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh oregano",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "lemon zest",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "lemon juice",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "red onion",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "ground lamb",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "ground beef",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "whole wheat pitas",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sliced cucumber",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "plum tomato",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_middle_eastern_salad_bowls_",
+    "name": "Middle Eastern Salad Bowls with Farro & Chicken",
+    "description": "We're pairing two shortcut products you can likely find at your local specialty grocery store--Middle Eastern bean salad and microwaveable farro--to add protein, fiber and satisfying texture to these high-protein lunch bowls. To cut down on prep time, we're also using preseasoned grilled chicken breasts from the refrigerated section, bottled balsamic vinaigrette and a few other ready-to-use ingredients to make these quick and easy meal-prep lunches.",
+    "calories": 379.6,
+    "protein": 26.9,
+    "carbs": 33.6,
+    "fats": 14.4,
+    "glycemicIndex": 36,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "french",
+    "prepTime": "20 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "high_protein"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "muscle_gain",
+      "weight_loss"
+    ],
+    "tags": [
+      "cheese",
+      "chicken",
+      "creamy",
+      "filling",
+      "french",
+      "fruit",
+      "grain",
+      "high_fiber",
+      "high_protein",
+      "legume",
+      "low_calorie",
+      "low_gi",
+      "meat",
+      "needs_cooking",
+      "plant_protein",
+      "quick_prep",
+      "salad",
+      "savory",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "microwaveable farro",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "container Middle Eastern bean salad",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "balsamic vinaigrette",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "package baby spinach",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "package lemon-pepper seasoned cooked chicken breast",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "crumbled feta cheese with Mediterranean herbs",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_green_goddess_quinoa_bowls_",
+    "name": "Green Goddess Quinoa Bowls with Arugula & Shrimp",
+    "description": "We're taking advantage of all the healthy items you can find at your local specialty grocery store to create these healthy meal-prep lunches. To add extra protein (while minimizing prep time), we're using fully cooked quinoa and cooked shrimp, both of which you can find in the freezer section. With a few more simple items, including bottled salad dressing, you'll have all the ingredients you need to make these high-protein lunch bowls in under 20 minutes.",
+    "calories": 233.5,
+    "protein": 14.8,
+    "carbs": 28.2,
+    "fats": 7,
+    "glycemicIndex": 46,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "20 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "medium",
+    "dietTags": [],
+    "suitableFor": [
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "grain",
+      "high_protein",
+      "low_calorie",
+      "low_fat",
+      "low_gi",
+      "needs_cooking",
+      "plant_protein",
+      "quick_prep",
+      "salad",
+      "savory",
+      "seafood"
+    ],
+    "ingredients": [
+      {
+        "name": ",,,P0DT0H20M,1 (16 ounce) package frozen cooked quinoa",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "package frozen peeled and deveined cooked large shrimp",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "green goddess salad dressing",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "package baby arugula",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "crumbled feta cheese",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_waffle_with_cream_cheese_pl",
+    "name": "Waffle with Cream Cheese, Plums & Granola",
+    "description": "Top a toasted frozen waffle with cream cheese, plums and granola for a healthy breakfast in a pinch. Loaded with protein, fiber and whole grains, this recipe will keep you full and satisfied all morning.",
+    "calories": 187.5,
+    "protein": 4.4,
+    "carbs": 24.9,
+    "fats": 9.6,
+    "glycemicIndex": 48,
+    "mealType": "Breakfast",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "grain",
+      "light",
+      "low_calorie",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "savory"
+    ],
+    "ingredients": [
+      {
+        "name": "frozen whole-grain blueberry waffle",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "cream cheese",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "plum",
+        "quantity": 1,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "granola",
+        "quantity": 1,
+        "unit": "tbsp",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_panko_parmesan_crusted_bake",
+    "name": "Panko- & Parmesan-Crusted Baked Scallops",
+    "description": "These easy baked scallops have a delightful balance of crunchy, golden-brown topping and tender, sweet scallops. They feel decadent like scallops should, thanks to the tasty lemon-butter sauce. Look for uniform scallops; \" if they're particularly large, you might need to bake them for more than 10 minutes.",
+    "calories": 281,
+    "protein": 17,
+    "carbs": 13,
+    "fats": 18,
+    "glycemicIndex": 48,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "20 min",
+    "difficulty": "medium",
+    "flexibilityScore": 3,
+    "availability": "medium",
+    "dietTags": [
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "balanced",
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "fruit",
+      "grain",
+      "high_protein",
+      "low_calorie",
+      "low_carb",
+      "low_gi",
+      "needs_cooking",
+      "quick_prep",
+      "savory",
+      "seafood",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "kosher salt",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "unsalted butter",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "lemon juice",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "chopped shallot",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "whole-wheat panko breadcrumbs",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "Parmesan cheese",
+        "quantity": 1,
+        "unit": "oz",
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh flat-leaf parsley",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_easy_broccoli_cheddar_quich",
+    "name": "Easy Broccoli-Cheddar Quiche",
+    "description": "This broccoli and Cheddar quiche gets its creamy texture from evaporated milk. It's a great recipe to make ahead: simply reheat before serving or cut into slices and reheat each morning for breakfast. Using precut microwaveable broccoli cuts down on prep time, but if you have broccoli crowns sitting around, go ahead and use those up. Just be sure to cook the broccoli only untilbarely tender or the final dish will have overcooked, soggy broccoli.",
+    "calories": 231,
+    "protein": 10,
+    "carbs": 14,
+    "fats": 16,
+    "glycemicIndex": 36,
+    "mealType": "Breakfast",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "55 min",
+    "difficulty": "hard",
+    "flexibilityScore": 2,
+    "availability": "low",
+    "dietTags": [
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "diabetic",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "cheese",
+      "creamy",
+      "eggs",
+      "grain",
+      "low_calorie",
+      "low_carb",
+      "low_gi",
+      "needs_cooking",
+      "savory",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "inch frozen whole wheat piecrust shell",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "microwavable fresh broccoli florets",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "olive oil",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped sweet onion from 1 large onion",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "eggs",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "evaporated milk",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sharp cheddar cheese",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "kosher salt",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_chickpea_chicken_salad",
+    "name": "Chickpea \"Chicken\" Salad",
+    "description": "This chickpea salad is a vegetarian version of a classic chicken salad--and, thus, can be eaten in the exact same way. Let's be clear, though: it doesn't taste like chicken, but it is a delicious (and fiber-packed) vegetarian alternative! Plus, it's easily transportable, perfect for picnics and will surely step up your sad desk lunch.",
+    "calories": 300,
+    "protein": 12,
+    "carbs": 37,
+    "fats": 9,
+    "glycemicIndex": 37,
+    "mealType": "Lunch",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "medium",
+    "flexibilityScore": 3,
+    "availability": "medium",
+    "dietTags": [
+      "vegetarian"
+    ],
+    "suitableFor": [
+      "balanced",
+      "weight_loss"
+    ],
+    "tags": [
+      "american",
+      "chicken",
+      "creamy",
+      "high_fiber",
+      "legume",
+      "low_calorie",
+      "low_fat",
+      "low_gi",
+      "meat",
+      "no_cook",
+      "plant_protein",
+      "quick_prep",
+      "salad",
+      "savory",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "canola mayonnaise",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh flat-leaf parsley",
+        "quantity": 3,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "chopped fresh dill",
+        "quantity": 2,
+        "unit": "tbsp",
+        "substitutes": []
+      },
+      {
+        "name": "country-style Dijon mustard",
+        "quantity": 1.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "kosher salt",
+        "quantity": 0.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "black pepper",
+        "quantity": 0.25,
+        "unit": "tsp",
+        "substitutes": []
+      },
+      {
+        "name": "cans no-salt-added chickpeas",
+        "quantity": 2,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped celery",
+        "quantity": 0.5,
+        "unit": "cup",
+        "substitutes": []
+      },
+      {
+        "name": "finely chopped shallot",
+        "quantity": 0.25,
+        "unit": "cup",
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  },
+  {
+    "id": "ew_chicken_avocado_quinoa_bowl",
+    "name": "Chicken, Avocado & Quinoa Bowls with Herb Dressing",
+    "description": "Arrange the toppings individually on these protein-packed grain bowls so each bite has a contrasting taste and texture. Make big batches of the salad dressing, quinoa and roasted chicken thighs and you'll have healthy meal-prep lunches or dinners for days. Though the chicken thighs take just 15 minutes to prep, you can also make the salads with leftover chicken or store-bought cooked chicken to make prep even faster.",
+    "calories": 752.9,
+    "protein": 34.4,
+    "carbs": 43.3,
+    "fats": 50,
+    "glycemicIndex": 39,
+    "mealType": "Dinner",
+    "mealRole": "main",
+    "cuisine": "american",
+    "prepTime": "30 min",
+    "difficulty": "hard",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "high_protein"
+    ],
+    "suitableFor": [
+      "muscle_gain"
+    ],
+    "tags": [
+      "american",
+      "chicken",
+      "filling",
+      "fruit",
+      "grain",
+      "high_calorie",
+      "high_fat",
+      "high_fiber",
+      "high_protein",
+      "legume",
+      "low_gi",
+      "meat",
+      "needs_cooking",
+      "nuts",
+      "plant_protein",
+      "savory",
+      "soup",
+      "sweet",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "boneless",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "ground pepper",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "salt",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "low sodium chicken broth",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "extra virgin olive oil",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "quinoa",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "red wine vinegar",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "water",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sugar",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "dijon mustard",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "garlic",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "dried basil",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "dried oregano",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chickpeas",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "avocado",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "radishes",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "sprouts",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "shoots",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "toasted seeds",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      },
+      {
+        "name": "chopped nuts",
+        "quantity": null,
+        "unit": null,
+        "substitutes": []
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "productionDecision": "main",
+    "productionReasons": [
+      "main_safe"
+    ]
+  }
+]

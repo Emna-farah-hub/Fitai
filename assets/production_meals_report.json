@@ -1,0 +1,717 @@
+{
+  "inputCount": 731,
+  "mainCount": 588,
+  "reviewCount": 126,
+  "excludedCount": 17,
+  "countsByMealTypeInMain": {
+    "Breakfast": 27,
+    "Dinner": 344,
+    "Lunch": 178,
+    "Snack": 39
+  },
+  "countsByCuisineInMain": {
+    "african": 7,
+    "american": 381,
+    "cajun": 3,
+    "chinese": 6,
+    "cypriot": 1,
+    "eastern_european": 3,
+    "egyptian": 2,
+    "filipino": 3,
+    "french": 16,
+    "greek": 14,
+    "indian": 6,
+    "italian": 36,
+    "japanese": 2,
+    "korean": 3,
+    "mediterranean": 14,
+    "mexican": 27,
+    "middle_eastern": 11,
+    "moroccan": 4,
+    "southern": 5,
+    "thai": 5,
+    "tunisian": 39
+  },
+  "countsBySuitableForInMain": {
+    "weight_loss": 439,
+    "muscle_gain": 233,
+    "diabetic": 276,
+    "balanced": 386
+  },
+  "countsByReviewReason": {
+    "dessert_like_review": 26,
+    "source_nutrition_mismatch_review": 2,
+    "meal_type_semantic_mismatch_review": 45,
+    "ambiguous_meal_identity_review": 37,
+    "side_or_condiment_review": 65
+  },
+  "countsByExclusionReason": {
+    "beverage_alcohol_excluded": 17
+  },
+  "beverageAlcoholRowsExcluded": 17,
+  "dessertLikeRowsRoutedToReview": 26,
+  "sourceNutritionMismatchRowsRoutedToReview": 2,
+  "remainingEncodingIssues": 0,
+  "tunisianRows": {
+    "main": 39,
+    "review": 0,
+    "excluded": 0
+  },
+  "sampleBeforeAfterDecisions": [
+    {
+      "before": {
+        "id": "ew_romaine_salad_with_orange_r",
+        "name": "Romaine Salad with Orange & Radish",
+        "mealType": "Lunch",
+        "mealRole": "light",
+        "calories": 194,
+        "protein": 4,
+        "carbs": 20,
+        "fats": 13,
+        "glycemicIndex": 47,
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "drink",
+          "fruit",
+          "greens",
+          "light",
+          "low_calorie",
+          "low_carb",
+          "low_gi",
+          "pepper",
+          "sauce",
+          "tangy",
+          "vegetable"
+        ],
+        "normalizationWarnings": [
+          "source_diabetes_label_mismatch"
+        ],
+        "sourceQualityFlags": [
+          "diabetes_label_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_romaine_salad_with_orange_r",
+        "name": "Romaine Salad with Orange & Radish",
+        "mealType": "Lunch",
+        "mealRole": "light",
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "fruit",
+          "light",
+          "low_calorie",
+          "low_carb",
+          "low_gi",
+          "no_cook",
+          "quick_prep",
+          "salad",
+          "tangy",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_garlic_pecan_green_beans",
+        "name": "Garlic-Pecan Green Beans",
+        "mealType": "Snack",
+        "mealRole": "snack",
+        "calories": 90,
+        "protein": 3,
+        "carbs": 10,
+        "fats": 5,
+        "glycemicIndex": 33,
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "bean",
+          "creamy",
+          "legume",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "nuts",
+          "pepper",
+          "plant_protein",
+          "savory",
+          "vegetable"
+        ],
+        "normalizationWarnings": [],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_garlic_pecan_green_beans",
+        "name": "Garlic-Pecan Green Beans",
+        "mealType": "Snack",
+        "mealRole": "snack",
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "creamy",
+          "high_fiber",
+          "legume",
+          "light",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "needs_cooking",
+          "nuts",
+          "plant_protein",
+          "quick_prep",
+          "savory",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_one_pot_spaghetti_with_meat",
+        "name": "One-Pot Spaghetti with Meat Sauce",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "calories": 660,
+        "protein": 38,
+        "carbs": 78,
+        "fats": 21,
+        "glycemicIndex": 57,
+        "suitableFor": [
+          "muscle_gain"
+        ],
+        "tags": [
+          "american",
+          "beef",
+          "chicken",
+          "grain",
+          "high_calorie",
+          "high_carb",
+          "high_fat",
+          "high_protein",
+          "meat",
+          "pasta",
+          "pepper",
+          "sauce",
+          "savory",
+          "spice",
+          "tomato",
+          "turkey",
+          "vegetable"
+        ],
+        "normalizationWarnings": [],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_one_pot_spaghetti_with_meat",
+        "name": "One-Pot Spaghetti with Meat Sauce",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "suitableFor": [
+          "muscle_gain"
+        ],
+        "tags": [
+          "american",
+          "chicken",
+          "filling",
+          "grain",
+          "high_calorie",
+          "high_carb",
+          "high_fat",
+          "high_protein",
+          "hot",
+          "meat",
+          "needs_cooking",
+          "pasta",
+          "savory",
+          "soup",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_herbed_chicken_thighs",
+        "name": "Herbed Chicken Thighs",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "calories": 242,
+        "protein": 29,
+        "carbs": 1,
+        "fats": 13,
+        "glycemicIndex": 42,
+        "suitableFor": [
+          "weight_loss",
+          "muscle_gain",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "chicken",
+          "drink",
+          "fruit",
+          "high_protein",
+          "low_calorie",
+          "low_carb",
+          "low_gi",
+          "meat",
+          "pepper",
+          "savory",
+          "tangy",
+          "vegetable"
+        ],
+        "normalizationWarnings": [
+          "source_diabetes_label_mismatch"
+        ],
+        "sourceQualityFlags": [
+          "diabetes_label_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_herbed_chicken_thighs",
+        "name": "Herbed Chicken Thighs",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "suitableFor": [
+          "weight_loss",
+          "muscle_gain",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "chicken",
+          "filling",
+          "fruit",
+          "high_protein",
+          "low_calorie",
+          "low_carb",
+          "low_gi",
+          "meat",
+          "needs_cooking",
+          "savory",
+          "tangy",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_one_pot_beef_stroganoff",
+        "name": "One-Pot Beef Stroganoff",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "calories": 563,
+        "protein": 29,
+        "carbs": 51,
+        "fats": 26,
+        "glycemicIndex": 61,
+        "suitableFor": [
+          "muscle_gain",
+          "balanced"
+        ],
+        "tags": [
+          "beef",
+          "creamy",
+          "eastern_european",
+          "egg",
+          "eggs",
+          "grain",
+          "high_calorie",
+          "high_fat",
+          "high_protein",
+          "meat",
+          "mushroom",
+          "pasta",
+          "pepper",
+          "sauce",
+          "savory",
+          "tangy",
+          "vegetable"
+        ],
+        "normalizationWarnings": [],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_one_pot_beef_stroganoff",
+        "name": "One-Pot Beef Stroganoff",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "suitableFor": [
+          "muscle_gain",
+          "balanced"
+        ],
+        "tags": [
+          "creamy",
+          "eastern_european",
+          "eggs",
+          "filling",
+          "grain",
+          "high_calorie",
+          "high_fat",
+          "high_protein",
+          "meat",
+          "mushroom",
+          "needs_cooking",
+          "pasta",
+          "savory",
+          "soup",
+          "tangy",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_rhubarb_bread",
+        "name": "Rhubarb Bread",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "calories": 246,
+        "protein": 5,
+        "carbs": 32,
+        "fats": 11,
+        "glycemicIndex": 59,
+        "suitableFor": [
+          "weight_loss"
+        ],
+        "tags": [
+          "creamy",
+          "egg",
+          "eggs",
+          "fruit",
+          "grain",
+          "greek",
+          "low_calorie",
+          "low_fat",
+          "spice",
+          "sweet",
+          "tangy",
+          "yogurt"
+        ],
+        "normalizationWarnings": [
+          "source_diabetes_label_mismatch"
+        ],
+        "sourceQualityFlags": [
+          "diabetes_label_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_rhubarb_bread",
+        "name": "Rhubarb Bread",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "suitableFor": [],
+        "tags": [
+          "bread",
+          "creamy",
+          "eggs",
+          "fruit",
+          "grain",
+          "greek",
+          "low_calorie",
+          "low_fat",
+          "needs_cooking",
+          "sweet",
+          "tangy",
+          "yogurt"
+        ],
+        "productionDecision": "review",
+        "productionReasons": [
+          "dessert_like_review"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_one_pot_chicken_pasta_with_",
+        "name": "One-Pot Chicken Pasta with Cajun Seasonings",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "calories": 580,
+        "protein": 42,
+        "carbs": 71,
+        "fats": 15,
+        "glycemicIndex": 50,
+        "suitableFor": [
+          "muscle_gain"
+        ],
+        "tags": [
+          "cajun",
+          "cheese",
+          "chicken",
+          "creamy",
+          "grain",
+          "greens",
+          "high_calorie",
+          "high_carb",
+          "high_protein",
+          "low_gi",
+          "meat",
+          "pasta",
+          "pepper",
+          "savory",
+          "spice",
+          "spicy",
+          "tomato",
+          "vegetable"
+        ],
+        "normalizationWarnings": [],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_one_pot_chicken_pasta_with_",
+        "name": "One-Pot Chicken Pasta with Cajun Seasonings",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "suitableFor": [
+          "muscle_gain"
+        ],
+        "tags": [
+          "cajun",
+          "cheese",
+          "chicken",
+          "creamy",
+          "filling",
+          "grain",
+          "high_calorie",
+          "high_carb",
+          "high_protein",
+          "low_gi",
+          "meat",
+          "needs_cooking",
+          "pasta",
+          "quick_prep",
+          "savory",
+          "soup",
+          "spicy",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_vegan_chickpea_frittata",
+        "name": "Vegan Chickpea Frittata",
+        "mealType": "Breakfast",
+        "mealRole": "light",
+        "calories": 107,
+        "protein": 5,
+        "carbs": 15,
+        "fats": 4,
+        "glycemicIndex": 41,
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "chickpea",
+          "creamy",
+          "drink",
+          "egg",
+          "eggs",
+          "fruit",
+          "grain",
+          "italian",
+          "legume",
+          "light",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "mushroom",
+          "pepper",
+          "plant_protein",
+          "sauce",
+          "savory",
+          "spinach",
+          "tangy",
+          "tomato",
+          "vegetable"
+        ],
+        "normalizationWarnings": [],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_vegan_chickpea_frittata",
+        "name": "Vegan Chickpea Frittata",
+        "mealType": "Breakfast",
+        "mealRole": "light",
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "creamy",
+          "fruit",
+          "grain",
+          "high_fiber",
+          "italian",
+          "legume",
+          "light",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "mushroom",
+          "needs_cooking",
+          "plant_protein",
+          "savory",
+          "tangy",
+          "vegetable"
+        ],
+        "productionDecision": "review",
+        "productionReasons": [
+          "ambiguous_meal_identity_review"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_ground_beef_potatoes_skille",
+        "name": "Ground Beef & Potatoes Skillet",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "calories": 322,
+        "protein": 20,
+        "carbs": 30,
+        "fats": 15,
+        "glycemicIndex": 47,
+        "suitableFor": [
+          "weight_loss",
+          "balanced"
+        ],
+        "tags": [
+          "american",
+          "beef",
+          "greens",
+          "high_protein",
+          "low_calorie",
+          "low_gi",
+          "meat",
+          "pepper",
+          "potato",
+          "savory",
+          "spice",
+          "tomato",
+          "vegetable"
+        ],
+        "normalizationWarnings": [],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_ground_beef_potatoes_skille",
+        "name": "Ground Beef & Potatoes Skillet",
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "suitableFor": [
+          "weight_loss",
+          "balanced"
+        ],
+        "tags": [
+          "american",
+          "filling",
+          "high_protein",
+          "low_calorie",
+          "low_gi",
+          "meat",
+          "needs_cooking",
+          "potato",
+          "savory",
+          "vegetable"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    },
+    {
+      "before": {
+        "id": "ew_caramelized_ripe_plantains_",
+        "name": "Caramelized Ripe Plantains with Dark Rum",
+        "mealType": "Snack",
+        "mealRole": "snack",
+        "calories": 190,
+        "protein": 1,
+        "carbs": 36,
+        "fats": 2,
+        "glycemicIndex": 69,
+        "suitableFor": [
+          "weight_loss"
+        ],
+        "tags": [
+          "african",
+          "creamy",
+          "dessert",
+          "fruit",
+          "low_fat",
+          "sweet"
+        ],
+        "normalizationWarnings": [
+          "dessert_tag_added"
+        ],
+        "sourceQualityFlags": []
+      },
+      "after": {
+        "id": "ew_caramelized_ripe_plantains_",
+        "name": "Caramelized Ripe Plantains with Dark Rum",
+        "mealType": "Snack",
+        "mealRole": "snack",
+        "suitableFor": [
+          "weight_loss"
+        ],
+        "tags": [
+          "african",
+          "creamy",
+          "hot",
+          "light",
+          "low_fat",
+          "needs_cooking",
+          "quick_prep",
+          "sweet"
+        ],
+        "productionDecision": "main",
+        "productionReasons": [
+          "main_safe"
+        ]
+      }
+    }
+  ]
+}

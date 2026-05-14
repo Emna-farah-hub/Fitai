@@ -10,6 +10,10 @@ class NutritionCalculator {
     'Lightly Active': 1.375,
     'Moderately Active': 1.55,
     'Very Active': 1.725,
+    'Athlete': 1.9,
+    'Lightly active': 1.375,
+    'Moderately active': 1.55,
+    'Very active': 1.725,
   };
 
   /// Calculates Basal Metabolic Rate using Mifflin-St Jeor equation.
@@ -22,8 +26,12 @@ class NutritionCalculator {
   }) {
     // Base formula: 10 * weight + 6.25 * height - 5 * age
     final base = (10 * weight) + (6.25 * height) - (5 * age);
-    // +5 for male, -161 for female
-    return sex.toLowerCase() == 'male' ? base + 5 : base - 161;
+    final lowerSex = sex.toLowerCase();
+    final maleBmr = base + 5;
+    final femaleBmr = base - 161;
+    if (lowerSex == 'male') return maleBmr;
+    if (lowerSex == 'female') return femaleBmr;
+    return (maleBmr + femaleBmr) / 2;
   }
 
   /// Calculates Total Daily Energy Expenditure.
@@ -47,7 +55,9 @@ class NutritionCalculator {
     final lowerGoals = goals.map((g) => g.toLowerCase()).toList();
     if (lowerGoals.any((g) => g.contains('lose'))) {
       return (tdee - 400).round();
-    } else if (lowerGoals.any((g) => g.contains('muscle') || g.contains('build'))) {
+    } else if (lowerGoals.any(
+      (g) => g.contains('muscle') || g.contains('build'),
+    )) {
       return (tdee + 300).round();
     }
     return tdee.round();

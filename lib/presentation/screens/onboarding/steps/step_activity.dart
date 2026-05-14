@@ -60,13 +60,17 @@ class StepActivity extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 12),
               child: GestureDetector(
                 onTap: () {
-                  context.read<OnboardingProvider>().setActivityLevel(option.label);
+                  context.read<OnboardingProvider>().setActivityLevel(
+                    option.label,
+                  );
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: selected ? AppColors.primarySurface : AppColors.surface,
+                    color: selected
+                        ? AppColors.primarySurface
+                        : AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: selected ? AppColors.primary : AppColors.border,
@@ -95,7 +99,9 @@ class StepActivity extends StatelessWidget {
                         ),
                         child: Icon(
                           option.icon,
-                          color: selected ? Colors.white : AppColors.textSecondary,
+                          color: selected
+                              ? Colors.white
+                              : AppColors.textSecondary,
                           size: 24,
                         ),
                       ),

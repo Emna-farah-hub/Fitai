@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/fitai_brand_mark.dart';
 import '../../widgets/gradient_button.dart';
 
 /// Registration screen — create a new account with email + password.
@@ -91,28 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Center(
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: AppColors.midnight,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.midnight.withValues(alpha: 0.30),
-                          blurRadius: 22,
-                          offset: const Offset(0, 9),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.eco_rounded,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ),
-                ),
+                const Center(child: FitAiBrandMark(size: 84)),
                 const SizedBox(height: 24),
                 Text(
                   'Create account',

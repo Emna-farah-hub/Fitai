@@ -63,7 +63,7 @@ class _GradientButtonState extends State<GradientButton> {
             gradient: widget.onPressed != null
                 ? AppColors.buttonGradient
                 : const LinearGradient(
-                    colors: [Color(0xFFd1d5db), Color(0xFFd1d5db)],
+                    colors: [AppColors.border, AppColors.border],
                   ),
             borderRadius: BorderRadius.circular(24),
             boxShadow: widget.onPressed != null

@@ -58,10 +58,10 @@ class _OnboardingBridgeScreenState extends State<OnboardingBridgeScreen> {
               children: [
                 const Spacer(),
                 const IllustrationWidget(
-                  assetPath: AppAssets.successIllustration,
-                  fallbackIcon: Icons.check_circle_outline_rounded,
-                  height: 200,
-                )
+                      assetPath: AppAssets.successIllustration,
+                      fallbackIcon: Icons.check_circle_outline_rounded,
+                      height: 200,
+                    )
                     .animate()
                     .fadeIn(duration: 500.ms)
                     .scale(
@@ -72,28 +72,28 @@ class _OnboardingBridgeScreenState extends State<OnboardingBridgeScreen> {
                     ),
                 const SizedBox(height: 28),
                 Text(
-                  'Welcome, ${widget.firstName}!',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.6,
-                  ),
-                )
+                      'Welcome, ${widget.firstName}!',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                        letterSpacing: -0.6,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 500.ms, delay: 200.ms)
                     .slideY(begin: 0.15, end: 0, curve: Curves.easeOut),
                 const SizedBox(height: 12),
                 Text(
-                  "Your profile is ready. Now let's discover foods you love →",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    color: AppColors.textSecondary,
-                    height: 1.5,
-                  ),
-                )
+                      "Your profile is ready. Now let's discover foods you love →",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        color: AppColors.textSecondary,
+                        height: 1.5,
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 500.ms, delay: 400.ms)
                     .slideY(begin: 0.15, end: 0, curve: Curves.easeOut),

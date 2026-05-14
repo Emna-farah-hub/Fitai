@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import '../agent/core/agent_event.dart';
@@ -28,11 +29,13 @@ class MealJournalService {
 
     // Notify agent that a meal was logged
     try {
-      AgentOrchestrator().handle(AgentEvent.now(
-        type: AgentEventType.mealLogged,
-        uid: uid,
-        payload: {'meal': meal, 'foodName': meal.foodName},
-      ));
+      AgentOrchestrator().handle(
+        AgentEvent.now(
+          type: AgentEventType.mealLogged,
+          uid: uid,
+          payload: {'meal': meal, 'foodName': meal.foodName},
+        ),
+      );
     } catch (_) {}
 
     try {
@@ -46,8 +49,9 @@ class MealJournalService {
       final now = DateTime.now();
 
       for (int i = 0; i < 7; i++) {
-        final date = DateFormat('yyyy-MM-dd')
-            .format(now.subtract(Duration(days: i)));
+        final date = DateFormat(
+          'yyyy-MM-dd',
+        ).format(now.subtract(Duration(days: i)));
         final snapshot = await _firestore
             .collection('meals')
             .doc(uid)
@@ -117,8 +121,13 @@ class MealJournalService {
         .collection('entries')
         .orderBy('timestamp')
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => MealEntry.fromMap(doc.data()))
-            .toList());
+        .handleError((error, stackTrace) {
+          debugPrint('[MEALS] watchTodayMeals failed: $error');
+        })
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => MealEntry.fromMap(doc.data()))
+              .toList(),
+        );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
@@ -20,6 +21,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+  static const Duration _profileLoadTimeout = Duration(seconds: 6);
+
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -60,19 +63,38 @@ class _SplashScreenState extends State<SplashScreen>
     debugPrint('[SPLASH] isAuthenticated=${authProvider.isAuthenticated}');
 
     if (!authProvider.isAuthenticated) {
-      debugPrint('[SPLASH] → /login');
-      context.go('/login');
+      debugPrint('[SPLASH] → /welcome');
+      context.go('/welcome');
       return;
     }
 
-    // Load the user profile to check onboarding status
-    await userProvider.loadProfile(authProvider.currentUser!.uid);
+    final uid = authProvider.currentUser!.uid;
+    final prefs = await SharedPreferences.getInstance();
+    final localOnboardingComplete =
+        prefs.getBool('onboardingComplete_$uid') ??
+        prefs.getBool('onboardingComplete') ??
+        false;
+
+    // Load the user profile to check onboarding status.
+    // Never block the splash forever on a slow Firestore read.
+    try {
+      await userProvider.loadProfile(uid).timeout(_profileLoadTimeout);
+    } catch (e) {
+      debugPrint('[SPLASH] profile load timed out/failed: $e');
+    }
     if (!mounted) return;
 
-    debugPrint('[SPLASH] onboardingComplete=${userProvider.onboardingComplete}, '
-        'hasProfile=${userProvider.hasProfile}');
+    debugPrint(
+      '[SPLASH] onboardingComplete=${userProvider.onboardingComplete}, '
+      'localOnboardingComplete=$localOnboardingComplete, '
+      'error=${userProvider.errorMessage}, '
+      'hasProfile=${userProvider.hasProfile}',
+    );
 
-    if (!userProvider.onboardingComplete) {
+    final onboardingComplete =
+        userProvider.onboardingComplete || localOnboardingComplete;
+
+    if (!onboardingComplete) {
       debugPrint('[SPLASH] → /onboarding');
       context.go('/onboarding');
       return;
@@ -98,10 +120,7 @@ class _SplashScreenState extends State<SplashScreen>
             animation: _controller,
             builder: (context, child) => FadeTransition(
               opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: child,
-              ),
+              child: ScaleTransition(scale: _scaleAnimation, child: child),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

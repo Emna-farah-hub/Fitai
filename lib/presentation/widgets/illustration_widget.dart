@@ -22,18 +22,16 @@ class IllustrationWidget extends StatelessWidget {
     return SizedBox(
       height: height,
       width: double.infinity,
-      child: Center(
-        child: _buildContent(),
-      ),
+      child: Center(child: _buildContent()),
     );
   }
 
   Widget _buildContent() {
     return _SvgWithFallback(
-      assetPath: assetPath,
-      fallbackIcon: fallbackIcon,
-      height: height,
-    )
+          assetPath: assetPath,
+          fallbackIcon: fallbackIcon,
+          height: height,
+        )
         .animate()
         .fadeIn(duration: 600.ms)
         .slideY(begin: -0.05, end: 0)
@@ -78,11 +76,7 @@ class _SvgWithFallback extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        fallbackIcon,
-        color: Colors.white,
-        size: 48,
-      ),
+      child: Icon(fallbackIcon, color: Colors.white, size: 48),
     );
   }
 }

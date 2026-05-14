@@ -32,29 +32,29 @@ class StepWelcome extends StatelessWidget {
                 const SizedBox(height: 24),
                 // App name: "Fit" in green + "AI" in dark
                 RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Fit',
-                        style: GoogleFonts.inter(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                          letterSpacing: -1,
-                        ),
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Fit',
+                            style: GoogleFonts.inter(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.primary,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'AI',
+                            style: GoogleFonts.inter(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                        ],
                       ),
-                      TextSpan(
-                        text: 'AI',
-                        style: GoogleFonts.inter(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                    )
                     .animate()
                     .fadeIn(duration: 500.ms, delay: 200.ms)
                     .slideY(begin: 0.1, end: 0),
@@ -65,34 +65,44 @@ class StepWelcome extends StatelessWidget {
                     fontSize: 16,
                     color: AppColors.textSecondary,
                   ),
-                )
-                    .animate()
-                    .fadeIn(duration: 500.ms, delay: 300.ms),
+                ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
                 const SizedBox(height: 32),
                 // Feature cards
                 _FeatureCard(
-                  icon: Icons.calculate_outlined,
-                  title: 'Personalized calorie goals',
-                  subtitle: 'Based on your body & lifestyle',
-                ).animate().fadeIn(duration: 400.ms, delay: 400.ms).slideX(begin: -0.05, end: 0),
+                      icon: Icons.calculate_outlined,
+                      title: 'Personalized calorie goals',
+                      subtitle: 'Based on your body & lifestyle',
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 400.ms)
+                    .slideX(begin: -0.05, end: 0),
                 const SizedBox(height: 10),
                 _FeatureCard(
-                  icon: Icons.monitor_heart_outlined,
-                  title: 'Diabetes-friendly plans',
-                  subtitle: 'Track glycemic index with ease',
-                ).animate().fadeIn(duration: 400.ms, delay: 500.ms).slideX(begin: -0.05, end: 0),
+                      icon: Icons.monitor_heart_outlined,
+                      title: 'Diabetes-friendly plans',
+                      subtitle: 'Track glycemic index with ease',
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 500.ms)
+                    .slideX(begin: -0.05, end: 0),
                 const SizedBox(height: 10),
                 _FeatureCard(
-                  icon: Icons.auto_awesome_outlined,
-                  title: 'AI coach powered by Gemini',
-                  subtitle: 'Smart meal suggestions & guidance',
-                ).animate().fadeIn(duration: 400.ms, delay: 600.ms).slideX(begin: -0.05, end: 0),
+                      icon: Icons.auto_awesome_outlined,
+                      title: 'AI coach powered by Gemini',
+                      subtitle: 'Smart meal suggestions & guidance',
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 600.ms)
+                    .slideX(begin: -0.05, end: 0),
                 const Spacer(flex: 2),
                 GradientButton(
-                  label: 'Get Started',
-                  onPressed: onNext,
-                  trailingIcon: Icons.arrow_forward_rounded,
-                ).animate().fadeIn(duration: 400.ms, delay: 700.ms).slideY(begin: 0.1, end: 0),
+                      label: 'Get Started',
+                      onPressed: onNext,
+                      trailingIcon: Icons.arrow_forward_rounded,
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 700.ms)
+                    .slideY(begin: 0.1, end: 0),
                 const SizedBox(height: 16),
                 Text(
                   'Takes only 2 minutes to set up',

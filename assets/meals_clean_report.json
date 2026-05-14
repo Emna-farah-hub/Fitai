@@ -1,0 +1,581 @@
+{
+  "totalInputCount": 827,
+  "cleanedOutputCount": 827,
+  "rejectedCount": 0,
+  "exactDuplicateRowCount": 0,
+  "exactDuplicateGroups": [],
+  "nearDuplicateCandidates": [],
+  "countsByCuisine": {
+    "african": 8,
+    "american": 566,
+    "cajun": 3,
+    "chinese": 7,
+    "cypriot": 3,
+    "eastern_european": 5,
+    "egyptian": 3,
+    "filipino": 4,
+    "french": 34,
+    "greek": 24,
+    "indian": 9,
+    "italian": 42,
+    "japanese": 4,
+    "korean": 3,
+    "mediterranean": 15,
+    "mexican": 32,
+    "middle_eastern": 11,
+    "moroccan": 4,
+    "southern": 6,
+    "thai": 5,
+    "tunisian": 39
+  },
+  "countsByMealTimeTags": {
+    "breakfast": 72,
+    "lunch": 246,
+    "dinner": 512,
+    "snack": 145,
+    "dessert": 121
+  },
+  "qualityFlagCounts": {
+    "nutrition_mismatch": 482,
+    "diabetes_label_mismatch": 446
+  },
+  "rowsWithEncodingRepairs": 0,
+  "rejectedReasonCounts": {},
+  "sampleRowsBeforeAfterCleanup": [
+    {
+      "id": "ew_romaine_salad_with_orange_r",
+      "before": {
+        "id": "ew_romaine_salad_with_orange_r",
+        "name": "Romaine Salad with Orange & Radish",
+        "description": "Inspired by a traditional Moroccan salad, which consists of oranges and radishes, this version adds romaine lettuce and a classic vinaigrette. Fresh orange juice adds acidity and brightness to the vinaigrette. Pomegranate seeds bring color and crunch. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 194,
+        "protein": 4,
+        "carbs": 20,
+        "fats": 0,
+        "prepTime": "15 min",
+        "cuisine": "African",
+        "difficulty": "easy",
+        "ingredients": [
+          "2 small heads romaine lettuce, washed and torn into bite-size pieces",
+          "3 large navel oranges, divided",
+          "1 bunch radishes",
+          "5 tablespoons extra-virgin olive oil",
+          "1 ½ tablespoons red-wine vinegar",
+          "¼ teaspoon salt",
+          "¼ teaspoon ground pepper",
+          "¼ cup pomegranate arils (seeds)"
+        ],
+        "dietTags": [
+          "vegan",
+          "dairy_free",
+          "gluten_free"
+        ],
+        "goalTags": [
+          "weight_loss",
+          "diabetes_friendly"
+        ],
+        "tasteTags": [
+          "tangy"
+        ],
+        "mealTimeTags": [
+          "lunch"
+        ],
+        "ingredientTags": [
+          "fruit",
+          "greens",
+          "pepper",
+          "sauce",
+          "drink"
+        ],
+        "glycemicIndex": 47,
+        "diabetesFriendlyLevel": "good"
+      },
+      "after": {
+        "id": "ew_romaine_salad_with_orange_r",
+        "name": "Romaine Salad with Orange & Radish",
+        "description": "Inspired by a traditional Moroccan salad, which consists of oranges and radishes, this version adds romaine lettuce and a classic vinaigrette. Fresh orange juice adds acidity and brightness to the vinaigrette. Pomegranate seeds bring color and crunch. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 194,
+        "protein": 4,
+        "carbs": 20,
+        "fats": 0,
+        "prepTime": "15 min",
+        "cuisine": "african",
+        "difficulty": "easy",
+        "ingredients": [
+          "2 small heads romaine lettuce, washed and torn into bite-size pieces",
+          "3 large navel oranges, divided",
+          "1 bunch radishes",
+          "5 tablespoons extra-virgin olive oil",
+          "1 ½ tablespoons red-wine vinegar",
+          "¼ teaspoon salt",
+          "¼ teaspoon ground pepper",
+          "¼ cup pomegranate arils (seeds)"
+        ],
+        "dietTags": [
+          "dairy_free",
+          "gluten_free",
+          "vegan"
+        ],
+        "goalTags": [
+          "diabetes_friendly",
+          "weight_loss"
+        ],
+        "tasteTags": [
+          "tangy"
+        ],
+        "mealTimeTags": [
+          "lunch"
+        ],
+        "ingredientTags": [
+          "drink",
+          "fruit",
+          "greens",
+          "pepper",
+          "sauce"
+        ],
+        "glycemicIndex": 47,
+        "diabetesFriendlyLevel": "good"
+      },
+      "qualityFlags": [
+        "nutrition_mismatch",
+        "diabetes_label_mismatch"
+      ]
+    },
+    {
+      "id": "ew_garlic_pecan_green_beans",
+      "before": {
+        "id": "ew_garlic_pecan_green_beans",
+        "name": "Garlic-Pecan Green Beans",
+        "description": "The addition of toasted pecans gives this French way with string beans a bit of crunch and sweetness as well as a touch of the American South. Try using slender haricots verts for a different twist. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 90,
+        "protein": 3,
+        "carbs": 10,
+        "fats": 0,
+        "prepTime": "20 min",
+        "cuisine": "African",
+        "difficulty": "easy",
+        "ingredients": [
+          "4 cups water",
+          "2 pounds fresh green beans, washed and stem ends removed",
+          "2 tablespoons unsalted butter",
+          "1 tablespoon minced garlic",
+          "2 teaspoons minced shallot",
+          "⅛ teaspoon salt",
+          "⅛ teaspoon ground pepper",
+          "2 tablespoons chopped pecans, toasted (see Tip)"
+        ],
+        "dietTags": [
+          "vegetarian",
+          "gluten_free",
+          "low_carb"
+        ],
+        "goalTags": [
+          "weight_loss",
+          "diabetes_friendly"
+        ],
+        "tasteTags": [
+          "savory",
+          "creamy"
+        ],
+        "mealTimeTags": [
+          "snack"
+        ],
+        "ingredientTags": [
+          "bean",
+          "nuts",
+          "pepper"
+        ],
+        "glycemicIndex": 33,
+        "diabetesFriendlyLevel": "excellent"
+      },
+      "after": {
+        "id": "ew_garlic_pecan_green_beans",
+        "name": "Garlic-Pecan Green Beans",
+        "description": "The addition of toasted pecans gives this French way with string beans a bit of crunch and sweetness as well as a touch of the American South. Try using slender haricots verts for a different twist. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 90,
+        "protein": 3,
+        "carbs": 10,
+        "fats": 0,
+        "prepTime": "20 min",
+        "cuisine": "african",
+        "difficulty": "easy",
+        "ingredients": [
+          "4 cups water",
+          "2 pounds fresh green beans, washed and stem ends removed",
+          "2 tablespoons unsalted butter",
+          "1 tablespoon minced garlic",
+          "2 teaspoons minced shallot",
+          "⅛ teaspoon salt",
+          "⅛ teaspoon ground pepper",
+          "2 tablespoons chopped pecans, toasted (see Tip)"
+        ],
+        "dietTags": [
+          "gluten_free",
+          "low_carb",
+          "vegetarian"
+        ],
+        "goalTags": [
+          "diabetes_friendly",
+          "weight_loss"
+        ],
+        "tasteTags": [
+          "creamy",
+          "savory"
+        ],
+        "mealTimeTags": [
+          "snack"
+        ],
+        "ingredientTags": [
+          "bean",
+          "nuts",
+          "pepper"
+        ],
+        "glycemicIndex": 33,
+        "diabetesFriendlyLevel": "excellent"
+      },
+      "qualityFlags": [
+        "nutrition_mismatch"
+      ]
+    },
+    {
+      "id": "ew_one_pot_spaghetti_with_meat",
+      "before": {
+        "id": "ew_one_pot_spaghetti_with_meat",
+        "name": "One-Pot Spaghetti with Meat Sauce",
+        "description": "The whole family is sure to love this one-pot spaghetti recipe! The sausage, chicken broth and white wine impart slow-cooked flavors in this quick-cooking ragu. As the pasta sauce thickens, you'll want to scrape the bottom of the pot to prevent the sauce and pasta from sticking and to help the pasta cook evenly.",
+        "calories": 660,
+        "protein": 38,
+        "carbs": 78,
+        "fats": 0,
+        "prepTime": "45 min",
+        "cuisine": "American",
+        "difficulty": "hard",
+        "ingredients": [
+          "2 tablespoons extra-virgin olive oil",
+          "8 ounces lean ground beef",
+          "2 ounces sweet or hot Italian-style turkey sausage (2 links), casings removed",
+          "½ cup finely chopped yellow onion",
+          "⅓ cup finely chopped carrot",
+          "4 cloves garlic, thinly sliced",
+          "2 teaspoons dried Italian seasoning",
+          "⅓ cup dry white wine",
+          "1 (28 ounce) can no-salt-added crushed tomatoes with basil and herbs",
+          "12 ounces whole-wheat spaghetti",
+          "2 cups unsalted chicken broth",
+          "½ cup water, plus more if needed",
+          "½ cup loosely packed fresh basil leaves, plus more for garnish",
+          "½ teaspoon ground pepper",
+          "½ teaspoon salt"
+        ],
+        "dietTags": [
+          "omnivore",
+          "dairy_free",
+          "high_protein"
+        ],
+        "goalTags": [
+          "high_protein",
+          "muscle_gain"
+        ],
+        "tasteTags": [
+          "savory"
+        ],
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "ingredientTags": [
+          "chicken",
+          "turkey",
+          "beef",
+          "pasta",
+          "tomato",
+          "pepper",
+          "sauce",
+          "spice"
+        ],
+        "glycemicIndex": 57,
+        "diabetesFriendlyLevel": "avoid"
+      },
+      "after": {
+        "id": "ew_one_pot_spaghetti_with_meat",
+        "name": "One-Pot Spaghetti with Meat Sauce",
+        "description": "The whole family is sure to love this one-pot spaghetti recipe! The sausage, chicken broth and white wine impart slow-cooked flavors in this quick-cooking ragu. As the pasta sauce thickens, you'll want to scrape the bottom of the pot to prevent the sauce and pasta from sticking and to help the pasta cook evenly.",
+        "calories": 660,
+        "protein": 38,
+        "carbs": 78,
+        "fats": 0,
+        "prepTime": "45 min",
+        "cuisine": "american",
+        "difficulty": "hard",
+        "ingredients": [
+          "2 tablespoons extra-virgin olive oil",
+          "8 ounces lean ground beef",
+          "2 ounces sweet or hot Italian-style turkey sausage (2 links), casings removed",
+          "½ cup finely chopped yellow onion",
+          "⅓ cup finely chopped carrot",
+          "4 cloves garlic, thinly sliced",
+          "2 teaspoons dried Italian seasoning",
+          "⅓ cup dry white wine",
+          "1 (28 ounce) can no-salt-added crushed tomatoes with basil and herbs",
+          "12 ounces whole-wheat spaghetti",
+          "2 cups unsalted chicken broth",
+          "½ cup water, plus more if needed",
+          "½ cup loosely packed fresh basil leaves, plus more for garnish",
+          "½ teaspoon ground pepper",
+          "½ teaspoon salt"
+        ],
+        "dietTags": [
+          "dairy_free",
+          "high_protein",
+          "omnivore"
+        ],
+        "goalTags": [
+          "high_protein",
+          "muscle_gain"
+        ],
+        "tasteTags": [
+          "savory"
+        ],
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "ingredientTags": [
+          "beef",
+          "chicken",
+          "pasta",
+          "pepper",
+          "sauce",
+          "spice",
+          "tomato",
+          "turkey"
+        ],
+        "glycemicIndex": 57,
+        "diabetesFriendlyLevel": "avoid"
+      },
+      "qualityFlags": [
+        "nutrition_mismatch"
+      ]
+    },
+    {
+      "id": "ew_herbed_chicken_thighs",
+      "before": {
+        "id": "ew_herbed_chicken_thighs",
+        "name": "Herbed Chicken Thighs",
+        "description": "Whether it's fried, boiled, roasted, baked or sautéed, chicken is eaten throughout Africa and the diaspora. In this recipe, chicken thighs are marinated in lemon juice and olive oil before being coated in herbs and broiled. The herbs will take on a slightly blackened color, so don't fret about the appearance. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 242,
+        "protein": 29,
+        "carbs": 1,
+        "fats": 0,
+        "prepTime": "1 hr 40 min",
+        "cuisine": "African",
+        "difficulty": "hard",
+        "ingredients": [
+          "4 tablespoons lemon juice",
+          "3 tablespoons extra-virgin olive oil",
+          "2 tablespoons dried thyme, divided",
+          "1 tablespoon herbes de Provence, divided",
+          "12 medium bone-in, skin-on chicken thighs",
+          "¼ teaspoon salt",
+          "¼ teaspoon ground pepper"
+        ],
+        "dietTags": [
+          "omnivore",
+          "dairy_free",
+          "gluten_free",
+          "high_protein",
+          "low_carb"
+        ],
+        "goalTags": [
+          "high_protein",
+          "muscle_gain",
+          "weight_loss",
+          "diabetes_friendly"
+        ],
+        "tasteTags": [
+          "savory",
+          "tangy"
+        ],
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "ingredientTags": [
+          "chicken",
+          "fruit",
+          "pepper",
+          "drink"
+        ],
+        "glycemicIndex": 42,
+        "diabetesFriendlyLevel": "excellent"
+      },
+      "after": {
+        "id": "ew_herbed_chicken_thighs",
+        "name": "Herbed Chicken Thighs",
+        "description": "Whether it's fried, boiled, roasted, baked or sautéed, chicken is eaten throughout Africa and the diaspora. In this recipe, chicken thighs are marinated in lemon juice and olive oil before being coated in herbs and broiled. The herbs will take on a slightly blackened color, so don't fret about the appearance. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 242,
+        "protein": 29,
+        "carbs": 1,
+        "fats": 0,
+        "prepTime": "1 hr 40 min",
+        "cuisine": "african",
+        "difficulty": "hard",
+        "ingredients": [
+          "4 tablespoons lemon juice",
+          "3 tablespoons extra-virgin olive oil",
+          "2 tablespoons dried thyme, divided",
+          "1 tablespoon herbes de Provence, divided",
+          "12 medium bone-in, skin-on chicken thighs",
+          "¼ teaspoon salt",
+          "¼ teaspoon ground pepper"
+        ],
+        "dietTags": [
+          "dairy_free",
+          "gluten_free",
+          "high_protein",
+          "low_carb",
+          "omnivore"
+        ],
+        "goalTags": [
+          "diabetes_friendly",
+          "high_protein",
+          "muscle_gain",
+          "weight_loss"
+        ],
+        "tasteTags": [
+          "savory",
+          "tangy"
+        ],
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "ingredientTags": [
+          "chicken",
+          "drink",
+          "fruit",
+          "pepper"
+        ],
+        "glycemicIndex": 42,
+        "diabetesFriendlyLevel": "excellent"
+      },
+      "qualityFlags": [
+        "nutrition_mismatch",
+        "diabetes_label_mismatch"
+      ]
+    },
+    {
+      "id": "ew_one_pot_beef_stroganoff",
+      "before": {
+        "id": "ew_one_pot_beef_stroganoff",
+        "name": "One-Pot Beef Stroganoff",
+        "description": "This one-pot beef stroganoff recipe cuts down on dishes, but not on flavor! Mixed mushrooms and sirloin steak layer on the umami flavors, while sour cream with a hint of Dijon mustard carries the sauce. Coating the steak in baking soda before cooking helps to tenderize it, but you can skip this step to speed things up if needed.",
+        "calories": 563,
+        "protein": 29,
+        "carbs": 51,
+        "fats": 0,
+        "prepTime": "55 min",
+        "cuisine": "Eastern European",
+        "difficulty": "hard",
+        "ingredients": [
+          "12 ounces sirloin steak, trimmed and sliced across the grain into 1/4-inch strips",
+          "1 teaspoon baking soda",
+          "3 tablespoons extra-virgin olive oil, divided",
+          "1 cup thinly sliced yellow onion",
+          "12 ounces sliced fresh mixed wild mushrooms (such as cremini, shiitake and oyster)",
+          "1 ½ tablespoons minced garlic",
+          "8 ounces egg noodles",
+          "3 cups unsalted beef broth",
+          "1 tablespoon Dijon mustard",
+          "¾ teaspoon ground pepper",
+          "½ teaspoon salt",
+          "⅔ cup sour cream",
+          "2 tablespoons chopped fresh flat-leaf parsley",
+          "2 tablespoons chopped fresh chives"
+        ],
+        "dietTags": [
+          "omnivore",
+          "high_protein"
+        ],
+        "goalTags": [
+          "high_protein",
+          "muscle_gain",
+          "balanced"
+        ],
+        "tasteTags": [
+          "savory",
+          "creamy",
+          "tangy"
+        ],
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "ingredientTags": [
+          "beef",
+          "egg",
+          "pasta",
+          "mushroom",
+          "pepper",
+          "sauce"
+        ],
+        "glycemicIndex": 61,
+        "diabetesFriendlyLevel": "avoid"
+      },
+      "after": {
+        "id": "ew_one_pot_beef_stroganoff",
+        "name": "One-Pot Beef Stroganoff",
+        "description": "This one-pot beef stroganoff recipe cuts down on dishes, but not on flavor! Mixed mushrooms and sirloin steak layer on the umami flavors, while sour cream with a hint of Dijon mustard carries the sauce. Coating the steak in baking soda before cooking helps to tenderize it, but you can skip this step to speed things up if needed.",
+        "calories": 563,
+        "protein": 29,
+        "carbs": 51,
+        "fats": 0,
+        "prepTime": "55 min",
+        "cuisine": "eastern_european",
+        "difficulty": "hard",
+        "ingredients": [
+          "12 ounces sirloin steak, trimmed and sliced across the grain into 1/4-inch strips",
+          "1 teaspoon baking soda",
+          "3 tablespoons extra-virgin olive oil, divided",
+          "1 cup thinly sliced yellow onion",
+          "12 ounces sliced fresh mixed wild mushrooms (such as cremini, shiitake and oyster)",
+          "1 ½ tablespoons minced garlic",
+          "8 ounces egg noodles",
+          "3 cups unsalted beef broth",
+          "1 tablespoon Dijon mustard",
+          "¾ teaspoon ground pepper",
+          "½ teaspoon salt",
+          "⅔ cup sour cream",
+          "2 tablespoons chopped fresh flat-leaf parsley",
+          "2 tablespoons chopped fresh chives"
+        ],
+        "dietTags": [
+          "high_protein",
+          "omnivore"
+        ],
+        "goalTags": [
+          "balanced",
+          "high_protein",
+          "muscle_gain"
+        ],
+        "tasteTags": [
+          "creamy",
+          "savory",
+          "tangy"
+        ],
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "ingredientTags": [
+          "beef",
+          "egg",
+          "mushroom",
+          "pasta",
+          "pepper",
+          "sauce"
+        ],
+        "glycemicIndex": 61,
+        "diabetesFriendlyLevel": "avoid"
+      },
+      "qualityFlags": [
+        "nutrition_mismatch"
+      ]
+    }
+  ],
+  "sampleRejectedRows": []
+}

@@ -63,7 +63,9 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('\u2713 ${widget.foodItem.name} added to ${widget.mealType}'),
+          content: Text(
+            '\u2713 ${widget.foodItem.name} added to ${widget.mealType}',
+          ),
           backgroundColor: AppColors.primary,
         ),
       );
@@ -74,10 +76,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
       setState(() => _isSaving = false);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
       );
     }
   }
@@ -89,7 +88,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -97,19 +96,13 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            color: Colors.black,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bookmark_border, color: Colors.black),
-            onPressed: () {},
-          ),
-        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: const Color(0xFFE0E0E0)),
+          child: Container(height: 1, color: AppColors.border),
         ),
       ),
       body: SingleChildScrollView(
@@ -151,7 +144,10 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
             children: [
               Text(
                 'Serving Size',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
               ),
               const Spacer(),
               Text(
@@ -179,8 +175,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
               overlayColor: AppColors.primary.withValues(alpha: 0.15),
               trackHeight: 4,
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-              overlayShape:
-                  const RoundSliderOverlayShape(overlayRadius: 20),
+              overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
             ),
             child: Slider(
               value: _quantity.clamp(_minQuantity, _maxQuantity),
@@ -199,13 +194,17 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
               children: [
                 Text(
                   '${_minQuantity.toInt()} g',
-                  style:
-                      TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 Text(
                   '${_maxQuantity.toInt()} g',
-                  style:
-                      TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -262,7 +261,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           ),
           const Text(
             'Calories',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
           ),
         ],
       ),
@@ -279,20 +278,20 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           _macroPill(
             label: 'Carbs',
             value: _carbs,
-            tintColor: const Color(0xFFE3F2FD),
-            textColor: const Color(0xFF1565C0),
+            tintColor: AppColors.amberSoft,
+            textColor: AppColors.amberDark,
           ),
           _macroPill(
             label: 'Fat',
             value: _fats,
-            tintColor: const Color(0xFFFFF8E1),
-            textColor: const Color(0xFFE65100),
+            tintColor: AppColors.sageSoft,
+            textColor: AppColors.sageDark,
           ),
           _macroPill(
             label: 'Protein',
             value: _protein,
-            tintColor: const Color(0xFFFCE4EC),
-            textColor: const Color(0xFFB71C1C),
+            tintColor: AppColors.infoSurface,
+            textColor: AppColors.tealDark,
           ),
         ],
       ),
@@ -315,7 +314,10 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
@@ -385,8 +387,7 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
           _nutritionRow('Total Fat', '${_fats.toStringAsFixed(1)}g'),
           _nutritionRow('  Saturated Fat', '\u2014', indented: true),
           _nutritionRow('  Trans Fat', '\u2014', indented: true),
-          _nutritionRow(
-              'Total Carbohydrate', '${_carbs.toStringAsFixed(1)}g'),
+          _nutritionRow('Total Carbohydrate', '${_carbs.toStringAsFixed(1)}g'),
           _nutritionRow('  Dietary Fiber', '\u2014', indented: true),
           _nutritionRow('  Sugars', '\u2014', indented: true),
           _nutritionRow('Protein', '${_protein.toStringAsFixed(1)}g'),
@@ -405,26 +406,28 @@ class _FoodDetailScreenState extends State<FoodDetailScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.only(
-            left: indented ? 16 : 0,
-            top: 8,
-            bottom: 8,
-          ),
+          padding: EdgeInsets.only(left: indented ? 16 : 0, top: 8, bottom: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 label.trim(),
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                ),
               ),
               Text(
                 value,
-                style: const TextStyle(fontSize: 13, color: Colors.black),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
         ),
-        Divider(height: 1, color: Colors.grey.shade200),
+        const Divider(height: 1, color: AppColors.divider),
       ],
     );
   }

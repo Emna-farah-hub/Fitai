@@ -1,0 +1,768 @@
+{
+  "inputCount": 827,
+  "normalizedOutputCount": 326,
+  "reviewCount": 501,
+  "countsByMealType": {
+    "Breakfast": 27,
+    "Dinner": 86,
+    "Lunch": 99,
+    "Snack": 114
+  },
+  "countsByCuisine": {
+    "african": 5,
+    "american": 214,
+    "chinese": 4,
+    "cypriot": 3,
+    "eastern_european": 2,
+    "egyptian": 1,
+    "filipino": 1,
+    "french": 20,
+    "greek": 6,
+    "indian": 2,
+    "italian": 13,
+    "korean": 1,
+    "mediterranean": 5,
+    "mexican": 2,
+    "middle_eastern": 5,
+    "southern": 2,
+    "thai": 1,
+    "tunisian": 39
+  },
+  "countsBySuitableFor": {
+    "weight_loss": 308,
+    "muscle_gain": 40,
+    "diabetic": 248,
+    "balanced": 39
+  },
+  "countsByReviewReason": {
+    "severe_nutrition_mismatch": 40,
+    "zero_fat_high_calories": 456,
+    "unresolved_ambiguous_meal_type": 51,
+    "dessert_only_not_snack_like": 45
+  },
+  "excludedBecauseZeroFatHighCalories": 456,
+  "rowsWithRemainingEncodingIssues": 0,
+  "sampleRowsBeforeAfter": [
+    {
+      "outcome": "main",
+      "before": {
+        "id": "ew_romaine_salad_with_orange_r",
+        "name": "Romaine Salad with Orange & Radish",
+        "calories": 194,
+        "protein": 4,
+        "carbs": 20,
+        "fats": 0,
+        "glycemicIndex": 47,
+        "mealTimeTags": [
+          "lunch"
+        ],
+        "goalTags": [
+          "diabetes_friendly",
+          "weight_loss"
+        ],
+        "qualityFlags": [
+          "nutrition_mismatch",
+          "diabetes_label_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_romaine_salad_with_orange_r",
+        "name": "Romaine Salad with Orange & Radish",
+        "description": "Inspired by a traditional Moroccan salad, which consists of oranges and radishes, this version adds romaine lettuce and a classic vinaigrette. Fresh orange juice adds acidity and brightness to the vinaigrette. Pomegranate seeds bring color and crunch. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 194,
+        "protein": 4,
+        "carbs": 20,
+        "fats": 0,
+        "glycemicIndex": 47,
+        "mealType": "Lunch",
+        "mealRole": "light",
+        "cuisine": "african",
+        "prepTime": "15 min",
+        "difficulty": "easy",
+        "flexibilityScore": 4,
+        "availability": "medium",
+        "dietTags": [
+          "dairy_free",
+          "gluten_free",
+          "vegan"
+        ],
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "drink",
+          "fruit",
+          "greens",
+          "light",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "pepper",
+          "sauce",
+          "tangy",
+          "vegetable"
+        ],
+        "ingredients": [
+          {
+            "name": "romaine lettuce"
+          },
+          {
+            "name": "navel oranges"
+          },
+          {
+            "name": "radishes"
+          },
+          {
+            "name": "extra virgin olive oil"
+          },
+          {
+            "name": "red wine vinegar"
+          },
+          {
+            "name": "salt"
+          },
+          {
+            "name": "ground pepper"
+          },
+          {
+            "name": "pomegranate arils seeds"
+          }
+        ],
+        "steps": [],
+        "servings": 1,
+        "isTunisian": false,
+        "sourceMealTimeTags": [
+          "lunch"
+        ],
+        "sourceGoalTags": [
+          "diabetes_friendly",
+          "weight_loss"
+        ],
+        "sourceQualityFlags": [
+          "nutrition_mismatch",
+          "diabetes_label_mismatch"
+        ],
+        "normalizationWarnings": [
+          "source_nutrition_mismatch",
+          "source_diabetes_label_mismatch"
+        ]
+      }
+    },
+    {
+      "outcome": "main",
+      "before": {
+        "id": "ew_garlic_pecan_green_beans",
+        "name": "Garlic-Pecan Green Beans",
+        "calories": 90,
+        "protein": 3,
+        "carbs": 10,
+        "fats": 0,
+        "glycemicIndex": 33,
+        "mealTimeTags": [
+          "snack"
+        ],
+        "goalTags": [
+          "diabetes_friendly",
+          "weight_loss"
+        ],
+        "qualityFlags": [
+          "nutrition_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_garlic_pecan_green_beans",
+        "name": "Garlic-Pecan Green Beans",
+        "description": "The addition of toasted pecans gives this French way with string beans a bit of crunch and sweetness as well as a touch of the American South. Try using slender haricots verts for a different twist. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 90,
+        "protein": 3,
+        "carbs": 10,
+        "fats": 0,
+        "glycemicIndex": 33,
+        "mealType": "Snack",
+        "mealRole": "snack",
+        "cuisine": "african",
+        "prepTime": "20 min",
+        "difficulty": "easy",
+        "flexibilityScore": 4,
+        "availability": "high",
+        "dietTags": [
+          "gluten_free",
+          "low_carb",
+          "vegetarian"
+        ],
+        "suitableFor": [
+          "weight_loss",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "bean",
+          "creamy",
+          "legume",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "nuts",
+          "pepper",
+          "plant_protein",
+          "savory",
+          "vegetable"
+        ],
+        "ingredients": [
+          {
+            "name": "water"
+          },
+          {
+            "name": "fresh green beans"
+          },
+          {
+            "name": "unsalted butter"
+          },
+          {
+            "name": "minced garlic"
+          },
+          {
+            "name": "minced shallot"
+          },
+          {
+            "name": "salt"
+          },
+          {
+            "name": "ground pepper"
+          },
+          {
+            "name": "chopped pecans"
+          }
+        ],
+        "steps": [],
+        "servings": 1,
+        "isTunisian": false,
+        "sourceMealTimeTags": [
+          "snack"
+        ],
+        "sourceGoalTags": [
+          "diabetes_friendly",
+          "weight_loss"
+        ],
+        "sourceQualityFlags": [
+          "nutrition_mismatch"
+        ],
+        "normalizationWarnings": [
+          "source_nutrition_mismatch"
+        ]
+      }
+    },
+    {
+      "outcome": "review",
+      "before": {
+        "id": "ew_one_pot_spaghetti_with_meat",
+        "name": "One-Pot Spaghetti with Meat Sauce",
+        "calories": 660,
+        "protein": 38,
+        "carbs": 78,
+        "fats": 0,
+        "glycemicIndex": 57,
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "goalTags": [
+          "high_protein",
+          "muscle_gain"
+        ],
+        "qualityFlags": [
+          "nutrition_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_one_pot_spaghetti_with_meat",
+        "name": "One-Pot Spaghetti with Meat Sauce",
+        "description": "The whole family is sure to love this one-pot spaghetti recipe! The sausage, chicken broth and white wine impart slow-cooked flavors in this quick-cooking ragu. As the pasta sauce thickens, you'll want to scrape the bottom of the pot to prevent the sauce and pasta from sticking and to help the pasta cook evenly.",
+        "calories": 660,
+        "protein": 38,
+        "carbs": 78,
+        "fats": 0,
+        "glycemicIndex": 57,
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "cuisine": "american",
+        "prepTime": "45 min",
+        "difficulty": "hard",
+        "flexibilityScore": 1,
+        "availability": "low",
+        "dietTags": [
+          "dairy_free",
+          "high_protein",
+          "omnivore"
+        ],
+        "suitableFor": [
+          "muscle_gain"
+        ],
+        "tags": [
+          "american",
+          "beef",
+          "chicken",
+          "grain",
+          "high_calorie",
+          "high_carb",
+          "high_protein",
+          "low_fat",
+          "meat",
+          "pasta",
+          "pepper",
+          "sauce",
+          "savory",
+          "spice",
+          "tomato",
+          "turkey",
+          "vegetable"
+        ],
+        "ingredients": [
+          {
+            "name": "extra virgin olive oil"
+          },
+          {
+            "name": "lean ground beef"
+          },
+          {
+            "name": "sweet"
+          },
+          {
+            "name": "hot italian style turkey sausage 2 links"
+          },
+          {
+            "name": "finely chopped yellow onion"
+          },
+          {
+            "name": "finely chopped carrot"
+          },
+          {
+            "name": "garlic"
+          },
+          {
+            "name": "dried italian seasoning"
+          },
+          {
+            "name": "dry white wine"
+          },
+          {
+            "name": "no salt added crushed tomatoes with basil and herbs"
+          },
+          {
+            "name": "whole wheat spaghetti"
+          },
+          {
+            "name": "unsalted chicken broth"
+          },
+          {
+            "name": "water"
+          },
+          {
+            "name": "loosely packed fresh basil leaves"
+          },
+          {
+            "name": "ground pepper"
+          },
+          {
+            "name": "salt"
+          }
+        ],
+        "steps": [],
+        "servings": 1,
+        "isTunisian": false,
+        "sourceMealTimeTags": [
+          "dinner"
+        ],
+        "sourceGoalTags": [
+          "high_protein",
+          "muscle_gain"
+        ],
+        "sourceQualityFlags": [
+          "nutrition_mismatch"
+        ],
+        "normalizationWarnings": [
+          "source_nutrition_mismatch"
+        ],
+        "reviewReasons": [
+          "zero_fat_high_calories"
+        ]
+      },
+      "reviewReasons": [
+        "zero_fat_high_calories"
+      ]
+    },
+    {
+      "outcome": "main",
+      "before": {
+        "id": "ew_herbed_chicken_thighs",
+        "name": "Herbed Chicken Thighs",
+        "calories": 242,
+        "protein": 29,
+        "carbs": 1,
+        "fats": 0,
+        "glycemicIndex": 42,
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "goalTags": [
+          "diabetes_friendly",
+          "high_protein",
+          "muscle_gain",
+          "weight_loss"
+        ],
+        "qualityFlags": [
+          "nutrition_mismatch",
+          "diabetes_label_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_herbed_chicken_thighs",
+        "name": "Herbed Chicken Thighs",
+        "description": "Whether it's fried, boiled, roasted, baked or sautéed, chicken is eaten throughout Africa and the diaspora. In this recipe, chicken thighs are marinated in lemon juice and olive oil before being coated in herbs and broiled. The herbs will take on a slightly blackened color, so don't fret about the appearance. This recipe is perfect for a Kwanzaa celebration",
+        "calories": 242,
+        "protein": 29,
+        "carbs": 1,
+        "fats": 0,
+        "glycemicIndex": 42,
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "cuisine": "african",
+        "prepTime": "1 hr 40 min",
+        "difficulty": "hard",
+        "flexibilityScore": 2,
+        "availability": "low",
+        "dietTags": [
+          "dairy_free",
+          "gluten_free",
+          "high_protein",
+          "low_carb",
+          "omnivore"
+        ],
+        "suitableFor": [
+          "weight_loss",
+          "muscle_gain",
+          "diabetic"
+        ],
+        "tags": [
+          "african",
+          "chicken",
+          "drink",
+          "fruit",
+          "high_protein",
+          "low_calorie",
+          "low_carb",
+          "low_fat",
+          "low_gi",
+          "meat",
+          "pepper",
+          "savory",
+          "tangy",
+          "vegetable"
+        ],
+        "ingredients": [
+          {
+            "name": "lemon juice"
+          },
+          {
+            "name": "extra virgin olive oil"
+          },
+          {
+            "name": "dried thyme"
+          },
+          {
+            "name": "herbes de provence"
+          },
+          {
+            "name": "bone in"
+          },
+          {
+            "name": "salt"
+          },
+          {
+            "name": "ground pepper"
+          }
+        ],
+        "steps": [],
+        "servings": 1,
+        "isTunisian": false,
+        "sourceMealTimeTags": [
+          "dinner"
+        ],
+        "sourceGoalTags": [
+          "diabetes_friendly",
+          "high_protein",
+          "muscle_gain",
+          "weight_loss"
+        ],
+        "sourceQualityFlags": [
+          "nutrition_mismatch",
+          "diabetes_label_mismatch"
+        ],
+        "normalizationWarnings": [
+          "source_nutrition_mismatch",
+          "source_diabetes_label_mismatch"
+        ]
+      }
+    },
+    {
+      "outcome": "review",
+      "before": {
+        "id": "ew_one_pot_beef_stroganoff",
+        "name": "One-Pot Beef Stroganoff",
+        "calories": 563,
+        "protein": 29,
+        "carbs": 51,
+        "fats": 0,
+        "glycemicIndex": 61,
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "goalTags": [
+          "balanced",
+          "high_protein",
+          "muscle_gain"
+        ],
+        "qualityFlags": [
+          "nutrition_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_one_pot_beef_stroganoff",
+        "name": "One-Pot Beef Stroganoff",
+        "description": "This one-pot beef stroganoff recipe cuts down on dishes, but not on flavor! Mixed mushrooms and sirloin steak layer on the umami flavors, while sour cream with a hint of Dijon mustard carries the sauce. Coating the steak in baking soda before cooking helps to tenderize it, but you can skip this step to speed things up if needed.",
+        "calories": 563,
+        "protein": 29,
+        "carbs": 51,
+        "fats": 0,
+        "glycemicIndex": 61,
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "cuisine": "eastern_european",
+        "prepTime": "55 min",
+        "difficulty": "hard",
+        "flexibilityScore": 1,
+        "availability": "low",
+        "dietTags": [
+          "high_protein",
+          "omnivore"
+        ],
+        "suitableFor": [
+          "muscle_gain",
+          "balanced"
+        ],
+        "tags": [
+          "beef",
+          "creamy",
+          "eastern_european",
+          "egg",
+          "eggs",
+          "grain",
+          "high_calorie",
+          "high_protein",
+          "low_fat",
+          "meat",
+          "mushroom",
+          "pasta",
+          "pepper",
+          "sauce",
+          "savory",
+          "tangy",
+          "vegetable"
+        ],
+        "ingredients": [
+          {
+            "name": "sirloin steak"
+          },
+          {
+            "name": "baking soda"
+          },
+          {
+            "name": "extra virgin olive oil"
+          },
+          {
+            "name": "thinly sliced yellow onion"
+          },
+          {
+            "name": "sliced fresh mixed wild mushrooms such as cremini"
+          },
+          {
+            "name": "minced garlic"
+          },
+          {
+            "name": "egg noodles"
+          },
+          {
+            "name": "unsalted beef broth"
+          },
+          {
+            "name": "dijon mustard"
+          },
+          {
+            "name": "ground pepper"
+          },
+          {
+            "name": "salt"
+          },
+          {
+            "name": "sour cream"
+          },
+          {
+            "name": "chopped fresh flat leaf parsley"
+          },
+          {
+            "name": "chopped fresh chives"
+          }
+        ],
+        "steps": [],
+        "servings": 1,
+        "isTunisian": false,
+        "sourceMealTimeTags": [
+          "dinner"
+        ],
+        "sourceGoalTags": [
+          "balanced",
+          "high_protein",
+          "muscle_gain"
+        ],
+        "sourceQualityFlags": [
+          "nutrition_mismatch"
+        ],
+        "normalizationWarnings": [
+          "source_nutrition_mismatch"
+        ],
+        "reviewReasons": [
+          "zero_fat_high_calories"
+        ]
+      },
+      "reviewReasons": [
+        "zero_fat_high_calories"
+      ]
+    },
+    {
+      "outcome": "main",
+      "before": {
+        "id": "ew_rhubarb_bread",
+        "name": "Rhubarb Bread",
+        "calories": 246,
+        "protein": 5,
+        "carbs": 32,
+        "fats": 0,
+        "glycemicIndex": 59,
+        "mealTimeTags": [
+          "dinner"
+        ],
+        "goalTags": [
+          "weight_loss"
+        ],
+        "qualityFlags": [
+          "nutrition_mismatch",
+          "diabetes_label_mismatch"
+        ]
+      },
+      "after": {
+        "id": "ew_rhubarb_bread",
+        "name": "Rhubarb Bread",
+        "description": "This rhubarb bread has a lovely nutty flavor from the buckwheat flour which works beautifully with the tang from the rhubarb and Greek yogurt. The olive oil complements the buckwheat perfectly with earthy flavor. Crunchy bits of turbinado sugar on top add an extra hint of sweetness.",
+        "calories": 246,
+        "protein": 5,
+        "carbs": 32,
+        "fats": 0,
+        "glycemicIndex": 59,
+        "mealType": "Dinner",
+        "mealRole": "main",
+        "cuisine": "greek",
+        "prepTime": "2 hr 25 min",
+        "difficulty": "hard",
+        "flexibilityScore": 1,
+        "availability": "low",
+        "dietTags": [
+          "vegetarian"
+        ],
+        "suitableFor": [
+          "weight_loss"
+        ],
+        "tags": [
+          "creamy",
+          "egg",
+          "eggs",
+          "fruit",
+          "grain",
+          "greek",
+          "low_calorie",
+          "low_fat",
+          "spice",
+          "sweet",
+          "tangy",
+          "yogurt"
+        ],
+        "ingredients": [
+          {
+            "name": "all purpose flour"
+          },
+          {
+            "name": "buckwheat flour"
+          },
+          {
+            "name": "baking powder"
+          },
+          {
+            "name": "ground cardamom"
+          },
+          {
+            "name": "baking soda"
+          },
+          {
+            "name": "salt"
+          },
+          {
+            "name": "packed light brown sugar"
+          },
+          {
+            "name": "plain whole milk strained yogurt"
+          },
+          {
+            "name": "skyr"
+          },
+          {
+            "name": "extra virgin olive oil"
+          },
+          {
+            "name": "grated lemon zest"
+          },
+          {
+            "name": "eggs"
+          },
+          {
+            "name": "fresh"
+          },
+          {
+            "name": "thawed frozen rhubarb slices 1 4 inch"
+          },
+          {
+            "name": "turbinado sugar"
+          }
+        ],
+        "steps": [],
+        "servings": 1,
+        "isTunisian": false,
+        "sourceMealTimeTags": [
+          "dinner"
+        ],
+        "sourceGoalTags": [
+          "weight_loss"
+        ],
+        "sourceQualityFlags": [
+          "nutrition_mismatch",
+          "diabetes_label_mismatch"
+        ],
+        "normalizationWarnings": [
+          "source_nutrition_mismatch",
+          "source_diabetes_label_mismatch"
+        ]
+      }
+    }
+  ]
+}

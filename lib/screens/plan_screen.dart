@@ -481,31 +481,31 @@ class _PlanScreenState extends State<PlanScreen> {
     switch (mealType) {
       case 'breakfast':
         return (
-          bg: const Color(0xFFFFF7ED),
-          accent: const Color(0xFFC2410C),
-          border: const Color(0xFFFED7AA),
+          bg: AppColors.amberSoft,
+          accent: AppColors.amberDark,
+          border: AppColors.amber,
           emoji: '🍳',
         );
       case 'lunch':
         return (
-          bg: const Color(0xFFF0FDF4),
-          accent: const Color(0xFF15803D),
-          border: const Color(0xFFBBF7D0),
+          bg: AppColors.primarySurface,
+          accent: AppColors.primaryDark,
+          border: AppColors.primarySoft,
           emoji: '🥗',
         );
       case 'dinner':
         return (
-          bg: const Color(0xFFEFF6FF),
-          accent: const Color(0xFF1D4ED8),
-          border: const Color(0xFFBFDBFE),
+          bg: AppColors.infoSurface,
+          accent: AppColors.tealDark,
+          border: AppColors.tealLight,
           emoji: '🍽️',
         );
       case 'snack':
       default:
         return (
-          bg: const Color(0xFFFAF5FF),
-          accent: const Color(0xFF6B21A8),
-          border: const Color(0xFFE9D5FF),
+          bg: AppColors.sageSoft,
+          accent: AppColors.sageDark,
+          border: AppColors.sage,
           emoji: '🍎',
         );
     }
@@ -694,7 +694,7 @@ class _PlanScreenState extends State<PlanScreen> {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF3E0),
+                    color: AppColors.amberSoft,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -702,7 +702,7 @@ class _PlanScreenState extends State<PlanScreen> {
                     style: GoogleFonts.inter(
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
-                      color: const Color(0xFFE65100),
+                      color: AppColors.amberDark,
                       letterSpacing: 0.4,
                     ),
                   ),
@@ -741,14 +741,14 @@ class _PlanScreenState extends State<PlanScreen> {
                 if (meal['cuisine'] == 'tunisian')
                   _tagPill(
                     '🇹🇳 Tunisian',
-                    bg: const Color(0xFFFEE2E2),
-                    fg: const Color(0xFF991B1B),
+                    bg: AppColors.primarySurface,
+                    fg: AppColors.primaryDark,
                   ),
                 if (meal['glycemicIndex'] != null)
                   _tagPill(
                     'GI:${meal['glycemicIndex']}',
-                    bg: const Color(0xFFDBEAFE),
-                    fg: const Color(0xFF1E40AF),
+                    bg: AppColors.infoSurface,
+                    fg: AppColors.tealDark,
                   ),
               ],
             ),
@@ -876,18 +876,14 @@ class _PlanScreenState extends State<PlanScreen> {
               _totalStat(
                 '${total['protein'] ?? 0}g',
                 'protein',
-                const Color(0xFFEF4444),
+                AppColors.macroProtein,
               ),
               _totalStat(
                 '${total['carbs'] ?? 0}g',
                 'carbs',
-                const Color(0xFF3B82F6),
+                AppColors.macroCarbs,
               ),
-              _totalStat(
-                '${total['fats'] ?? 0}g',
-                'fats',
-                const Color(0xFFF59E0B),
-              ),
+              _totalStat('${total['fats'] ?? 0}g', 'fats', AppColors.macroFats),
             ],
           ),
         ],
@@ -920,18 +916,23 @@ class _PlanScreenState extends State<PlanScreen> {
 
   Future<void> _markEaten(String mealType) async {
     try {
+      // Read the meal name up front so the snackbar can show it even after the
+      // orchestrator round-trip (which also flips `confirmed` in the plan doc).
       final planDoc = await _db.collection('meal_plan').doc(_uid).get();
       if (!planDoc.exists) return;
       final days = Map<String, dynamic>.from(planDoc.data()?['days'] ?? {});
       final day = Map<String, dynamic>.from(days['$_selectedDay'] ?? {});
       final meal = Map<String, dynamic>.from(day[mealType] ?? {});
       if (meal.isEmpty) return;
+      final mealName = (meal['name'] as String?) ?? 'Meal';
 
-      meal['confirmed'] = true;
-      day[mealType] = meal;
-      days['$_selectedDay'] = day;
-
-      await _db.collection('meal_plan').doc(_uid).update({'days': days});
+      // Delegate to the orchestrator so the meal also lands in the journal,
+      // FoodScoringService sees it, and an agent_actions log entry is written.
+      await _orchestrator.confirmPlannedMeal(
+        uid: _uid,
+        dayNumber: _selectedDay,
+        mealType: mealType,
+      );
 
       if (!mounted) return;
       await _loadAll();
@@ -940,7 +941,7 @@ class _PlanScreenState extends State<PlanScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '✓ ${meal['name']} marked as eaten',
+            '✓ $mealName marked as eaten',
             style: GoogleFonts.inter(fontWeight: FontWeight.w600),
           ),
           backgroundColor: AppColors.primary,
@@ -1204,7 +1205,7 @@ class _SwapSheetState extends State<_SwapSheet> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFEE2E2),
+                    color: AppColors.primarySurface,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -1212,7 +1213,7 @@ class _SwapSheetState extends State<_SwapSheet> {
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF991B1B),
+                      color: AppColors.primaryDark,
                     ),
                   ),
                 ),

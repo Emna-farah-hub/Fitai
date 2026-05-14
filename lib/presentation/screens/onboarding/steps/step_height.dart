@@ -69,8 +69,12 @@ class _StepHeightState extends State<StepHeight> {
               SliderTheme(
                 data: SliderThemeData(
                   trackHeight: 6,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 14),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 14,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 24,
+                  ),
                   activeTrackColor: AppColors.primary,
                   inactiveTrackColor: AppColors.border,
                   thumbColor: AppColors.primary,
@@ -90,10 +94,8 @@ class _StepHeightState extends State<StepHeight> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(_useCm ? '100 cm' : "3'3\"",
-                      style: _rangeStyle()),
-                  Text(_useCm ? '230 cm' : "7'6\"",
-                      style: _rangeStyle()),
+                  Text(_useCm ? '100 cm' : "3'3\"", style: _rangeStyle()),
+                  Text(_useCm ? '230 cm' : "7'6\"", style: _rangeStyle()),
                 ],
               ),
             ],
@@ -103,10 +105,8 @@ class _StepHeightState extends State<StepHeight> {
     );
   }
 
-  TextStyle _rangeStyle() => GoogleFonts.inter(
-        fontSize: 12,
-        color: AppColors.textMuted,
-      );
+  TextStyle _rangeStyle() =>
+      GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted);
 }
 
 class _UnitToggle extends StatelessWidget {
@@ -138,7 +138,11 @@ class _Tab extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _Tab({required this.label, required this.selected, required this.onTap});
+  const _Tab({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

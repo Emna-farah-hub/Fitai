@@ -1,0 +1,1363 @@
+[
+  {
+    "id": "ew_whipped_hot_chocolate",
+    "name": "Whipped Hot Chocolate",
+    "description": "Any kind of milk will work in this fun take on hot chocolate that's perfect for special occasions. For other flavor variations, try adding a drop of peppermint extract or a pinch of pumpkin spice or chili powder, depending on the season. You can even swap out half of the milk for coffee for a flavorful twist.",
+    "calories": 235,
+    "protein": 6,
+    "carbs": 23,
+    "fats": 15,
+    "glycemicIndex": 68,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "gluten_free",
+      "vegetarian"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "creamy",
+      "high_fat",
+      "hot",
+      "no_cook",
+      "quick_prep",
+      "spicy",
+      "sweet"
+    ],
+    "ingredients": [
+      {
+        "name": "unsweetened cocoa powder"
+      },
+      {
+        "name": "granulated sugar"
+      },
+      {
+        "name": "whipping cream"
+      },
+      {
+        "name": "vanilla extract"
+      },
+      {
+        "name": "milk"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_jalapeno_margaritas",
+    "name": "Jalapeño Margaritas",
+    "description": "This reduced-sugar jalapeñ; o margarita is a drink with a kick! We sweeten this zippy cocktail with fresh orange juice and just a touch of simple syrup steeped with slices of jalapeñ\"o. If you like the heat, add more chile slices to the sugar mixture.",
+    "calories": 188.2,
+    "protein": 0.2,
+    "carbs": 15.5,
+    "fats": 0,
+    "glycemicIndex": 67,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "1 hr 30 min",
+    "difficulty": "hard",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_carb",
+      "low_fat",
+      "needs_cooking",
+      "spicy",
+      "sweet",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "granulated sugar"
+      },
+      {
+        "name": "water"
+      },
+      {
+        "name": "jalape o pepper"
+      },
+      {
+        "name": "blanco tequila"
+      },
+      {
+        "name": "lime juice"
+      },
+      {
+        "name": "orange juice"
+      },
+      {
+        "name": "ice cubes"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_afghan_spiced_tea_kahwah",
+    "name": "Afghan Spiced Tea (Kahwah)",
+    "description": "Afghans sip this spiced tea throughout the day.",
+    "calories": 2.6,
+    "protein": 0.1,
+    "carbs": 0.6,
+    "fats": 0.1,
+    "glycemicIndex": 50,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "sweet"
+    ],
+    "ingredients": [
+      {
+        "name": "loose black"
+      },
+      {
+        "name": "green tea"
+      },
+      {
+        "name": "ground cardamom"
+      },
+      {
+        "name": "saffron threads"
+      },
+      {
+        "name": "boiling water"
+      },
+      {
+        "name": "sugar"
+      },
+      {
+        "name": "honey"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_kentucky_mule",
+    "name": "Kentucky Mule",
+    "description": "This rendition of a Moscow Mule is made with bourbon instead of vodka and infused with fresh ginger syrup. Using fresh ingredients helps create a healthy cocktail that people will love. Select a sharp, effervescent and not-too-sweet ginger beer, such as Fever Tree.",
+    "calories": 161.1,
+    "protein": 0.2,
+    "carbs": 17.5,
+    "fats": 0,
+    "glycemicIndex": 67,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "1 hr 15 min",
+    "difficulty": "hard",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "dairy_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "needs_cooking",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "granulated sugar"
+      },
+      {
+        "name": "water"
+      },
+      {
+        "name": "chopped peeled fresh ginger"
+      },
+      {
+        "name": "leaves fresh mint"
+      },
+      {
+        "name": "fluid ounces bourbon"
+      },
+      {
+        "name": "lime juice"
+      },
+      {
+        "name": "ginger beer"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_prosecco_kombucha_cocktail",
+    "name": "Prosecco Kombucha Cocktail",
+    "description": "This easy and refreshing big-batch drink is perfect for celebrations year round!",
+    "calories": 112.2,
+    "protein": 0.3,
+    "carbs": 5.1,
+    "fats": 0,
+    "glycemicIndex": 40,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "extra dry prosecco"
+      },
+      {
+        "name": "berry and citrus kombucha"
+      },
+      {
+        "name": "strawberry lemonade"
+      },
+      {
+        "name": "fluid ounces gin"
+      },
+      {
+        "name": "lemon slices"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_winter_honey_whiskey_cockta",
+    "name": "Winter Honey Whiskey Cocktail",
+    "description": "Stay a little warmer this winter with this riff on a classic hot toddy. Ginger gives this healthy cocktail a pinch of spice.",
+    "calories": 149.9,
+    "protein": 0.2,
+    "carbs": 14.2,
+    "fats": 0.1,
+    "glycemicIndex": 57,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "10 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "hot",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "no_cook",
+      "quick_prep",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "inch piece fresh ginger"
+      },
+      {
+        "name": "lemon"
+      },
+      {
+        "name": "honey"
+      },
+      {
+        "name": "bourbon"
+      },
+      {
+        "name": "other whiskey"
+      },
+      {
+        "name": "dropperful scant 1 4 teaspoon propolis tincture"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_festive_brunch_mezcal_cockt",
+    "name": "Festive Brunch Mezcal Cocktail",
+    "description": "Carrot juice adds a sweet and earthy counterpoint to the smoky mezcal.",
+    "calories": 153.2,
+    "protein": 0.6,
+    "carbs": 13.5,
+    "fats": 0.1,
+    "glycemicIndex": 52,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "20 min",
+    "difficulty": "easy",
+    "flexibilityScore": 3,
+    "availability": "medium",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "needs_cooking",
+      "quick_prep",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "pineapple juice"
+      },
+      {
+        "name": "mezcal"
+      },
+      {
+        "name": "tequila"
+      },
+      {
+        "name": "carrot juice"
+      },
+      {
+        "name": "lime juice"
+      },
+      {
+        "name": "ice"
+      },
+      {
+        "name": "angostura bitters"
+      },
+      {
+        "name": "wedge fresh pineapple"
+      },
+      {
+        "name": "lime"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_celebration_champagne_spark",
+    "name": "Celebration Champagne Sparkler",
+    "description": "Sure, the lemon/maple/cayenne combo may evoke the Master Cleanse detox, but they just taste great together, especially in a glass of bubbles.",
+    "calories": 104.3,
+    "protein": 0.4,
+    "carbs": 4.2,
+    "fats": 0,
+    "glycemicIndex": 55,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "2 hr",
+    "difficulty": "hard",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "needs_cooking",
+      "spicy",
+      "sweet",
+      "tangy",
+      "vegetable"
+    ],
+    "ingredients": [
+      {
+        "name": "pure maple syrup"
+      },
+      {
+        "name": "lemon juice"
+      },
+      {
+        "name": "cayenne pepper"
+      },
+      {
+        "name": "chilled dry sparkling wine"
+      },
+      {
+        "name": "prosecco"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_solstice_holiday_sangria",
+    "name": "Solstice Holiday Sangria",
+    "description": "Kombucha gives a nice fizz to this holiday sangria. Bonus: It's full of probiotic bacteria that may help maintain a healthy gut.",
+    "calories": 201.5,
+    "protein": 0.4,
+    "carbs": 16.8,
+    "fats": 0.1,
+    "glycemicIndex": 62,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "4 hr",
+    "difficulty": "hard",
+    "flexibilityScore": 1,
+    "availability": "low",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_carb",
+      "low_fat",
+      "needs_cooking",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "spanish dry red wine"
+      },
+      {
+        "name": "blood orange juice"
+      },
+      {
+        "name": "brandy"
+      },
+      {
+        "name": "coconut sugar"
+      },
+      {
+        "name": "oranges"
+      },
+      {
+        "name": "ginger kombucha"
+      },
+      {
+        "name": "ice"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_pumpkin_spice_hot_toddy",
+    "name": "Pumpkin-Spice Hot Toddy",
+    "description": "Flavored decaf tea adds a seasonal twist to a traditional hot toddy recipe. You can use any flavor of tea for this easy cocktail, but we love the comforting notes of pumpkin-spice in the fall and winter.",
+    "calories": 97.8,
+    "protein": 0.1,
+    "carbs": 9.2,
+    "fats": 0,
+    "glycemicIndex": 50,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegetarian"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "hot",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "brewed decaf pumpkin spice tea"
+      },
+      {
+        "name": "other decaf"
+      },
+      {
+        "name": "herbal tea"
+      },
+      {
+        "name": "bourbon"
+      },
+      {
+        "name": "honey"
+      },
+      {
+        "name": "lemon juice"
+      },
+      {
+        "name": "cinnamon stick"
+      },
+      {
+        "name": "strip lemon zest"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_cranberry_grand_marnier_spa",
+    "name": "Cranberry Grand Marnier Sparkler",
+    "description": "This colorful cocktail gives a new way to use Grand Marnier liqueur that makes a festive option for holiday toasts and special occasions. Frozen cranberries make a playful garnish and also do double duty by keeping drinks cold.",
+    "calories": 134.6,
+    "protein": 0.4,
+    "carbs": 9.5,
+    "fats": 0,
+    "glycemicIndex": 45,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "cold",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "sparkling wine"
+      },
+      {
+        "name": "champagne"
+      },
+      {
+        "name": "grand marnier"
+      },
+      {
+        "name": "cranberry juice cocktail"
+      },
+      {
+        "name": "fresh cranberries"
+      },
+      {
+        "name": "frozen cranberries"
+      },
+      {
+        "name": "strip orange zest"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_witches_brew_skinny_margari",
+    "name": "Witches' Brew Skinny Margarita",
+    "description": "This striking red and black margarita is the perfect Halloween party cocktail. Hibiscus tea and pomegranate juice give the citrusy cocktail its red color, and rimming the glass with black lava salt makes it just a little creepy. Use regular kosher salt in place of the black lava salt (or skip the salt altogether) for a cocktail that works any time of year. We love the tartness of this margarita, but feel free to add a little agave nectar if you prefer a sweeter cocktail.",
+    "calories": 111.6,
+    "protein": 0.3,
+    "carbs": 6.8,
+    "fats": 0.1,
+    "glycemicIndex": 45,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "15 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "medium",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "no_cook",
+      "quick_prep",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "hibiscus tea bags"
+      },
+      {
+        "name": "blanco tequila"
+      },
+      {
+        "name": "unsweetened pomegranate juice"
+      },
+      {
+        "name": "freshly squeezed orange juice about 3 oranges"
+      },
+      {
+        "name": "freshly squeezed lime juice about 5 limes"
+      },
+      {
+        "name": "agave nectar"
+      },
+      {
+        "name": "black lava salt"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_sagey_gin_gimlet",
+    "name": "Sagey Gin Gimlet",
+    "description": "Bright and refreshing, this gin gimlet is made with sage-infused simple syrup and muddled fresh sage. This light and festive cocktail is perfect for fall gatherings, such as Thanksgiving. This recipe makes enough simple syrup for about 8 cocktails and can easily be doubled for a crowd.",
+    "calories": 160.5,
+    "protein": 0.2,
+    "carbs": 15.6,
+    "fats": 0.1,
+    "glycemicIndex": 67,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "40 min",
+    "difficulty": "medium",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "needs_cooking",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "sugar"
+      },
+      {
+        "name": "water"
+      },
+      {
+        "name": "fresh sage leaves"
+      },
+      {
+        "name": "gin"
+      },
+      {
+        "name": "sage simple syrup"
+      },
+      {
+        "name": "fresh lemon juice"
+      },
+      {
+        "name": "ice"
+      },
+      {
+        "name": "lemon"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_grapefruit_elderflower_spri",
+    "name": "Grapefruit Elderflower Spritz",
+    "description": "The combination of gin, grapefruit and elderflower seems to be a new, trending combination in cocktails. Our version is super straightforward, but the twist is that we call for spiked grapefruit-flavored seltzer. We think it makes it that much more delicious and refreshing.",
+    "calories": 189,
+    "protein": 0,
+    "carbs": 18,
+    "fats": 0,
+    "glycemicIndex": 62,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "light",
+      "low_carb",
+      "low_fat",
+      "no_cook",
+      "quick_prep",
+      "sweet"
+    ],
+    "ingredients": [
+      {
+        "name": "ice"
+      },
+      {
+        "name": "grapefruit juice"
+      },
+      {
+        "name": "gin"
+      },
+      {
+        "name": "elderflower liqueur such as st germain"
+      },
+      {
+        "name": "simple syrup"
+      },
+      {
+        "name": "spiked grapefruit seltzer"
+      },
+      {
+        "name": "grapefruit peel strips"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_spiked_seltzer_mojito",
+    "name": "Spiked Seltzer Mojito",
+    "description": "There are no surprises here--this is a classic mojito: minty, fresh, limey and spiked with rum! Turbinado sugar adds depth to the plain spiked seltzer so it's worth adding it to your pantry.",
+    "calories": 201,
+    "protein": 0,
+    "carbs": 18,
+    "fats": 0,
+    "glycemicIndex": 62,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "5 min",
+    "difficulty": "easy",
+    "flexibilityScore": 1,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_carb",
+      "low_fat",
+      "no_cook",
+      "quick_prep",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "fresh mint leaves"
+      },
+      {
+        "name": "lime juice from 1 lime"
+      },
+      {
+        "name": "turbinado sugar"
+      },
+      {
+        "name": "limeade such as simply limeade"
+      },
+      {
+        "name": "white rum"
+      },
+      {
+        "name": "plain spiked seltzer"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_tequila_citrus_raspberry_sp",
+    "name": "Tequila, Citrus & Raspberry Spritz",
+    "description": "This spiked seltzer cocktail is a marriage between a Tequila Sunrise and a Sex on the Beach cocktail. The clementine-hibiscus seltzer really makes this sweet, but not syrupy, cocktail stand out! Serve this chilled or over ice.",
+    "calories": 197,
+    "protein": 1,
+    "carbs": 19,
+    "fats": 0,
+    "glycemicIndex": 57,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "15 min",
+    "difficulty": "easy",
+    "flexibilityScore": 4,
+    "availability": "high",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "cold",
+      "fruit",
+      "light",
+      "low_carb",
+      "low_fat",
+      "no_cook",
+      "quick_prep",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "container fresh raspberries"
+      },
+      {
+        "name": "grenadine"
+      },
+      {
+        "name": "chilled clementine hibiscus spiked seltzer such as bon and viv"
+      },
+      {
+        "name": "orange juice"
+      },
+      {
+        "name": "silver tequila"
+      },
+      {
+        "name": "maraschino cherries"
+      },
+      {
+        "name": "orange wedges"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  },
+  {
+    "id": "ew_blackberry_rosemary_vodka_s",
+    "name": "Blackberry-Rosemary Vodka & Soda",
+    "description": "Blackberries give this vodka cocktail its gorgeous hue and jammy flavor. Use the leftover simple syrup to mix up drinks for friends or skip the vodka for a mocktail.",
+    "calories": 125.3,
+    "protein": 0.2,
+    "carbs": 7.1,
+    "fats": 0.1,
+    "glycemicIndex": 55,
+    "mealType": "Snack",
+    "mealRole": "snack",
+    "cuisine": "american",
+    "prepTime": "45 min",
+    "difficulty": "medium",
+    "flexibilityScore": 1,
+    "availability": "medium",
+    "dietTags": [
+      "dairy_free",
+      "gluten_free",
+      "low_carb",
+      "vegan"
+    ],
+    "suitableFor": [],
+    "tags": [
+      "american",
+      "fruit",
+      "light",
+      "low_calorie",
+      "low_carb",
+      "low_fat",
+      "low_gi",
+      "needs_cooking",
+      "sweet",
+      "tangy"
+    ],
+    "ingredients": [
+      {
+        "name": "blackberries"
+      },
+      {
+        "name": "frozen"
+      },
+      {
+        "name": "fresh rosemary"
+      },
+      {
+        "name": "sugar"
+      },
+      {
+        "name": "water"
+      },
+      {
+        "name": "vodka"
+      },
+      {
+        "name": "lime juice"
+      },
+      {
+        "name": "ice cubes"
+      },
+      {
+        "name": "seltzer"
+      }
+    ],
+    "steps": [],
+    "servings": 1,
+    "isTunisian": false,
+    "sourceMealTimeTags": [
+      "snack"
+    ],
+    "sourceGoalTags": [
+      "diabetes_friendly",
+      "weight_loss"
+    ],
+    "sourceQualityFlags": [
+      "nutrition_mismatch",
+      "diabetes_label_mismatch"
+    ],
+    "normalizationWarnings": [
+      "source_nutrition_mismatch",
+      "source_diabetes_label_mismatch"
+    ],
+    "productionDecision": "excluded",
+    "productionReasons": [
+      "beverage_alcohol_excluded"
+    ]
+  }
+]

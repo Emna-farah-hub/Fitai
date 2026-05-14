@@ -67,8 +67,9 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
       setState(() {
         _weekly = weekly;
         _plan = planSnap.exists ? planSnap.data() : null;
-        _agentActions =
-            actionsSnap.docs.map((d) => d.data()).toList(growable: false);
+        _agentActions = actionsSnap.docs
+            .map((d) => d.data())
+            .toList(growable: false);
         _tagScores = tagScores;
         _user = userSnap.exists ? userSnap.data() : null;
         _isLoading = false;
@@ -81,7 +82,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
   // ─── Plan-derived stats ────────────────────────────────
 
   ({int total, int confirmed, int swapped, Map<String, int> confirmedByType})
-      _planStats() {
+  _planStats() {
     final counts = {'breakfast': 0, 'lunch': 0, 'dinner': 0, 'snack': 0};
     int total = 0, confirmed = 0, swapped = 0;
     final days = _plan?['days'] as Map<String, dynamic>? ?? {};
@@ -109,19 +110,25 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
   // ─── Tag helpers ───────────────────────────────────────
 
   List<String> _topTags({required bool liked}) {
-    final entries = _tagScores.entries
-        .where((e) => liked ? e.value > 0 : e.value < 0)
-        .toList()
-      ..sort((a, b) =>
-          liked ? b.value.compareTo(a.value) : a.value.compareTo(b.value));
+    final entries =
+        _tagScores.entries
+            .where((e) => liked ? e.value > 0 : e.value < 0)
+            .toList()
+          ..sort(
+            (a, b) =>
+                liked ? b.value.compareTo(a.value) : a.value.compareTo(b.value),
+          );
     return entries.take(3).map((e) => e.key).toList();
   }
 
   String _formatTag(String raw) {
     final parts = raw.replaceAll('_', ' ').split(' ');
     return parts
-        .map((p) =>
-            p.isEmpty ? p : '${p[0].toUpperCase()}${p.substring(1).toLowerCase()}')
+        .map(
+          (p) => p.isEmpty
+              ? p
+              : '${p[0].toUpperCase()}${p.substring(1).toLowerCase()}',
+        )
         .join(' ');
   }
 
@@ -136,9 +143,8 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
     if (ts == null) return '';
     final dt = ts.toDate();
     final now = DateTime.now();
-    final isToday = dt.year == now.year &&
-        dt.month == now.month &&
-        dt.day == now.day;
+    final isToday =
+        dt.year == now.year && dt.month == now.month && dt.day == now.day;
     if (isToday) {
       return DateFormat('h:mm a').format(dt);
     }
@@ -154,16 +160,14 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: AppColors.backgroundAlt,
       body: SafeArea(
         bottom: false,
         child: Column(
           children: [
             _buildAppBar(),
             Expanded(
-              child: _isLoading
-                  ? const SkeletonInsightsPage()
-                  : _buildBody(),
+              child: _isLoading ? const SkeletonInsightsPage() : _buildBody(),
             ),
           ],
         ),
@@ -186,8 +190,11 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border, width: 0.5),
               ),
-              child: const Icon(Icons.arrow_back_ios_new,
-                  size: 16, color: AppColors.textPrimary),
+              child: const Icon(
+                Icons.arrow_back_ios_new,
+                size: 16,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
           Expanded(
@@ -227,12 +234,12 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
       padding: const EdgeInsets.only(bottom: 32),
       children: [
         _heroCard(
-          adherencePercent: adherence,
-          consistencyScore: consistencyScore,
-          daysLogged: daysLogged,
-          confirmedMeals: stats.confirmed,
-          swappedMeals: stats.swapped,
-        )
+              adherencePercent: adherence,
+              consistencyScore: consistencyScore,
+              daysLogged: daysLogged,
+              confirmedMeals: stats.confirmed,
+              swappedMeals: stats.swapped,
+            )
             .animate()
             .fadeIn(duration: 350.ms, delay: 0.ms)
             .slideY(
@@ -244,11 +251,11 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
             ),
         const SizedBox(height: 12),
         _calorieSection(
-          avgCal: avgCal,
-          currentTarget: currentTarget.toInt(),
-          originalTarget: originalTarget.toInt(),
-          adapted: calorieAdaptCount > 0,
-        )
+              avgCal: avgCal,
+              currentTarget: currentTarget.toInt(),
+              originalTarget: originalTarget.toInt(),
+              adapted: calorieAdaptCount > 0,
+            )
             .animate()
             .fadeIn(duration: 350.ms, delay: 80.ms)
             .slideY(
@@ -260,9 +267,9 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
             ),
         const SizedBox(height: 12),
         _mealPatternsSection(
-          confirmedByType: stats.confirmedByType,
-          mostSkipped: mostSkipped,
-        )
+              confirmedByType: stats.confirmedByType,
+              mostSkipped: mostSkipped,
+            )
             .animate()
             .fadeIn(duration: 350.ms, delay: 160.ms)
             .slideY(
@@ -338,8 +345,10 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.25),
                   borderRadius: BorderRadius.circular(20),
@@ -424,10 +433,10 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
     Color trendColor;
     if (avgCal < safeTarget * 0.85) {
       trendLabel = '↓ Under';
-      trendColor = const Color(0xFFF59E0B);
+      trendColor = AppColors.amber;
     } else if (avgCal > safeTarget * 1.15) {
       trendLabel = '↑ Over';
-      trendColor = const Color(0xFFEF4444);
+      trendColor = AppColors.error;
     } else {
       trendLabel = '✓ On track';
       trendColor = AppColors.primary;
@@ -453,7 +462,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                 child: _metricTile(
                   value: '$currentTarget',
                   label: 'current target',
-                  color: const Color(0xFF1D4ED8),
+                  color: AppColors.teal,
                 ),
               ),
               const SizedBox(width: 8),
@@ -477,8 +486,11 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.lightbulb_outline,
-                      color: AppColors.primary, size: 16),
+                  const Icon(
+                    Icons.lightbulb_outline,
+                    color: AppColors.primary,
+                    size: 16,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -523,10 +535,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
           const SizedBox(height: 2),
           Text(
             label,
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: AppColors.textMuted,
-            ),
+            style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -565,14 +574,17 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFBEB),
+                color: AppColors.warningSurface,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.warning_amber_rounded,
-                      color: Color(0xFFF59E0B), size: 16),
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.warning,
+                    size: 16,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -580,7 +592,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                       "next week's plan has been adjusted with quicker options",
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: const Color(0xFF92400E),
+                        color: AppColors.amberDark,
                       ),
                     ),
                   ),
@@ -602,9 +614,9 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
     if (count >= 5) {
       barColor = AppColors.primary;
     } else if (count >= 3) {
-      barColor = const Color(0xFFF59E0B);
+      barColor = AppColors.amber;
     } else {
-      barColor = const Color(0xFFEF4444);
+      barColor = AppColors.error;
     }
     final ratio = (count / 7).clamp(0.0, 1.0);
 
@@ -695,7 +707,9 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                         Container(
                           margin: const EdgeInsets.only(bottom: 6),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 6),
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primarySurface,
                             borderRadius: BorderRadius.circular(8),
@@ -703,8 +717,11 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.favorite,
-                                  color: AppColors.primary, size: 12),
+                              const Icon(
+                                Icons.favorite,
+                                color: AppColors.primary,
+                                size: 12,
+                              ),
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
@@ -741,16 +758,21 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                         Container(
                           margin: const EdgeInsets.only(bottom: 6),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 6),
+                            horizontal: 8,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFEF2F2),
+                            color: AppColors.errorSurface,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.close,
-                                  color: Color(0xFFEF4444), size: 12),
+                              const Icon(
+                                Icons.close,
+                                color: AppColors.error,
+                                size: 12,
+                              ),
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
@@ -758,7 +780,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
                                   style: GoogleFonts.inter(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF991B1B),
+                                    color: AppColors.error,
                                   ),
                                 ),
                               ),
@@ -817,8 +839,8 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
     IconData iconData;
     switch (type) {
       case 'glycemic_alert':
-        circleBg = const Color(0xFFFEF3C7);
-        iconColor = const Color(0xFFF59E0B);
+        circleBg = AppColors.warningSurface;
+        iconColor = AppColors.warning;
         iconData = Icons.warning_amber_rounded;
         break;
       case 'plan_generated':
@@ -827,13 +849,13 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
         iconData = Icons.calendar_today_rounded;
         break;
       case 'morning_briefing':
-        circleBg = const Color(0xFFEFF6FF);
-        iconColor = const Color(0xFF1D4ED8);
+        circleBg = AppColors.infoSurface;
+        iconColor = AppColors.teal;
         iconData = Icons.wb_sunny_rounded;
         break;
       case 'calorie_target_updated':
-        circleBg = const Color(0xFFF3E8FF);
-        iconColor = const Color(0xFF6B21A8);
+        circleBg = AppColors.sageSoft;
+        iconColor = AppColors.sageDark;
         iconData = Icons.tune_rounded;
         break;
       default:
@@ -854,10 +876,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
           Container(
             width: 36,
             height: 36,
-            decoration: BoxDecoration(
-              color: circleBg,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: circleBg, shape: BoxShape.circle),
             child: Icon(iconData, color: iconColor, size: 18),
           ),
           const SizedBox(width: 12),
@@ -891,10 +910,7 @@ class _WeeklyInsightsScreenState extends State<WeeklyInsightsScreen> {
           const SizedBox(width: 8),
           Text(
             _formatActionTime(ts),
-            style: GoogleFonts.inter(
-              fontSize: 11,
-              color: AppColors.textMuted,
-            ),
+            style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted),
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/onboarding_provider.dart';
 import '../../providers/user_provider.dart';
@@ -82,7 +83,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Not signed in. Please log in again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
       return;
@@ -90,8 +91,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     debugPrint('[ONBOARDING] calling saveProfile...');
     final success = await onboardingProvider.saveProfile(uid);
-    debugPrint('[ONBOARDING] saveProfile returned success=$success '
-        'error=${onboardingProvider.errorMessage}');
+    debugPrint(
+      '[ONBOARDING] saveProfile returned success=$success '
+      'error=${onboardingProvider.errorMessage}',
+    );
     if (!mounted) return;
 
     if (success) {
@@ -102,8 +105,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (!mounted) return;
 
       final fullName = onboardingProvider.name.trim();
-      final firstName =
-          fullName.isEmpty ? 'there' : fullName.split(' ').first;
+      final firstName = fullName.isEmpty ? 'there' : fullName.split(' ').first;
 
       Navigator.of(context).push(
         PageRouteBuilder(
@@ -121,14 +123,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       );
     } else {
-      debugPrint('[ONBOARDING] saveProfile FAILED: '
-          '${onboardingProvider.errorMessage}');
+      debugPrint(
+        '[ONBOARDING] saveProfile FAILED: '
+        '${onboardingProvider.errorMessage}',
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             onboardingProvider.errorMessage ?? 'Failed to save profile',
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
           duration: const Duration(seconds: 8),
         ),
       );
@@ -171,7 +175,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         // Step 10: Dietary preference
         StepDietary(onNext: _nextStep, onBack: _prevStep),
         // Step 11: Personalizing (saves profile → navigates to agent onboarding)
-        StepPersonalizing(key: _personalizingKey, onComplete: _completeOnboarding),
+        StepPersonalizing(
+          key: _personalizingKey,
+          onComplete: _completeOnboarding,
+        ),
       ],
     );
   }

@@ -61,6 +61,178 @@ class FoodScoringService {
   static const int _maxSwipeHistory = 200;
   static const double _maxScore = 15.0;
 
+  static const Map<NutritionGoalType, Map<String, double>>
+      _goalTagWeights = {
+    NutritionGoalType.weightLoss: {
+      'low_calorie': 1.0,
+      'low_gi': 0.9,
+      'low_carb': 0.7,
+      'high_protein': 0.9,
+      'high_fiber': 0.8,
+      'light': 0.8,
+      'vegetable': 0.8,
+      'plant_protein': 0.6,
+      'legume': 0.5,
+      'fish': 0.6,
+      'seafood': 0.5,
+      'chicken': 0.7,
+      'high_calorie': -1.0,
+      'high_carb': -0.9,
+      'high_gi': -1.0,
+      'high_fat': -0.8,
+      'comfort_food': -0.6,
+      'sweet': -0.8,
+      'filling': -0.4,
+      'grain': -0.4,
+      'snack': -0.3,
+    },
+    NutritionGoalType.muscleGain: {
+      'high_protein': 1.0,
+      'plant_protein': 0.7,
+      'legume': 0.5,
+      'meat': 0.6,
+      'chicken': 0.8,
+      'fish': 0.6,
+      'seafood': 0.5,
+      'eggs': 0.5,
+      'filling': 0.4,
+      'grain': 0.3,
+      'comfort_food': 0.1,
+      'low_calorie': -0.5,
+      'light': -0.4,
+      'high_gi': -0.3,
+    },
+    NutritionGoalType.diabetes: {
+      'low_gi': 1.0,
+      'high_fiber': 0.9,
+      'high_protein': 0.7,
+      'low_carb': 0.6,
+      'vegetable': 0.7,
+      'legume': 0.6,
+      'plant_protein': 0.5,
+      'light': 0.3,
+      'high_gi': -1.0,
+      'high_carb': -0.9,
+      'sweet': -0.9,
+      'comfort_food': -0.4,
+      'grain': -0.4,
+    },
+    NutritionGoalType.balanced: {
+      'high_protein': 0.5,
+      'vegetable': 0.6,
+      'low_gi': 0.5,
+      'high_fiber': 0.5,
+      'light': 0.3,
+      'high_calorie': -0.7,
+      'high_gi': -0.7,
+      'high_fat': -0.5,
+      'sweet': -0.4,
+    },
+  };
+
+  static const Map<NutritionGoalType, Map<String, double>>
+      _goalIngredientWeights = {
+    NutritionGoalType.weightLoss: {
+      'chicken breast': 0.9,
+      'turkey': 0.8,
+      'salmon': 0.7,
+      'shrimp': 0.6,
+      'tuna': 0.5,
+      'eggs': 0.4,
+      'egg': 0.4,
+      'lentils': 0.5,
+      'chickpeas': 0.4,
+      'peas': 0.4,
+      'lettuce': 0.6,
+      'spinach': 0.6,
+      'broccoli': 0.6,
+      'peppers': 0.5,
+      'tomatoes': 0.5,
+      'eggplant': 0.4,
+      'zucchini': 0.4,
+      'artichoke': 0.4,
+      'sugar': -1.0,
+      'flour': -0.8,
+      'bread': -0.6,
+      'bread dough': -0.8,
+      'malsouka pastry': -0.9,
+      'spaghetti': -0.9,
+      'penne': -0.8,
+      'pasta': -0.8,
+      'rice': -0.7,
+      'couscous': -0.8,
+      'cream': -0.7,
+      'butter': -0.7,
+      'oil': -0.4,
+      'bun': -0.8,
+      'tortillas': -0.6,
+      'raisins': -0.4,
+    },
+    NutritionGoalType.muscleGain: {
+      'chicken breast': 0.9,
+      'turkey': 0.8,
+      'salmon': 0.8,
+      'ground beef': 0.7,
+      'beef': 0.7,
+      'eggs': 0.5,
+      'egg': 0.5,
+      'lentils': 0.5,
+      'chickpeas': 0.4,
+      'peas': 0.4,
+      'oats': 0.4,
+      'rice': 0.3,
+      'pasta': 0.3,
+      'spaghetti': 0.3,
+      'penne': 0.3,
+      'sugar': -0.4,
+    },
+    NutritionGoalType.diabetes: {
+      'lentils': 0.7,
+      'chickpeas': 0.6,
+      'peas': 0.5,
+      'broccoli': 0.6,
+      'spinach': 0.6,
+      'peppers': 0.5,
+      'tomatoes': 0.5,
+      'lettuce': 0.5,
+      'artichoke': 0.4,
+      'salmon': 0.4,
+      'chicken breast': 0.4,
+      'sugar': -1.0,
+      'flour': -0.7,
+      'bread': -0.6,
+      'spaghetti': -0.8,
+      'penne': -0.7,
+      'pasta': -0.7,
+      'rice': -0.7,
+      'couscous': -0.7,
+      'tortillas': -0.6,
+      'raisins': -0.5,
+    },
+    NutritionGoalType.balanced: {
+      'chicken breast': 0.4,
+      'salmon': 0.4,
+      'lentils': 0.4,
+      'chickpeas': 0.4,
+      'broccoli': 0.4,
+      'spinach': 0.4,
+      'peppers': 0.3,
+      'tomatoes': 0.3,
+      'sugar': -0.6,
+      'cream': -0.4,
+    },
+  };
+
+  static const Map<NutritionGoalType, Set<String>> _goalHardBlockTags = {
+    NutritionGoalType.weightLoss: {'high_calorie', 'high_gi'},
+    NutritionGoalType.diabetes: {'high_gi'},
+  };
+
+  static const Map<NutritionGoalType, Set<String>> _goalHardBlockIngredients = {
+    NutritionGoalType.weightLoss: {'sugar', 'bread dough', 'malsouka pastry'},
+    NutritionGoalType.diabetes: {'sugar'},
+  };
+
   GoalProfile deriveGoalProfile({
     required List<String> goals,
     required List<String> conditions,
@@ -625,6 +797,7 @@ class FoodScoringService {
     _MealFeatures features,
     GoalProfile goalProfile,
   ) {
+    final goalSignalScore = _goalSignalScore(features, goalProfile);
     switch (goalProfile.primaryGoal) {
       case NutritionGoalType.weightLoss:
         final maxCalories = _goalConstraints(features.mealType, goalProfile)['maxCalories']!;
@@ -637,10 +810,12 @@ class FoodScoringService {
             ((features.protein * 4) / (features.calories <= 0 ? 1 : features.calories))
                 .clamp(0.0, 0.35) /
             0.35;
-        return ((calorieScore * 0.35) +
+        final baseScore = ((calorieScore * 0.35) +
                 (fatScore * 0.20) +
                 (giScore * 0.20) +
                 (proteinDensity * 0.25))
+            .clamp(0.0, 1.0);
+        return ((baseScore * 0.7) + (goalSignalScore * 0.3))
             .clamp(0.0, 1.0);
       case NutritionGoalType.muscleGain:
         final constraints = _goalConstraints(features.mealType, goalProfile);
@@ -650,10 +825,12 @@ class FoodScoringService {
         final proteinScore = (features.protein / minProtein).clamp(0.0, 1.0);
         final carbSupport = (features.carbs / 45).clamp(0.0, 1.0);
         final giPenalty = features.glycemicIndex >= 70 ? 0.1 : 0.0;
-        return ((calorieScore * 0.30) +
+        final baseScore = ((calorieScore * 0.30) +
                 (proteinScore * 0.45) +
                 (carbSupport * 0.25) -
                 giPenalty)
+            .clamp(0.0, 1.0);
+        return ((baseScore * 0.75) + (goalSignalScore * 0.25))
             .clamp(0.0, 1.0);
       case NutritionGoalType.diabetes:
         final constraints = _goalConstraints(features.mealType, goalProfile);
@@ -663,17 +840,22 @@ class FoodScoringService {
         final carbScore = 1 - (features.carbs / maxCarbs).clamp(0.0, 1.0);
         final fiberProxy = features.tags.contains('high_fiber') ? 1.0 : 0.5;
         final proteinSupport = (features.protein / 25).clamp(0.0, 1.0);
-        return ((giScore * 0.35) +
+        final baseScore = ((giScore * 0.35) +
                 (carbScore * 0.35) +
                 (fiberProxy * 0.15) +
                 (proteinSupport * 0.15))
+            .clamp(0.0, 1.0);
+        return ((baseScore * 0.75) + (goalSignalScore * 0.25))
             .clamp(0.0, 1.0);
       case NutritionGoalType.balanced:
         final midpoint = _mealTypeMidpoint(features.mealType);
         final calorieDistance =
             ((features.calories - midpoint).abs() / midpoint).clamp(0.0, 1.0);
         final proteinSupport = (features.protein / 20).clamp(0.0, 1.0);
-        return ((1 - calorieDistance) * 0.55 + proteinSupport * 0.45)
+        final baseScore =
+            ((1 - calorieDistance) * 0.55 + proteinSupport * 0.45)
+                .clamp(0.0, 1.0);
+        return ((baseScore * 0.8) + (goalSignalScore * 0.2))
             .clamp(0.0, 1.0);
     }
   }
@@ -707,29 +889,45 @@ class FoodScoringService {
   ) {
     final constraints = _goalConstraints(features.mealType, goalProfile);
     final suitable = features.suitableFor;
-    final tags = features.tags;
+    final tags = _goalSignals(features);
+    final goalSignalScore = _goalSignalScore(features, goalProfile);
+
+    if (_hasHardGoalClash(features, goalProfile)) {
+      return false;
+    }
 
     switch (goalProfile.primaryGoal) {
       case NutritionGoalType.weightLoss:
         final semanticMatch = suitable.contains('weight_loss') ||
             tags.contains('low_calorie') ||
-            tags.contains('low_fat');
+            tags.contains('low_fat') ||
+            tags.contains('vegetable') ||
+            tags.contains('high_protein') ||
+            tags.contains('light');
         return semanticMatch &&
+            goalSignalScore >= 0.45 &&
             features.calories <= constraints['maxCalories']! &&
             features.fats <= constraints['maxFats']! &&
             features.glycemicIndex <= constraints['maxGi']! &&
             features.carbs <= constraints['maxCarbs']!;
       case NutritionGoalType.muscleGain:
         final semanticMatch = suitable.contains('muscle_gain') ||
-            tags.contains('high_protein');
+            tags.contains('high_protein') ||
+            tags.contains('plant_protein') ||
+            tags.contains('meat') ||
+            tags.contains('fish');
         return semanticMatch &&
+            goalSignalScore >= 0.4 &&
             features.protein >= constraints['minProtein']! &&
             features.calories >= constraints['minCalories']! &&
             features.glycemicIndex <= constraints['maxGi']!;
       case NutritionGoalType.diabetes:
         final semanticMatch =
-            suitable.contains('diabetic') || tags.contains('low_gi');
+            suitable.contains('diabetic') ||
+            tags.contains('low_gi') ||
+            tags.contains('high_fiber');
         return semanticMatch &&
+            goalSignalScore >= 0.45 &&
             features.glycemicIndex <= constraints['maxGi']! &&
             features.carbs <= constraints['maxCarbs']! &&
             features.calories <= constraints['maxCalories']!;
@@ -737,6 +935,57 @@ class FoodScoringService {
         return features.calories <= constraints['maxCalories']! &&
             features.glycemicIndex <= constraints['maxGi']!;
     }
+  }
+
+  Set<String> _goalSignals(_MealFeatures features) {
+    return {
+      ...features.tags.map(_normalizeKey),
+      ...features.macroTags.map(_normalizeKey),
+    };
+  }
+
+  double _goalSignalScore(
+    _MealFeatures features,
+    GoalProfile goalProfile,
+  ) {
+    final tagWeights = _goalTagWeights[goalProfile.primaryGoal] ?? const {};
+    final ingredientWeights =
+        _goalIngredientWeights[goalProfile.primaryGoal] ?? const {};
+
+    double rawScore = 0.0;
+    double magnitude = 0.0;
+
+    for (final tag in _goalSignals(features)) {
+      final weight = tagWeights[tag];
+      if (weight == null) continue;
+      rawScore += weight;
+      magnitude += weight.abs();
+    }
+
+    for (final ingredient in features.ingredients.map(_normalizeKey).toSet()) {
+      final weight = ingredientWeights[ingredient];
+      if (weight == null) continue;
+      rawScore += weight * 0.85;
+      magnitude += weight.abs() * 0.85;
+    }
+
+    if (magnitude == 0) return 0.5;
+    return (((rawScore / magnitude) + 1) / 2).clamp(0.0, 1.0);
+  }
+
+  bool _hasHardGoalClash(
+    _MealFeatures features,
+    GoalProfile goalProfile,
+  ) {
+    final blockedTags =
+        _goalHardBlockTags[goalProfile.primaryGoal] ?? const <String>{};
+    final blockedIngredients =
+        _goalHardBlockIngredients[goalProfile.primaryGoal] ?? const <String>{};
+    final tags = _goalSignals(features);
+    final ingredients = features.ingredients.map(_normalizeKey).toSet();
+
+    return tags.any(blockedTags.contains) ||
+        ingredients.any(blockedIngredients.contains);
   }
 
   Map<String, double> _goalConstraints(

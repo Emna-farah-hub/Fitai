@@ -34,7 +34,10 @@ class StepBirthday extends StatelessWidget {
             children: [
               // Age display
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primarySurface,
                   borderRadius: BorderRadius.circular(16),
@@ -43,7 +46,11 @@ class StepBirthday extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.cake_outlined, color: AppColors.primary, size: 22),
+                    const Icon(
+                      Icons.cake_outlined,
+                      color: AppColors.primary,
+                      size: 22,
+                    ),
                     const SizedBox(width: 10),
                     Text(
                       'You are $age years old',
@@ -68,7 +75,9 @@ class StepBirthday extends StatelessWidget {
                 child: CupertinoDatePicker(
                   mode: CupertinoDatePickerMode.date,
                   initialDateTime: provider.birthday,
-                  maximumDate: DateTime.now().subtract(const Duration(days: 365 * 13)),
+                  maximumDate: DateTime.now().subtract(
+                    const Duration(days: 365 * 13),
+                  ),
                   minimumDate: DateTime(1920),
                   onDateTimeChanged: (date) {
                     context.read<OnboardingProvider>().setBirthday(date);

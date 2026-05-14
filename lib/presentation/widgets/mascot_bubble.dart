@@ -169,13 +169,13 @@ class _MascotFacePainter extends CustomPainter {
     );
 
     final eyePaint = Paint()
-      ..color = const Color(0xFF163322)
+      ..color = AppColors.textPrimary
       ..style = PaintingStyle.fill;
     _drawEye(canvas, Offset(size.width * 0.39, size.height * 0.42), eyePaint);
     _drawEye(canvas, Offset(size.width * 0.61, size.height * 0.42), eyePaint);
 
     final cheekPaint = Paint()
-      ..color = const Color(0x22FF6B6B)
+      ..color = AppColors.amber.withValues(alpha: 0.18)
       ..style = PaintingStyle.fill;
     canvas.drawCircle(
       Offset(size.width * 0.34, size.height * 0.55),
@@ -189,7 +189,7 @@ class _MascotFacePainter extends CustomPainter {
     );
 
     final smilePaint = Paint()
-      ..color = const Color(0xFF163322)
+      ..color = AppColors.textPrimary
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8
       ..strokeCap = StrokeCap.round;

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/fitai_brand_mark.dart';
 import '../../widgets/gradient_button.dart';
 
 /// Login screen — email + password sign in.
@@ -17,6 +19,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  static const Duration _profileLoadTimeout = Duration(seconds: 6);
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -43,10 +47,24 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       // Load profile to check onboarding status, then route
       final userProvider = context.read<UserProvider>();
-      await userProvider.loadProfile(authProvider.currentUser!.uid);
+      final uid = authProvider.currentUser!.uid;
+      final prefs = await SharedPreferences.getInstance();
+      final localOnboardingComplete =
+          prefs.getBool('onboardingComplete_$uid') ??
+          prefs.getBool('onboardingComplete') ??
+          false;
+
+      try {
+        await userProvider.loadProfile(uid).timeout(_profileLoadTimeout);
+      } catch (e) {
+        debugPrint('[LOGIN] profile load timed out/failed: $e');
+      }
       if (!mounted) return;
 
-      if (!userProvider.onboardingComplete) {
+      final onboardingComplete =
+          userProvider.onboardingComplete || localOnboardingComplete;
+
+      if (!onboardingComplete) {
         context.go('/onboarding');
       } else {
         context.go('/dashboard');
@@ -73,29 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 48),
-                // Logo
-                Center(
-                  child: Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: AppColors.midnight,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.midnight.withValues(alpha: 0.30),
-                          blurRadius: 22,
-                          offset: const Offset(0, 9),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.eco_rounded,
-                      color: Colors.white,
-                      size: 36,
-                    ),
-                  ),
-                ),
+                const Center(child: FitAiBrandMark(size: 84)),
                 const SizedBox(height: 28),
                 Text(
                   'Welcome back',

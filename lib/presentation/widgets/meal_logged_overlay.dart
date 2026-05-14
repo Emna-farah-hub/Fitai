@@ -76,29 +76,31 @@ class _MealLoggedOverlayState extends State<MealLoggedOverlay>
       duration: const Duration(milliseconds: 600),
       reverseDuration: const Duration(milliseconds: 240),
     );
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1.4),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.elasticOut,
-      reverseCurve: Curves.easeIn,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 1.4), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _slideController,
+            curve: Curves.elasticOut,
+            reverseCurve: Curves.easeIn,
+          ),
+        );
 
     final safeTarget = widget.dailyTarget <= 0 ? 1.0 : widget.dailyTarget;
     final beginRatio = (widget.previousTotal / safeTarget).clamp(0.0, 1.0);
-    final endRatio =
-        ((widget.previousTotal + widget.calories) / safeTarget).clamp(0.0, 1.0);
+    final endRatio = ((widget.previousTotal + widget.calories) / safeTarget)
+        .clamp(0.0, 1.0);
 
     _progressController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
     _progressAnimation = Tween<double>(begin: beginRatio, end: endRatio)
-        .animate(CurvedAnimation(
-      parent: _progressController,
-      curve: Curves.easeOutCubic,
-    ));
+        .animate(
+          CurvedAnimation(
+            parent: _progressController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     HapticFeedback.mediumImpact();
     _slideController.forward();

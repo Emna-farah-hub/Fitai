@@ -272,9 +272,7 @@ class SkeletonInsightsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.only(bottom: 32),
       children: [
-        const SkeletonHeroCard(
-          margin: EdgeInsets.fromLTRB(16, 8, 16, 0),
-        ),
+        const SkeletonHeroCard(margin: EdgeInsets.fromLTRB(16, 8, 16, 0)),
         const SizedBox(height: 12),
         _sectionSkeleton(),
         const SizedBox(height: 12),

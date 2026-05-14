@@ -48,12 +48,16 @@ class StepConditions extends StatelessWidget {
                 final selected = provider.conditions.contains(condition);
                 return GestureDetector(
                   onTap: () {
-                    context.read<OnboardingProvider>().toggleCondition(condition);
+                    context.read<OnboardingProvider>().toggleCondition(
+                      condition,
+                    );
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: selected
                           ? AppColors.primarySurface
@@ -68,8 +72,11 @@ class StepConditions extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (selected) ...[
-                          const Icon(Icons.check_circle_rounded,
-                              color: AppColors.primary, size: 16),
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            color: AppColors.primary,
+                            size: 16,
+                          ),
                           const SizedBox(width: 6),
                         ],
                         Text(
@@ -99,12 +106,20 @@ class StepConditions extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.shield_outlined, color: AppColors.primary, size: 20),
+                  const Icon(
+                    Icons.shield_outlined,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       'FitAI provides general nutritional guidance. Not a substitute for professional medical advice.',
-                      style: GoogleFonts.inter(fontSize: 12, color: AppColors.primaryDark, height: 1.4),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: AppColors.primaryDark,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ],

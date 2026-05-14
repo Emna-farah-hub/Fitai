@@ -171,13 +171,13 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 16),
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              leading: const Icon(Icons.delete_outline, color: AppColors.error),
               title: const Text('Clear chat history'),
               onTap: () {
                 Navigator.pop(ctx);
@@ -210,7 +210,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FBF8),
+      backgroundColor: AppColors.backgroundAlt,
       body: Column(
         children: [
           _buildHeader(),
@@ -223,6 +223,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   .orderBy('timestamp')
                   .snapshots(),
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return _buildUnavailableState(
+                    'Chat is unavailable right now.',
+                    'Firestore permissions are blocking message access for this account.',
+                  );
+                }
+
                 final docs = snapshot.data?.docs ?? [];
                 String? lastAgentDocId;
                 for (final doc in docs.reversed) {
@@ -382,7 +389,7 @@ class _ChatScreenState extends State<ChatScreen> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -391,7 +398,10 @@ class _ChatScreenState extends State<ChatScreen> {
               'get meal suggestions, or let me\n'
               'analyze your day.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 24),
             Wrap(
@@ -403,6 +413,56 @@ class _ChatScreenState extends State<ChatScreen> {
                 _suggestionChip('How am I doing today?'),
                 _suggestionChip('Suggest a healthy snack'),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUnavailableState(String title, String subtitle) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.primarySurface),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.lock_outline_rounded,
+              size: 42,
+              color: AppColors.primaryDark,
+            ),
+            const SizedBox(height: 14),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
         ),
@@ -513,7 +573,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       DateFormat('h:mm a').format(ts.toDate()),
                       style: TextStyle(
                         fontSize: 10,
-                        color: Colors.grey.shade500,
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ),
@@ -604,7 +664,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     key: ValueKey('typewriter-$messageId'),
                                     text: content,
                                     style: const TextStyle(
-                                      color: Color(0xFF1A1A1A),
+                                      color: AppColors.textPrimary,
                                       fontSize: 14,
                                       height: 1.5,
                                     ),
@@ -612,7 +672,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 : Text(
                                     content,
                                     style: const TextStyle(
-                                      color: Color(0xFF1A1A1A),
+                                      color: AppColors.textPrimary,
                                       fontSize: 14,
                                       height: 1.5,
                                     ),
@@ -637,7 +697,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             DateFormat('h:mm a').format(ts.toDate()),
                             style: TextStyle(
                               fontSize: 10,
-                              color: Colors.grey.shade500,
+                              color: AppColors.textMuted,
                             ),
                           ),
                         ),
@@ -684,7 +744,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A1A1A),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   Text(
@@ -692,7 +752,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     'P:${(suggestion['protein'] ?? 0).toInt()}g '
                     'C:${(suggestion['carbs'] ?? 0).toInt()}g '
                     'F:${(suggestion['fats'] ?? 0).toInt()}g',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -809,9 +872,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.grey.shade200, width: 0.5),
-        ),
+        border: Border(top: BorderSide(color: AppColors.border, width: 0.5)),
       ),
       padding: EdgeInsets.fromLTRB(
         8,
@@ -829,7 +890,7 @@ class _ChatScreenState extends State<ChatScreen> {
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Ask your coach...',
-                hintStyle: TextStyle(color: Colors.grey.shade400),
+                hintStyle: const TextStyle(color: AppColors.textMuted),
                 filled: true,
                 fillColor: AppColors.surfaceVariant,
                 border: OutlineInputBorder(
@@ -859,7 +920,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         colors: [AppColors.primaryDark, AppColors.primary],
                       )
                     : null,
-                color: _hasText ? null : Colors.grey.shade300,
+                color: _hasText ? null : AppColors.border,
                 shape: BoxShape.circle,
                 boxShadow: _hasText
                     ? [
@@ -872,7 +933,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Icon(
                 Icons.send_rounded,
-                color: _hasText ? Colors.white : Colors.grey.shade500,
+                color: _hasText ? Colors.white : AppColors.textMuted,
                 size: 20,
               ),
             ),

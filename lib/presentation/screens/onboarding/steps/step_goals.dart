@@ -51,7 +51,9 @@ class StepGoals extends StatelessWidget {
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: selected ? AppColors.primarySurface : AppColors.surface,
+                    color: selected
+                        ? AppColors.primarySurface
+                        : AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: selected ? AppColors.primary : AppColors.border,
@@ -71,8 +73,9 @@ class StepGoals extends StatelessWidget {
                         ),
                         child: Icon(
                           _icons[index],
-                          color:
-                              selected ? Colors.white : AppColors.textSecondary,
+                          color: selected
+                              ? Colors.white
+                              : AppColors.textSecondary,
                           size: 22,
                         ),
                       ),
@@ -94,7 +97,9 @@ class StepGoals extends StatelessWidget {
                         width: 24,
                         height: 24,
                         decoration: BoxDecoration(
-                          color: selected ? AppColors.primary : AppColors.surface,
+                          color: selected
+                              ? AppColors.primary
+                              : AppColors.surface,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: selected
@@ -104,8 +109,11 @@ class StepGoals extends StatelessWidget {
                           ),
                         ),
                         child: selected
-                            ? const Icon(Icons.check_rounded,
-                                color: Colors.white, size: 14)
+                            ? const Icon(
+                                Icons.check_rounded,
+                                color: Colors.white,
+                                size: 14,
+                              )
                             : null,
                       ),
                     ],

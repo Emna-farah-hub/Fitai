@@ -50,7 +50,7 @@ class SwipeMeal {
       fats: (map['fats'] ?? 0).toDouble(),
       glycemicIndex: (map['glycemicIndex'] ?? 0).toInt(),
       mealType: map['mealType'] ?? 'Lunch',
-      cuisine: map['cuisine'] ?? 'western',
+      cuisine: map['cuisine'] ?? 'international',
       prepTime: map['prepTime'] ?? '20 min',
       difficulty: map['difficulty'] ?? 'easy',
       tags: List<String>.from(map['tags'] ?? []),

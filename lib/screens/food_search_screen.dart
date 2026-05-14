@@ -136,16 +136,19 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Add Food',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
-          child: Container(height: 1, color: Colors.grey.shade300),
+          child: Container(height: 1, color: AppColors.border),
         ),
       ),
       body: Column(
@@ -160,15 +163,27 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
             child: TextField(
               controller: _searchController,
               autofocus: true,
-              style: const TextStyle(color: Colors.black, fontSize: 15),
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 15,
+              ),
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
                 hintText: 'Search foods...',
-                hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 15),
-                prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+                hintStyle: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 15,
+                ),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: AppColors.textMuted,
+                ),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.close, color: Colors.grey.shade500),
+                        icon: const Icon(
+                          Icons.close,
+                          color: AppColors.textMuted,
+                        ),
                         onPressed: _clearSearch,
                       )
                     : null,
@@ -182,7 +197,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor: Colors.grey,
+            unselectedLabelColor: AppColors.textMuted,
             indicatorColor: AppColors.primary,
             tabs: const [
               Tab(text: 'SEARCH'),
@@ -217,12 +232,12 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
+          baseColor: AppColors.border,
+          highlightColor: AppColors.surfaceSoft,
           child: Container(
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -236,16 +251,19 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search, size: 64, color: Colors.grey.shade400),
+          Icon(Icons.search, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
             "No results for '$_query'",
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            style: const TextStyle(
+              fontSize: 16,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             'Try a different search term',
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+            style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -308,7 +326,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       return const Center(
         child: Text(
           'No recent meals yet',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+          style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
         ),
       );
     }
@@ -332,7 +350,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: Colors.grey.shade500,
+          color: AppColors.textMuted,
           letterSpacing: 0.5,
         ),
       ),
@@ -347,7 +365,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: Colors.grey.shade600,
+          color: AppColors.textSecondary,
           letterSpacing: 0.5,
         ),
       ),
@@ -385,7 +403,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF757575),
+            color: AppColors.textSecondary,
           ),
         ),
       );
@@ -395,7 +413,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
-          color: const Color(0xFFE3F2FD),
+          color: AppColors.infoSurface,
           borderRadius: BorderRadius.circular(4),
         ),
         child: const Text(
@@ -403,7 +421,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
           style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: AppColors.chartBlue,
+            color: AppColors.tealDark,
           ),
         ),
       );
@@ -439,7 +457,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                             ),
@@ -452,7 +470,7 @@ class _FoodSearchScreenState extends State<FoodSearchScreen>
                           '100g \u00b7 ${item.caloriesPer100g.toInt()} kcal',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],

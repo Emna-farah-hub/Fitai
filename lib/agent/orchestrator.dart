@@ -400,15 +400,11 @@ class AgentOrchestrator {
     final uid = event.uid;
     final messageText = event.payload['message'] as String? ?? '';
 
-    // 1. Save user message first (before generating reply)
-    await _db.collection('chat').doc(uid).collection('messages').add({
-      'role': 'user',
-      'content': messageText,
-      'timestamp': FieldValue.serverTimestamp(),
-      'suggestionCard': null,
-    });
+    // The UI (ChatScreen) persists the user's message before dispatching this
+    // event so it renders instantly. Do NOT re-write it here — that produced
+    // duplicate user messages in the chat stream.
 
-    // 2. Load last 10 messages as conversation history (memory)
+    // Load last 10 messages as conversation history (memory).
     final history = await _db
         .collection('chat')
         .doc(uid)

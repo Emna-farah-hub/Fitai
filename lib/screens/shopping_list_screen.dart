@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants/app_assets.dart';
 import '../core/constants/app_colors.dart';
@@ -27,6 +29,11 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   final Set<String> _checked = <String>{};
   bool _hasTriggeredAllDone = false;
 
+  // Persistence key for the checked-set, scoped to the current plan's week.
+  // Format: shopping_checked_<uid>_<weekStartDate>. When the orchestrator
+  // generates a new plan, weekStartDate changes and a fresh empty set loads.
+  String? _checkedPrefsKey;
+
   static const List<String> _categoryOrder = [
     'Meat & Fish',
     'Dairy & Eggs',
@@ -39,33 +46,33 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
   static const Map<String, _CategoryStyle> _styles = {
     'Meat & Fish': _CategoryStyle(
       emoji: '🥩',
-      bg: Color(0xFFFEE2E2),
-      accent: Color(0xFF991B1B),
+      bg: AppColors.errorSurface,
+      accent: AppColors.error,
     ),
     'Dairy & Eggs': _CategoryStyle(
       emoji: '🥚',
-      bg: Color(0xFFFEF3C7),
-      accent: Color(0xFF92400E),
+      bg: AppColors.amberSoft,
+      accent: AppColors.amberDark,
     ),
     'Vegetables & Fruits': _CategoryStyle(
       emoji: '🥬',
-      bg: Color(0xFFDCFCE7),
-      accent: Color(0xFF15803D),
+      bg: AppColors.primarySoft,
+      accent: AppColors.primaryDark,
     ),
     'Grains & Carbs': _CategoryStyle(
       emoji: '🌾',
-      bg: Color(0xFFFEF9C3),
-      accent: Color(0xFF854D0E),
+      bg: AppColors.amberSoft,
+      accent: AppColors.amberDark,
     ),
     'Sauces & Condiments': _CategoryStyle(
       emoji: '🧂',
-      bg: Color(0xFFF3E8FF),
-      accent: Color(0xFF6B21A8),
+      bg: AppColors.infoSurface,
+      accent: AppColors.tealDark,
     ),
     'Other': _CategoryStyle(
       emoji: '🛒',
-      bg: Color(0xFFF1F5F9),
-      accent: Color(0xFF475569),
+      bg: AppColors.surfaceSoft,
+      accent: AppColors.textSecondary,
     ),
   };
 
@@ -199,6 +206,10 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         if (mounted) setState(() => _isLoading = false);
         return;
       }
+      final weekStartDate = doc.data()?['weekStartDate']?.toString() ?? 'na';
+      _checkedPrefsKey = 'shopping_checked_${_uid}_$weekStartDate';
+      final restored = await _loadCheckedFromPrefs(_checkedPrefsKey!);
+
       final days = doc.data()?['days'] as Map<String, dynamic>? ?? {};
       final aggregate = <String, _Ingredient>{};
 
@@ -245,10 +256,39 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
       if (!mounted) return;
       setState(() {
         _grouped = grouped;
+        // Only keep restored IDs that still exist in the current list — if the
+        // plan changed mid-week, stale IDs would otherwise count toward "done".
+        final validIds = aggregate.keys.toSet();
+        _checked
+          ..clear()
+          ..addAll(restored.where(validIds.contains));
         _isLoading = false;
       });
     } catch (_) {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<Set<String>> _loadCheckedFromPrefs(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(key);
+      if (raw == null) return <String>{};
+      final list = json.decode(raw) as List<dynamic>;
+      return list.map((e) => e.toString()).toSet();
+    } catch (_) {
+      return <String>{};
+    }
+  }
+
+  Future<void> _persistChecked() async {
+    final key = _checkedPrefsKey;
+    if (key == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(key, json.encode(_checked.toList()));
+    } catch (_) {
+      // Best-effort — losing one tap's persistence is not worth surfacing.
     }
   }
 
@@ -288,6 +328,15 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         HapticFeedback.mediumImpact();
       }
     });
+    _persistChecked();
+  }
+
+  void _clearAll() {
+    setState(() {
+      _checked.clear();
+      _hasTriggeredAllDone = false;
+    });
+    _persistChecked();
   }
 
   @override
@@ -498,7 +547,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                 .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
             const SizedBox(height: 24),
             GestureDetector(
-              onTap: () => setState(_checked.clear),
+              onTap: _clearAll,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -601,10 +650,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
                     .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
                 const SizedBox(height: 24),
                 GestureDetector(
-                  onTap: () => setState(() {
-                    _checked.clear();
-                    _hasTriggeredAllDone = false;
-                  }),
+                  onTap: _clearAll,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -797,7 +843,7 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
         height: 56,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
+            backgroundColor: AppColors.tealDark,
             foregroundColor: Colors.white,
             elevation: 0,
             shape: RoundedRectangleBorder(

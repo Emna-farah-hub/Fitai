@@ -1,0 +1,161 @@
+# production_meals_v2 build report
+
+- Source: `production_meals.json` (611 rows)
+- CSV records recovered: 788 / 788
+- Matched ew_ rows to CSV: **539** / 549
+- Tunisian (tn_/Bxxx) rows passed through: 62
+
+## Final bucket counts
+- **main**: 468
+- **review**: 139
+- **excluded**: 4
+
+## Data quality in main
+- ew_ rows in main: 406
+- …with non-empty steps: 381 (93.8%)
+- …with parsed ingredient quantities: 397 (97.8%)
+
+## All 143 demoted rows
+- [REVIEW] `ew_romaine_salad_with_orange_r` Romaine Salad with Orange & Radish — low_kcal_for_lunch:194
+- [EXCLUDED] `ew_caramelized_ripe_plantains_` Caramelized Ripe Plantains with Dark Rum — alcohol:rum
+- [REVIEW] `ew_layered_fall_salad_with_squ` Layered Fall Salad with Squash & Mozzarella — low_kcal_for_lunch:139
+- [REVIEW] `ew_broccoli_casserole_with_sun` Broccoli Casserole with Sun-Dried Tomato Cream Sauce — desc:side dish
+- [REVIEW] `ew_slow_cooker_mushroom_soup_w` Slow-Cooker Mushroom Soup with Sherry — low_kcal_for_lunch:101
+- [REVIEW] `ew_roasted_salmon_caprese` Roasted Salmon Caprese — appetizer_name:caprese
+- [REVIEW] `ew_purslane_cucumber_tomato_sa` Purslane, Cucumber & Tomato Salad with Mint — low_kcal_for_lunch:72
+- [REVIEW] `ew_egyptian_tossed_salad` Egyptian Tossed Salad — dessert_tag_added
+- [REVIEW] `ew_fried_asparagus_squash_blos` Fried Asparagus & Squash Blossoms — low_protein_for_dinner:1.8g
+- [REVIEW] `ew_sweet_sour_rabbit_rabbit_sa` Sweet & Sour Rabbit (Rabbit Saor) — dessert_tag_added
+- [REVIEW] `ew_lemony_samphire` Lemony Samphire — low_kcal_snack:38
+- [EXCLUDED] `ew_watermelon_juice` Watermelon Juice — beverage:juice
+- [REVIEW] `ew_sheet_pan_ratatouille` Sheet-Pan Ratatouille — low_protein_for_dinner:7.0g
+- [REVIEW] `ew_steak_pepper_sugar_snap_sti` Steak, Pepper & Sugar Snap Stir Fry — dessert_tag_added
+- [REVIEW] `ew_instant_pot_adobo_chicken_t` Instant Pot Adobo Chicken Thighs with Bok Choy & Green Onions — dessert_tag_added
+- [REVIEW] `ew_vegan_macaroni_salad` Vegan Macaroni Salad — low_kcal_for_lunch:185
+- [REVIEW] `ew_loaded_baked_potato_salad` Loaded Baked Potato Salad — low_protein_for_lunch:4.8g
+- [REVIEW] `ew_bbq_pork_smoked_gouda_quesa` BBQ Pork & Smoked Gouda Quesadillas — dessert_tag_added
+- [REVIEW] `ew_baked_potatoes_on_the_grill` Baked Potatoes on the Grill — low_protein_for_lunch:5.0g
+- [REVIEW] `ew_cheesy_mushroom_gratin` Cheesy Mushroom Gratin — desc:side dish
+- [REVIEW] `ew_hard_boiled_egg_blts` Hard-Boiled Egg BLTs — desc:as an appetizer
+- [REVIEW] `ew_chicken_shiitake_dumplings_` Chicken & Shiitake Dumplings in Tangy Chile-Oil Sauce — low_kcal_for_dinner:150
+- [REVIEW] `ew_eat_the_rainbow_chopped_sal` Eat-the-Rainbow Chopped Salad with Basil & Mozzarella — low_kcal_for_lunch:139
+- [REVIEW] `ew_greek_turkey_burgers_with_p` Greek Turkey Burgers with Portobello "Buns — dessert_tag_added
+- [REVIEW] `ew_mediterranean_broccoli_past` Mediterranean Broccoli Pasta Salad — dessert_tag_added
+- [REVIEW] `ew_ham_potato_casserole` Ham & Potato Casserole — low_kcal_for_dinner:191
+- [REVIEW] `ew_asparagus_casserole` Asparagus Casserole — low_kcal_for_dinner:179
+- [REVIEW] `ew_broccoli_grape_salad` Broccoli & Grape Salad — desc:side dish
+- [REVIEW] `ew_mediterranean_cabbage_soup` Mediterranean Cabbage Soup — low_protein_for_lunch:6.2g
+- [REVIEW] `ew_flat_belly_soup` Flat-Belly Soup — low_kcal_for_lunch:160
+- [REVIEW] `ew_low_carb_broccoli_cheddar_c` Low-Carb Broccoli & Cheddar Casserole — low_kcal_for_dinner:179
+- [REVIEW] `ew_chicken_paillards_with_bloo` Chicken Paillards with Blood Orange Pan Sauce — dessert_tag_added
+- [REVIEW] `ew_afghan_vegetable_chickpea_s` Afghan Vegetable & Chickpea Soup (Tarkari) — low_kcal_for_lunch:175
+- [REVIEW] `ew_citrus_salad_with_chia_cele` Citrus Salad with Chia-Celery Seed Dressing — low_kcal_for_lunch:180
+- [REVIEW] `ew_fattoush_salad` Fattoush Salad — low_kcal_for_lunch:108
+- [REVIEW] `ew_lola_beef_kebabs` Lola Beef Kebabs — dessert_tag_added
+- [REVIEW] `ew_chicken_kurma_traditional_c` Chicken Kurma (Traditional Chicken Curry) — low_kcal_for_dinner:175
+- [REVIEW] `ew_vegetarian_bourguignon` Vegetarian Bourguignon — low_protein_for_dinner:4.2g
+- [REVIEW] `ew_bbq_cauliflower_nachos_with` BBQ Cauliflower Nachos with Chicken — dessert_tag_added
+- [REVIEW] `ew_slow_cooker_potato_soup_fou` Slow-Cooker Potato Soup Four Ways — low_kcal_for_lunch:183
+- [REVIEW] `ew_spaghetti_squash_casserole` Spaghetti Squash Casserole — dessert_tag_added
+- [REVIEW] `ew_antipasto_baked_smothered_c` Antipasto Baked Smothered Chicken — appetizer_name:antipasto
+- [REVIEW] `ew_broccoli_cauliflower_soup` Broccoli-Cauliflower Soup — low_kcal_for_lunch:132
+- [REVIEW] `ew_vegan_jambalaya` Vegan Jambalaya — low_protein_for_dinner:7.9g
+- [REVIEW] `ew_zucchini_noodle_cacio_e_pep` Zucchini Noodle Cacio e Pepe — low_kcal_for_dinner:157
+- [REVIEW] `ew_roasted_cauliflower_salad_w` Roasted Cauliflower Salad with Almonds, Olives & Feta — low_kcal_for_lunch:197
+- [REVIEW] `ew_instant_pot_chicken_breast` Instant Pot Chicken Breast — low_kcal_for_lunch:153
+- [REVIEW] `ew_christmas_waldorf_salad` Christmas Waldorf Salad — low_kcal_for_lunch:169
+- [REVIEW] `ew_slow_cooker_mediterranean_d` Slow-Cooker Mediterranean Diet Stew — low_kcal_for_dinner:191
+- [REVIEW] `ew_mediterranean_stuffed_chick` Mediterranean Stuffed Chicken Breasts — low_kcal_for_dinner:178
+- [REVIEW] `ew_3_ingredient_cheddar_apple_` 3-Ingredient Cheddar & Apple Bites — dessert_tag_added
+- [REVIEW] `ew_3_ingredient_blue_cheese_fi` 3-Ingredient Blue Cheese & Fig Bites — dessert_tag_added
+- [REVIEW] `ew_3_ingredient_goat_cheese_su` 3-Ingredient Goat Cheese & Sun-Dried Tomato Bites — dessert_tag_added
+- [REVIEW] `ew_shaved_brussels_sprout_sala` Shaved Brussels Sprout Salad — dessert_tag_added
+- [REVIEW] `ew_cream_of_broccoli_soup` Cream of Broccoli Soup — low_kcal_for_lunch:157
+- [REVIEW] `ew_beet_goat_cheese_salad` Beet & Goat Cheese Salad — low_protein_for_lunch:6.2g
+- [REVIEW] `ew_broiled_lobster_tails` Broiled Lobster Tails — desc:pair with
+- [REVIEW] `ew_slow_cooker_chile_rubbed_po` Slow-Cooker Chile-Rubbed Pork with Corn & Black Beans — desc:side dish
+- [REVIEW] `ew_slow_cooker_pork_sausage_bo` Slow-Cooker Pork Sausage Bolognese — dessert_tag_added
+- [REVIEW] `ew_3_ingredient_cream_cheese_c` 3-Ingredient Cream Cheese & Cherry Pepper Bites — dessert_tag_added
+- [REVIEW] `ew_baked_potato_latkes` Baked Potato Latkes — low_protein_for_dinner:7.5g
+- [EXCLUDED] `ew_slow_roasted_pork_shoulder_` Slow-Roasted Pork Shoulder with Tequila Citrus Sauce — alcohol:tequila
+- [REVIEW] `ew_cardamom_cured_salmon_gravl` Cardamom-Cured Salmon Gravlax — low_kcal_for_dinner:45
+- [REVIEW] `ew_quinoa_avocado_salad_with_b` Quinoa Avocado Salad with Buttermilk Dressing — low_protein_for_lunch:6.6g
+- [REVIEW] `ew_slow_cooker_lemon_pepper_ch` Slow-Cooker Lemon-Pepper Chicken Thighs with Broccolini — dessert_tag_added
+- [REVIEW] `ew_persian_style_butternut_squ` Persian-Style Butternut Squash Soup — low_kcal_for_lunch:175
+- [REVIEW] `ew_slow_cooker_turkey_kale_min` Slow-Cooker Turkey & Kale Minestrone Soup — low_kcal_for_lunch:169
+- [REVIEW] `ew_herb_roasted_turkey_breast_` Herb-Roasted Turkey Breast with Garlic — low_kcal_for_dinner:153
+- [REVIEW] `ew_waldorf_turkey_salad` Waldorf Turkey Salad — dessert_tag_added
+- [REVIEW] `ew_slow_roasted_rosemary_turke` Slow-Roasted Rosemary Turkey with Peppercorn Gravy — low_kcal_for_dinner:184
+- [REVIEW] `ew_roasted_green_beans_with_ap` Roasted Green Beans with Applewood Bacon — low_kcal_snack:48
+- [EXCLUDED] `ew_fizzy_rosemary_cider_mockta` Fizzy Rosemary Cider Mocktail — beverage:mocktail
+- [REVIEW] `ew_mixed_greens_citrus_salad` Mixed Greens & Citrus Salad — low_kcal_for_lunch:143
+- [REVIEW] `ew_puerto_rican_mofongo_dressi` Puerto Rican Mofongo Dressing with Salami — low_protein_for_lunch:7.5g
+- [REVIEW] `ew_pumpkin_coconut_soup` Pumpkin & Coconut Soup — low_protein_for_lunch:4.4g
+- [REVIEW] `ew_slow_cooker_bacon_leek_thym` Slow-Cooker Bacon, Leek & Thyme Farro — low_kcal_for_dinner:158
+- [REVIEW] `ew_slow_cooker_brown_rice_pila` Slow-Cooker Brown Rice Pilaf with Cherries & Hazelnuts — low_protein_for_dinner:5.0g
+- [REVIEW] `ew_slow_cooker_cuban_style_bla` Slow-Cooker Cuban-Style Black Beans — low_kcal_for_dinner:173
+- [REVIEW] `ew_slow_cooker_brussels_sprout` Slow-Cooker Brussels Sprouts with Lemon — low_kcal_for_dinner:111
+- [REVIEW] `ew_slow_cooker_curried_caulifl` Slow-Cooker Curried Cauliflower and Potatoes — desc:double the serving
+- [REVIEW] `ew_pickle_sub_sandwiches_with_` Pickle Sub Sandwiches with Turkey & Cheddar — low_kcal_for_lunch:186
+- [REVIEW] `ew_fall_chopped_salad_with_spi` Fall Chopped Salad with Spinach, Butternut Squash, Apples & Cheddar — low_kcal_for_lunch:184
+- [REVIEW] `ew_roasted_savoy_cabbage_with_` Roasted Savoy Cabbage with Orange Vinaigrette — desc:serve alongside
+- [REVIEW] `ew_best_caesar_salad_with_cris` Best Caesar Salad with Crispy Parmesan — low_kcal_for_lunch:117
+- [REVIEW] `ew_roasted_honeynut_squash_wit` Roasted Honeynut Squash with Spicy Agrodolce — low_protein_for_dinner:3.1g
+- [REVIEW] `ew_roasted_garlic_mashed_potat` Roasted Garlic Mashed Potatoes with Buttermilk — low_kcal_for_lunch:174
+- [REVIEW] `ew_the_ultimate_turkey_avocado` The Ultimate Turkey Avocado Sandwich — dessert_tag_added
+- [REVIEW] `ew_whole_roasted_romanesco_wit` Whole Roasted Romanesco with Labneh & Curry Oil — desc:side dish
+- [REVIEW] `ew_traditional_roast_turkey_wi` Traditional Roast Turkey with Giblet Gravy — low_kcal_for_dinner:167
+- [REVIEW] `ew_roasted_kabocha_squash_with` Roasted Kabocha Squash with Umami Butter & Candied Pepitas — low_protein_for_dinner:6.3g
+- [REVIEW] `ew_slow_cooker_cod_with_tomato` Slow-Cooker Cod with Tomato-Balsamic Jam — condiment_name:jam
+- [REVIEW] `ew_cornmeal_topped_turkey_chil` Cornmeal-Topped Turkey Chili Pie — dessert_tag_added
+- [REVIEW] `ew_steamed_green_beans_with_ro` Steamed Green Beans with Rosemary-Garlic Vinaigrette & Fried Shallots — low_kcal_for_lunch:151
+- [REVIEW] `ew_slow_cooker_parmesan_pea_fa` Slow-Cooker Parmesan & Pea Farro with Fennel Salad — dessert_tag_added
+- [REVIEW] `ew_slow_cooker_caprese_spaghet` Slow-Cooker Caprese Spaghetti Squash with White Beans — appetizer_name:caprese
+- [REVIEW] `ew_peanut_butter_cereal_banana` Peanut Butter & Cereal Banana Skewers — appetizer_name:skewers
+- [REVIEW] `ew_pear_gorgonzola_walnut_sala` Pear, Gorgonzola & Walnut Salad — low_protein_for_lunch:4.0g
+- [REVIEW] `ew_curried_butternut_squash_ap` Curried Butternut Squash & Apple Soup — low_protein_for_lunch:5.0g
+- [REVIEW] `ew_creamy_chicken_noodle_soup_` Creamy Chicken Noodle Soup with Rotisserie Chicken — dessert_tag_added
+- [REVIEW] `ew_red_wine_balsamic_pearl_oni` Red Wine & Balsamic Pearl Onion Tarte Tatin — dessert_name:tarte tatin
+- [REVIEW] `ew_vegan_cheesy_pumpkin_seeds` Vegan "Cheesy" Pumpkin Seeds — garnish_name:pumpkin seeds
+- [REVIEW] `ew_za_atar_roasted_pumpkin_see` Za'atar Roasted Pumpkin Seeds — garnish_name:pumpkin seeds
+- [REVIEW] `ew_maple_spice_toasted_pumpkin` Maple-Spice Toasted Pumpkin Seeds — garnish_name:pumpkin seeds
+- [REVIEW] `ew_cocoa_roasted_pumpkin_seeds` Cocoa Roasted Pumpkin Seeds — garnish_name:pumpkin seeds
+- [REVIEW] `ew_oven_baked_salmon_with_char` Oven-Baked Salmon with Charred Onions & Old Bay Radishes — dessert_tag_added
+- [REVIEW] `ew_kohlrabi_gratin` Kohlrabi Gratin — dessert_tag_added
+- [REVIEW] `ew_muhammara` Muhammara — dip_name:muhammara
+- [REVIEW] `ew_cast_iron_skillet_pizza_wit` Cast-Iron Skillet Pizza with Sausage & Kale — dessert_tag_added
+- [REVIEW] `ew_butternut_squash_salad_with` Butternut Squash Salad with Piquillo Peppers — low_protein_for_lunch:5.7g
+- [REVIEW] `ew_cranberry_salad` Cranberry Salad — dessert_tag_added
+- [REVIEW] `ew_watermelon_orange_cucumber_` Watermelon, Orange & Cucumber Salad with Castelvetrano Olive Vinaigrette — low_protein_for_lunch:3.0g
+- [REVIEW] `ew_turkey_potpie` Turkey Potpie — dessert_tag_added
+- [REVIEW] `ew_butternut_squash_bisque_wit` Butternut Squash Bisque with Almonds & Cilantro — low_protein_for_dinner:7.0g
+- [REVIEW] `ew_cream_of_celery_soup` Cream of Celery Soup — low_kcal_for_lunch:141
+- [REVIEW] `ew_vegan_potato_leek_soup` Vegan Potato-Leek Soup — low_protein_for_lunch:5.8g
+- [REVIEW] `ew_roasted_brussels_sprout_but` Roasted Brussels Sprout & Butternut Squash Salad — dessert_tag_added
+- [REVIEW] `ew_slow_cooker_vegan_butternut` Slow-Cooker Vegan Butternut Squash Soup with Apple — desc:as an appetizer
+- [REVIEW] `ew_tomato_mozzarella_peach_pro` Tomato, Mozzarella, Peach & Prosciutto Caprese Skewers — appetizer_name:skewers
+- [REVIEW] `ew_tortellini_pepper_salami_an` Tortellini, Pepper & Salami Antipasto Skewers — appetizer_name:skewers
+- [REVIEW] `ew_sheet_pan_caprese_pizza` Sheet-Pan Caprese Pizza — appetizer_name:caprese
+- [REVIEW] `ew_savory_dutch_baby_with_smok` Savory Dutch Baby with Smoked Salmon & Cream Cheese — dessert_tag_added
+- [REVIEW] `ew_cheesy_summer_squash_casser` Cheesy Summer Squash Casserole — low_protein_for_dinner:7.0g
+- [REVIEW] `ew_mexican_skillet_quinoa` Mexican Skillet Quinoa — dessert_tag_added
+- [REVIEW] `ew_honeydew_cucumber_salad_wit` Honeydew & Cucumber Salad with Burrata — low_kcal_for_lunch:170
+- [REVIEW] `ew_watermelon_salad_with_crisp` Watermelon Salad with Crispy Prosciutto, Feta & Mint — low_kcal_for_lunch:67
+- [REVIEW] `ew_slow_cooker_creamy_butter_2` Slow-Cooker Creamy Butternut Squash-Apple Soup — low_kcal_for_lunch:88
+- [REVIEW] `ew_easy_grilled_peppers` Easy Grilled Peppers — low_kcal_for_lunch:155
+- [REVIEW] `ew_slow_cooker_manhattan_style` Slow-Cooker Manhattan-Style Shrimp Chowder — low_kcal_for_dinner:190
+- [REVIEW] `ew_lemon_thyme_blueberry_grani` Lemon & Thyme Blueberry Granita — dessert_name:granita
+- [REVIEW] `ew_sheet_pan_lemon_pepper_chic` Sheet-Pan Lemon-Pepper Chicken — desc:side dish
+- [REVIEW] `ew_foil_packet_corn_with_srira` Foil-Packet Corn with Sriracha-Mayo Drizzle — low_protein_for_dinner:4.0g
+- [REVIEW] `ew_caprese_salad_with_heirloom` Caprese Salad with Heirloom Tomatoes & Burrata — appetizer_name:caprese
+- [REVIEW] `ew_roasted_butternut_squash_ro` Roasted Butternut Squash & Root Vegetables with Cauliflower Gnocchi — desc:side dish
+- [REVIEW] `ew_apple_ricotta_pancakes` Apple Ricotta Pancakes — dessert_tag_added
+- [REVIEW] `ew_cheesy_beef_enchilada_casse` Cheesy Beef Enchilada Casserole — desc:side dish
+- [REVIEW] `ew_pesto_chicken_cauliflower_p` Pesto Chicken Cauliflower Pizza & Antipasto Salad — appetizer_name:antipasto
+- [REVIEW] `ew_one_pot_mac_cheese_with_cau` One-Pot Mac & Cheese with Cauliflower & Brussels Sprouts — desc:side dish
+- [REVIEW] `ew_garlic_chile_marinated_oliv` Garlic-Chile Marinated Olives — condiment_name:marinated olives
+- [REVIEW] `ew_easy_homemade_applesauce` Easy Homemade Applesauce — condiment_name:applesauce
+- [REVIEW] `ew_spanakopita_grilled_cheese_` Spanakopita Grilled Cheese Sandwiches — dessert_tag_added
+- [REVIEW] `ew_cauliflower_tikka_masala_wi` Cauliflower Tikka Masala with Chickpeas — low_protein_for_dinner:7.8g
+- [REVIEW] `ew_ginger_tahini_oven_baked_sa` Ginger-Tahini Oven-Baked Salmon & Vegetables — dessert_tag_added
+- [REVIEW] `ew_skillet_chicken_potpie` Skillet Chicken Potpie — dessert_tag_added

@@ -48,9 +48,14 @@ class StepFitness extends StatelessWidget {
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
-                    color: selected ? AppColors.primarySurface : AppColors.surface,
+                    color: selected
+                        ? AppColors.primarySurface
+                        : AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
                       color: selected ? AppColors.primary : AppColors.border,
@@ -61,7 +66,9 @@ class StepFitness extends StatelessWidget {
                     children: [
                       Icon(
                         _icons[index],
-                        color: selected ? AppColors.primary : AppColors.textMuted,
+                        color: selected
+                            ? AppColors.primary
+                            : AppColors.textMuted,
                         size: 24,
                       ),
                       const SizedBox(width: 14),
@@ -77,8 +84,11 @@ class StepFitness extends StatelessWidget {
                       ),
                       const Spacer(),
                       if (selected)
-                        const Icon(Icons.check_circle_rounded,
-                            color: AppColors.primary, size: 22),
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: AppColors.primary,
+                          size: 22,
+                        ),
                     ],
                   ),
                 ),

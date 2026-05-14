@@ -1,0 +1,85 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /meals/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /logs/{dateId} {
+        allow read, write: if isOwner(userId);
+
+        match /entries/{entryId} {
+          allow read, write: if isOwner(userId);
+        }
+      }
+    }
+
+    match /chat/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /messages/{messageId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /dashboard_pins/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    match /common_foods/{docId} {
+      allow read: if true;
+    }
+
+    match /tunisian_foods/{docId} {
+      allow read: if true;
+    }
+
+    match /tunisian_meals/{docId} {
+      allow read: if true;
+    }
+
+    // Preference scores (liked/disliked tags + swipe history)
+    match /preferences/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Personalized 7-day meal plan (single doc per user)
+    match /meal_plan/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+
+    // Agent action log
+    match /agent_actions/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /log/{entryId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Meal recommendation events emitted by the orchestrator
+    match /meal_recommendations/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /events/{eventId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

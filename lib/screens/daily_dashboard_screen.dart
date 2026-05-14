@@ -81,9 +81,18 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
   void initState() {
     super.initState();
     _loadProfile();
-    _subscription = _mealService.watchTodayMeals(_uid).listen((meals) {
-      if (mounted) setState(() => _todayMeals = meals);
-    });
+    _subscription = _mealService
+        .watchTodayMeals(_uid)
+        .listen(
+          (meals) {
+            if (mounted) setState(() => _todayMeals = meals);
+          },
+          onError: (error, stackTrace) {
+            if (!mounted) return;
+            debugPrint('[DASHBOARD] meal stream failed: $error');
+            setState(() => _todayMeals = []);
+          },
+        );
     MealJournalService.onMealLogged = _handleMealLogged;
   }
 
@@ -113,7 +122,9 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           .collection('users')
           .doc(_uid)
           .get();
-      if (doc.exists && mounted) {
+      if (!mounted) return;
+
+      if (doc.exists) {
         final data = doc.data()!;
         setState(() {
           _dailyCalorieTarget = (data['dailyCalorieGoal'] ?? 1800).toDouble();
@@ -122,7 +133,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           _conditions = List<String>.from(data['conditions'] ?? []);
           _isLoadingProfile = false;
         });
+        return;
       }
+
+      setState(() => _isLoadingProfile = false);
     } catch (_) {
       if (mounted) setState(() => _isLoadingProfile = false);
     }
@@ -159,15 +173,6 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             ),
           );
         },
-        onPhotoTap: () {
-          Navigator.pop(ctx);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Photo logging coming soon'),
-              backgroundColor: AppColors.primary,
-            ),
-          );
-        },
       ),
     );
   }
@@ -185,7 +190,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Confirm', style: TextStyle(color: Colors.red)),
+            child: const Text(
+              'Confirm',
+              style: TextStyle(color: AppColors.error),
+            ),
           ),
         ],
       ),
@@ -289,7 +297,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           children: [
             Text(
               _greeting(),
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 10),
             Expanded(
@@ -371,6 +382,9 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           .doc(_uid)
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
         if (!snapshot.hasData || !snapshot.data!.exists) {
           return const SizedBox.shrink();
         }
@@ -474,7 +488,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                           child: Icon(
                             Icons.close,
                             size: 18,
-                            color: Colors.grey.shade400,
+                            color: AppColors.textMuted,
                           ),
                         ),
                       ],
@@ -484,7 +498,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                       message,
                       style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: Colors.black87,
+                        color: AppColors.textPrimary,
                         height: 1.5,
                       ),
                     ),
@@ -560,6 +574,9 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           .doc(_uid)
           .snapshots(),
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
         if (!snapshot.hasData || !snapshot.data!.exists) {
           return const SizedBox.shrink();
         }
@@ -611,7 +628,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
@@ -621,7 +638,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                 'P:${(suggestion['protein'] ?? 0).toInt()}g '
                 'C:${(suggestion['carbs'] ?? 0).toInt()}g '
                 'F:${(suggestion['fats'] ?? 0).toInt()}g',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
               ),
               if (suggestion['whySuggested'] != null) ...[
                 const SizedBox(height: 4),
@@ -630,7 +650,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontStyle: FontStyle.italic,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -777,7 +797,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -796,7 +816,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                     ],
                   ),
                 ),
-                Divider(height: 1, color: Colors.grey.shade200),
+                const Divider(height: 1, color: AppColors.divider),
                 // Meal items or empty
                 if (meals.isEmpty)
                   Padding(
@@ -814,7 +834,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -846,7 +866,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                         height: 1,
                         indent: 14,
                         endIndent: 14,
-                        color: Colors.grey.shade200,
+                        color: AppColors.divider,
                       ),
                   ],
                 // Footer
@@ -865,7 +885,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                   child: Text(
                     meals.isEmpty ? '' : 'Total: ${totalCal.toInt()} kcal',
                     textAlign: TextAlign.right,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
               ],
@@ -892,7 +915,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -901,7 +924,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                     'P:${meal.protein.toStringAsFixed(0)}g '
                     'C:${meal.carbs.toStringAsFixed(0)}g '
                     'F:${meal.fats.toStringAsFixed(0)}g',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -920,7 +946,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                 const SizedBox(height: 2),
                 Text(
                   DateFormat('h:mm a').format(meal.timestamp),
-                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 if (_isDiabetes && meal.glycemicIndex > 0) ...[
                   const SizedBox(height: 4),
@@ -944,7 +973,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         children: [
           Text(
             _greeting(),
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
@@ -952,7 +984,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: AppColors.textPrimary,
             ),
           ),
         ],
@@ -999,7 +1031,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           '$label kcal',
           style: TextStyle(
             fontSize: compact ? 9 : 12,
-            color: Colors.grey.shade500,
+            color: AppColors.textMuted,
           ),
         ),
       ],
@@ -1027,7 +1059,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             'Protein',
             _totalProtein,
             _proteinTarget,
-            const Color(0xFFEF9A9A),
+            AppColors.macroProtein,
             compact: compact,
           ),
           SizedBox(height: compact ? 8 : 10),
@@ -1035,7 +1067,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             'Carbs',
             _totalCarbs,
             _carbsTarget,
-            const Color(0xFF90CAF9),
+            AppColors.macroCarbs,
             compact: compact,
           ),
           SizedBox(height: compact ? 8 : 10),
@@ -1043,7 +1075,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             'Fat',
             _totalFats,
             _fatsTarget,
-            const Color(0xFFFFCC80),
+            AppColors.macroFats,
             compact: compact,
           ),
         ],
@@ -1074,7 +1106,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             label,
             style: TextStyle(
               fontSize: compact ? 11 : 13,
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondary,
             ),
           ),
         ),
@@ -1083,7 +1115,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: const Color(0xFFF5F5F5),
+              backgroundColor: AppColors.surfaceSoft,
               valueColor: AlwaysStoppedAnimation<Color>(color),
               minHeight: compact ? 6 : 8,
             ),
@@ -1098,7 +1130,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
             style: TextStyle(
               fontSize: compact ? 11 : 13,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: AppColors.textPrimary,
             ),
           ),
         ),
@@ -1134,7 +1166,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                   const SizedBox(height: 2),
                   Text(
                     "Based on today's intake",
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -1151,7 +1186,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
                 ),
                 Text(
                   '/100',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -1449,7 +1487,7 @@ class _CalorieRingCompletionState extends State<CalorieRingCompletion>
                               if (remainingValue > 0)
                                 PieChartSectionData(
                                   value: remainingValue,
-                                  color: const Color(0xFFE0E0E0),
+                                  color: AppColors.border,
                                   radius: ringRadius,
                                   showTitle: false,
                                 ),
@@ -1475,7 +1513,7 @@ class _CalorieRingCompletionState extends State<CalorieRingCompletion>
                                 '/ ${widget.target.toInt()} kcal',
                                 style: TextStyle(
                                   fontSize: widget.compact ? 10 : 12,
-                                  color: Colors.grey.shade600,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -1507,7 +1545,7 @@ class _CalorieRingCompletionState extends State<CalorieRingCompletion>
                   widget.summaryBuilder(
                     'Remaining',
                     '${widget.remaining.toInt()}',
-                    Colors.grey.shade600,
+                    AppColors.textSecondary,
                     compact: widget.compact,
                   ),
                   widget.summaryBuilder(
@@ -1519,7 +1557,7 @@ class _CalorieRingCompletionState extends State<CalorieRingCompletion>
                   widget.summaryBuilder(
                     'Target',
                     '${widget.target.toInt()}',
-                    Colors.black,
+                    AppColors.textPrimary,
                     compact: widget.compact,
                   ),
                 ],
@@ -1535,12 +1573,10 @@ class _CalorieRingCompletionState extends State<CalorieRingCompletion>
 class _MealTypeBottomSheet extends StatelessWidget {
   final String mealType;
   final VoidCallback onSearchTap;
-  final VoidCallback onPhotoTap;
 
   const _MealTypeBottomSheet({
     required this.mealType,
     required this.onSearchTap,
-    required this.onPhotoTap,
   });
 
   @override
@@ -1562,7 +1598,7 @@ class _MealTypeBottomSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -1573,13 +1609,16 @@ class _MealTypeBottomSheet extends StatelessWidget {
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             'Choose how to log your meal',
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+            style: const TextStyle(
+              fontSize: 13,
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: 24),
           // Search Food
@@ -1595,47 +1634,22 @@ class _MealTypeBottomSheet extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.textPrimary,
               ),
             ),
             subtitle: Text(
               'Find from our food database',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-            ),
-            trailing: Icon(
-              Icons.arrow_forward_ios,
-              size: 14,
-              color: Colors.grey.shade400,
-            ),
-            onTap: onSearchTap,
-          ),
-          const Divider(),
-          // Take a Photo
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const CircleAvatar(
-              radius: 24,
-              backgroundColor: Color(0xFFFFF3E0),
-              child: Icon(Icons.camera_alt, color: AppColors.mealBreakfast),
-            ),
-            title: const Text(
-              'Take a Photo',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textSecondary,
               ),
             ),
-            subtitle: Text(
-              'Coming soon \u2014 Gemini Vision',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-            ),
             trailing: Icon(
               Icons.arrow_forward_ios,
               size: 14,
-              color: Colors.grey.shade400,
+              color: AppColors.textMuted,
             ),
-            onTap: onPhotoTap,
+            onTap: onSearchTap,
           ),
         ],
       ),

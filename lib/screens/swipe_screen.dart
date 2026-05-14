@@ -112,23 +112,56 @@ class _SwipeScreenState extends State<SwipeScreen>
     });
 
     try {
-      final results = await Future.wait([
-        _mealService.getUnswipedMeals(uid: _uid),
-        _db.collection('users').doc(_uid).get(),
-      ]);
-      final meals = results[0] as List<SwipeMeal>;
-      final profileDoc = results[1] as DocumentSnapshot<Map<String, dynamic>>;
-      final profile = profileDoc.data() ?? {};
-      final goals = List<String>.from(profile['goals'] ?? []);
-      final conditions = List<String>.from(profile['conditions'] ?? []);
+      final meals = await _mealService.getUnswipedMeals(uid: _uid);
+      var filteredMeals = List<SwipeMeal>.from(meals);
 
-      final rankedMeals = await _scoringService.rankSwipeMeals(
-        uid: _uid,
-        meals: meals,
-        goals: goals,
-        conditions: conditions,
-      );
-      var filteredMeals = rankedMeals.map((ranked) => ranked.meal).toList();
+      try {
+        final profileDoc = await _db.collection('users').doc(_uid).get();
+        final profile = profileDoc.data() ?? {};
+        final goals = List<String>.from(profile['goals'] ?? []);
+        final conditions = List<String>.from(profile['conditions'] ?? []);
+        final cuisinePreferences = List<String>.from(
+          profile['cuisinePreferences'] ?? [],
+        );
+        final allergies = List<String>.from(profile['allergies'] ?? []);
+        final avoidFoods = List<String>.from(profile['avoidFoods'] ?? []);
+        final dietaryPreference =
+            (profile['dietaryPreference'] ?? 'I eat everything').toString();
+
+        filteredMeals = _applyProfileMealFilters(
+          meals: filteredMeals,
+          cuisinePreferences: cuisinePreferences,
+          allergies: allergies,
+          avoidFoods: avoidFoods,
+          dietaryPreference: dietaryPreference,
+        );
+
+        if (filteredMeals.isEmpty &&
+            _selectedCuisineKeys(cuisinePreferences).isNotEmpty) {
+          filteredMeals = _applyProfileMealFilters(
+            meals: meals,
+            cuisinePreferences: const [],
+            allergies: allergies,
+            avoidFoods: avoidFoods,
+            dietaryPreference: dietaryPreference,
+          );
+        }
+
+        final rankedMeals = await _scoringService.rankSwipeMeals(
+          uid: _uid,
+          meals: filteredMeals,
+          goals: goals,
+          conditions: conditions,
+        );
+
+        final rankedOnly = rankedMeals.map((ranked) => ranked.meal).toList();
+        if (rankedOnly.isNotEmpty) {
+          filteredMeals = rankedOnly;
+        }
+      } catch (e, st) {
+        debugPrint('[SWIPE] ranking/profile fallback: $e\n$st');
+      }
+
       if (widget.isOnboarding && filteredMeals.length > 15) {
         filteredMeals = filteredMeals.take(15).toList();
       }
@@ -154,6 +187,312 @@ class _SwipeScreenState extends State<SwipeScreen>
           _hasError = true;
         });
       }
+    }
+  }
+
+  static const Set<String> _supportedCuisineKeys = {
+    'tunisian',
+    'mediterranean',
+    'middle_eastern',
+    'french',
+    'italian',
+    'asian',
+    'mexican',
+    'indian',
+    'international',
+  };
+
+  List<SwipeMeal> _applyProfileMealFilters({
+    required List<SwipeMeal> meals,
+    required List<String> cuisinePreferences,
+    required List<String> allergies,
+    required List<String> avoidFoods,
+    required String dietaryPreference,
+  }) {
+    final allowedCuisines = _selectedCuisineKeys(cuisinePreferences);
+    final blockedTerms = _blockedTermsFor(
+      allergies: allergies,
+      avoidFoods: avoidFoods,
+      dietaryPreference: dietaryPreference,
+    );
+    final requireLowGi = allergies.any(
+      (value) => _normalize(value).contains('diabetic'),
+    );
+
+    return meals.where((meal) {
+      final mealTerms = _mealTerms(meal);
+      if (allowedCuisines.isNotEmpty &&
+          !_matchesCuisinePreference(meal, allowedCuisines, mealTerms)) {
+        return false;
+      }
+
+      if (requireLowGi &&
+          meal.glycemicIndex > 55 &&
+          !mealTerms.contains('low_gi') &&
+          !mealTerms.contains('low gi')) {
+        return false;
+      }
+
+      for (final blocked in blockedTerms) {
+        if (mealTerms.contains(blocked)) return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  Set<String> _selectedCuisineKeys(List<String> preferences) {
+    return preferences
+        .map(_normalizeCuisineKey)
+        .where((value) => value.isNotEmpty && value != 'none')
+        .toSet();
+  }
+
+  bool _matchesCuisinePreference(
+    SwipeMeal meal,
+    Set<String> allowedCuisines,
+    Set<String> mealTerms,
+  ) {
+    final mealCuisine = _normalizeCuisineKey(meal.cuisine);
+    if (allowedCuisines.contains(mealCuisine)) {
+      return true;
+    }
+
+    for (final cuisine in allowedCuisines) {
+      if (mealTerms.contains(cuisine)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Set<String> _mealTerms(SwipeMeal meal) {
+    final terms = <String>{};
+
+    void addValue(String value) {
+      terms.addAll(_searchableTerms(value));
+    }
+
+    addValue(meal.name);
+    addValue(meal.description);
+    addValue(meal.mealType);
+    addValue(meal.cuisine);
+    terms.add(_normalizeCuisineKey(meal.cuisine));
+
+    for (final tag in meal.tags) {
+      addValue(tag);
+      final cuisineKey = _normalizeCuisineKey(tag);
+      if (_supportedCuisineKeys.contains(cuisineKey)) {
+        terms.add(cuisineKey);
+      }
+    }
+
+    for (final ingredient in meal.mainIngredients) {
+      addValue(ingredient);
+    }
+
+    if (meal.glycemicIndex <= 55) {
+      terms.addAll({'low_gi', 'low gi'});
+    }
+
+    terms.remove('');
+    return terms;
+  }
+
+  Set<String> _searchableTerms(String value) {
+    final normalized = _normalize(value);
+    if (normalized.isEmpty) return const <String>{};
+
+    final spaced = normalized
+        .replaceAll('&', ' and ')
+        .replaceAll('_', ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    final underscored = spaced.replaceAll(' ', '_');
+    final terms = <String>{normalized, spaced, underscored};
+
+    for (final token in spaced.split(RegExp(r'[^a-z0-9]+'))) {
+      if (token.isNotEmpty) {
+        terms.add(token);
+      }
+    }
+
+    return terms;
+  }
+
+  Set<String> _blockedTermsFor({
+    required List<String> allergies,
+    required List<String> avoidFoods,
+    required String dietaryPreference,
+  }) {
+    final blocked = <String>{};
+
+    for (final allergy in allergies) {
+      switch (_normalize(allergy)) {
+        case 'gluten-free':
+          blocked.addAll({
+            'flour',
+            'bread',
+            'couscous',
+            'bun',
+            'tortillas',
+            'vermicelli',
+            'pasta',
+            'penne',
+            'spaghetti',
+            'pastry',
+            'malsouka',
+            'malsouka pastry',
+            'bread dough',
+          });
+          break;
+        case 'dairy-free':
+          blocked.addAll({
+            'dairy',
+            'milk',
+            'cheese',
+            'feta',
+            'mozzarella',
+            'cheddar',
+            'parmesan',
+            'cream',
+            'butter',
+            'yogurt',
+            'swiss',
+            'buttermilk',
+          });
+          break;
+        case 'nut allergy':
+          blocked.addAll({
+            'nut',
+            'nuts',
+            'walnut',
+            'walnuts',
+            'almond',
+            'almonds',
+            'peanut',
+            'peanuts',
+            'pesto',
+          });
+          break;
+        case 'soy-free':
+          blocked.addAll({'soy', 'tofu', 'soy sauce'});
+          break;
+        case 'shellfish':
+          blocked.addAll({'shellfish', 'shrimp', 'prawns'});
+          break;
+        case 'egg allergy':
+          blocked.addAll({'egg', 'eggs', 'omelet', 'omelets', 'frittata'});
+          break;
+        case 'halal':
+          blocked.addAll({'pork', 'ham', 'bacon', 'alcohol', 'wine'});
+          break;
+        case 'kosher':
+          blocked.addAll({'pork', 'ham', 'bacon', 'shellfish'});
+          break;
+      }
+    }
+
+    for (final avoid in avoidFoods) {
+      switch (_normalize(avoid)) {
+        case 'broccoli':
+          blocked.addAll({'broccoli'});
+          break;
+        case 'liver':
+          blocked.addAll({'liver'});
+          break;
+        case 'tofu':
+          blocked.addAll({'tofu', 'soy'});
+          break;
+        case 'mushrooms':
+          blocked.addAll({'mushroom', 'mushrooms'});
+          break;
+        case 'olives':
+          blocked.addAll({'olive', 'olives'});
+          break;
+        case 'eggplant':
+          blocked.addAll({'eggplant'});
+          break;
+        case 'spicy food':
+          blocked.addAll({'spicy', 'harissa', 'cajun', 'enchilada'});
+          break;
+        case 'seafood':
+          blocked.addAll({
+            'seafood',
+            'shellfish',
+            'shrimp',
+            'fish',
+            'tuna',
+            'salmon',
+          });
+          break;
+      }
+    }
+
+    switch (_normalize(dietaryPreference)) {
+      case 'vegetarian':
+        blocked.addAll({
+          'meat',
+          'beef',
+          'chicken',
+          'lamb',
+          'turkey',
+          'fish',
+          'tuna',
+          'seafood',
+          'shellfish',
+          'shrimp',
+        });
+        break;
+      case 'vegan':
+        blocked.addAll({
+          'meat',
+          'beef',
+          'chicken',
+          'lamb',
+          'turkey',
+          'fish',
+          'tuna',
+          'seafood',
+          'shellfish',
+          'shrimp',
+          'egg',
+          'eggs',
+          'dairy',
+          'milk',
+          'cheese',
+          'feta',
+          'cream',
+          'butter',
+          'yogurt',
+          'honey',
+        });
+        break;
+      case 'pescatarian':
+        blocked.addAll({'meat', 'beef', 'chicken', 'lamb', 'turkey'});
+        break;
+    }
+
+    blocked.remove('none');
+    return blocked;
+  }
+
+  String _normalize(String value) {
+    return value.trim().toLowerCase();
+  }
+
+  String _normalizeCuisineKey(String value) {
+    final normalized = _normalize(
+      value,
+    ).replaceAll('&', ' and ').replaceAll(RegExp(r'\s+'), ' ').trim();
+    switch (normalized) {
+      case 'middle eastern':
+      case 'middle_eastern':
+        return 'middle_eastern';
+      case 'western':
+        return 'international';
+      default:
+        return normalized.replaceAll(' ', '_');
     }
   }
 
@@ -227,7 +566,7 @@ class _SwipeScreenState extends State<SwipeScreen>
       debugPrint('[SWIPE] all done, navigating in 800ms');
       Future.delayed(const Duration(milliseconds: 800), () {
         if (mounted) {
-          debugPrint('[SWIPE] firing onComplete -> dashboard');
+          debugPrint('[SWIPE] firing onComplete -> next onboarding step');
           widget.onComplete!();
         }
       });
@@ -267,13 +606,13 @@ class _SwipeScreenState extends State<SwipeScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Shimmer.fromColors(
-              baseColor: Colors.grey.shade300,
-              highlightColor: Colors.grey.shade100,
+              baseColor: AppColors.border,
+              highlightColor: AppColors.surfaceSoft,
               child: Container(
                 width: 300,
                 height: 480,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
@@ -301,7 +640,7 @@ class _SwipeScreenState extends State<SwipeScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.grey.shade400),
+            Icon(Icons.error_outline, size: 64, color: AppColors.textMuted),
             const SizedBox(height: 16),
             Text(
               "Couldn't load meals. Please try again.",
@@ -378,7 +717,7 @@ class _SwipeScreenState extends State<SwipeScreen>
             ).animate().fadeIn(delay: 200.ms, duration: 300.ms),
             const SizedBox(height: 8),
             Text(
-              'Taking you to your dashboard...',
+              'Creating your 7-day plan...',
               style: GoogleFonts.inter(
                 fontSize: 14,
                 color: AppColors.textSecondary,
@@ -914,11 +1253,11 @@ class _SwipeScreenState extends State<SwipeScreen>
       imageUrl: meal.imagePath,
       fit: BoxFit.cover,
       placeholder: (_, _) => Container(
-        color: Colors.grey.shade200,
+        color: AppColors.divider,
         child: Shimmer.fromColors(
-          baseColor: Colors.grey.shade300,
-          highlightColor: Colors.grey.shade100,
-          child: Container(color: Colors.white),
+          baseColor: AppColors.border,
+          highlightColor: AppColors.surfaceSoft,
+          child: Container(color: AppColors.surface),
         ),
       ),
       errorWidget: (_, _, _) => _imageFallback(meal),
@@ -974,22 +1313,22 @@ class _SwipeScreenState extends State<SwipeScreen>
               _macroPill(
                 'P',
                 meal.protein,
-                const Color(0xFFEDE7F6),
-                const Color(0xFF5E35B1),
+                AppColors.infoSurface,
+                AppColors.tealDark,
               ),
               const SizedBox(width: 8),
               _macroPill(
                 'C',
                 meal.carbs,
-                const Color(0xFFFFF3E0),
-                const Color(0xFFE65100),
+                AppColors.amberSoft,
+                AppColors.amberDark,
               ),
               const SizedBox(width: 8),
               _macroPill(
                 'F',
                 meal.fats,
-                const Color(0xFFFFFDE7),
-                const Color(0xFFF9A825),
+                AppColors.sageSoft,
+                AppColors.sageDark,
               ),
             ],
           ),
@@ -1043,7 +1382,7 @@ class _SwipeScreenState extends State<SwipeScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: AppColors.surfaceSoft,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -1167,12 +1506,26 @@ class _SwipeScreenState extends State<SwipeScreen>
   // ─── HELPERS ──────────────────────────────────────────────
 
   List<Color> _cuisineGradient(String cuisine) {
-    switch (cuisine.toLowerCase()) {
+    switch (_normalizeCuisineKey(cuisine)) {
       case 'tunisian':
-        return const [Color(0xFF81C784), Color(0xFF2E7D32)];
-      case 'western':
+        return const [AppColors.primaryLight, AppColors.primaryDark];
+      case 'mediterranean':
+        return const [AppColors.tealLight, AppColors.tealDark];
+      case 'middle_eastern':
+        return const [AppColors.amber, AppColors.amberDark];
+      case 'french':
+        return const [AppColors.sage, AppColors.tealDark];
+      case 'italian':
+        return const [AppColors.primary, AppColors.amberDark];
+      case 'asian':
+        return const [AppColors.teal, AppColors.sageDark];
+      case 'mexican':
+        return const [AppColors.amber, AppColors.primaryDark];
+      case 'indian':
+        return const [AppColors.amber, AppColors.tealDark];
+      case 'international':
       default:
-        return const [Color(0xFF64B5F6), Color(0xFF1565C0)];
+        return const [AppColors.sage, AppColors.textSecondary];
     }
   }
 
@@ -1195,6 +1548,13 @@ class _SwipeScreenState extends State<SwipeScreen>
   static const _tagPriority = [
     'tunisian',
     'mediterranean',
+    'middle_eastern',
+    'french',
+    'italian',
+    'asian',
+    'mexican',
+    'indian',
+    'international',
     'high_protein',
     'low_gi',
     'low_carb',
@@ -1219,32 +1579,53 @@ class _SwipeScreenState extends State<SwipeScreen>
   }
 
   (Color, Color) _tagColors(String tag) {
-    final t = tag.toLowerCase();
+    final t = _normalizeCuisineKey(tag);
     if (t == 'tunisian') {
-      return (const Color(0xFFFFEBEE), const Color(0xFFC62828));
+      return (AppColors.primarySurface, AppColors.primaryDark);
     }
     if (t == 'mediterranean') {
-      return (const Color(0xFFE0F2F1), const Color(0xFF00695C));
+      return (AppColors.infoSurface, AppColors.tealDark);
+    }
+    if (t == 'middle_eastern') {
+      return (AppColors.amberSoft, AppColors.amberDark);
+    }
+    if (t == 'french') {
+      return (AppColors.sageSoft, AppColors.sageDark);
+    }
+    if (t == 'italian') {
+      return (AppColors.primarySoft, AppColors.primaryDark);
+    }
+    if (t == 'asian') {
+      return (AppColors.infoSurface, AppColors.tealDark);
+    }
+    if (t == 'mexican') {
+      return (AppColors.amberSoft, AppColors.amberDark);
+    }
+    if (t == 'indian') {
+      return (AppColors.amberSoft, AppColors.amberDark);
+    }
+    if (t == 'international') {
+      return (AppColors.surfaceSoft, AppColors.textSecondary);
     }
     if (t.contains('protein')) {
-      return (const Color(0xFFE8EAF6), const Color(0xFF3949AB));
+      return (AppColors.infoSurface, AppColors.tealDark);
     }
     if (t.contains('quick') || t == 'no_cook') {
-      return (const Color(0xFFF3E5F5), const Color(0xFF7B1FA2));
+      return (AppColors.sageSoft, AppColors.sageDark);
     }
     if (t == 'comfort_food') {
-      return (const Color(0xFFFFF8E1), const Color(0xFFFF8F00));
+      return (AppColors.amberSoft, AppColors.amberDark);
     }
     if (t == 'spicy') {
-      return (const Color(0xFFFFEBEE), const Color(0xFFC62828));
+      return (AppColors.errorSurface, AppColors.error);
     }
     if (t.contains('low_gi') || t.contains('low_carb')) {
-      return (const Color(0xFFE0F2F1), const Color(0xFF00695C));
+      return (AppColors.primarySurface, AppColors.primaryDark);
     }
     if (t == 'light' || t == 'low_calorie') {
-      return (const Color(0xFFE8F5E9), const Color(0xFF2E7D32));
+      return (AppColors.sageSoft, AppColors.sageDark);
     }
-    return (const Color(0xFFF5F5F5), const Color(0xFF616161));
+    return (AppColors.surfaceSoft, AppColors.textSecondary);
   }
 
   String _formatTag(String tag) {
@@ -1256,7 +1637,6 @@ class _SwipeScreenState extends State<SwipeScreen>
   }
 
   String _capitalize(String s) {
-    if (s.isEmpty) return s;
-    return '${s[0].toUpperCase()}${s.substring(1).toLowerCase()}';
+    return _formatTag(_normalizeCuisineKey(s));
   }
 }

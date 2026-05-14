@@ -30,10 +30,7 @@ class SwipeMealService {
     required String uid,
     int? limit,
   }) async {
-    final results = await Future.wait([
-      getAllMeals(),
-      _getSwipedMealIds(uid),
-    ]);
+    final results = await Future.wait([getAllMeals(), _getSwipedMealIds(uid)]);
     final all = results[0] as List<SwipeMeal>;
     final swiped = Set<String>.from(results[1] as List<String>);
 
@@ -54,8 +51,12 @@ class SwipeMealService {
   }
 
   Future<List<String>> _getSwipedMealIds(String uid) async {
-    final doc = await _db.collection('preferences').doc(uid).get();
-    if (!doc.exists) return [];
-    return List<String>.from(doc.data()?['swipedMealIds'] ?? []);
+    try {
+      final doc = await _db.collection('preferences').doc(uid).get();
+      if (!doc.exists) return [];
+      return List<String>.from(doc.data()?['swipedMealIds'] ?? []);
+    } catch (_) {
+      return [];
+    }
   }
 }

@@ -68,8 +68,12 @@ class _StepWeightState extends State<StepWeight> {
               SliderTheme(
                 data: SliderThemeData(
                   trackHeight: 6,
-                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 14),
-                  overlayShape: const RoundSliderOverlayShape(overlayRadius: 24),
+                  thumbShape: const RoundSliderThumbShape(
+                    enabledThumbRadius: 14,
+                  ),
+                  overlayShape: const RoundSliderOverlayShape(
+                    overlayRadius: 24,
+                  ),
                   activeTrackColor: AppColors.primary,
                   inactiveTrackColor: AppColors.border,
                   thumbColor: AppColors.primary,
@@ -81,7 +85,9 @@ class _StepWeightState extends State<StepWeight> {
                   max: _useKg ? 200 : 440,
                   divisions: _useKg ? 170 : 374,
                   onChanged: (v) {
-                    final weightKg = _useKg ? v : NutritionCalculator.lbsToKg(v);
+                    final weightKg = _useKg
+                        ? v
+                        : NutritionCalculator.lbsToKg(v);
                     context.read<OnboardingProvider>().setWeight(weightKg);
                   },
                 ),
@@ -89,10 +95,8 @@ class _StepWeightState extends State<StepWeight> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(_useKg ? '30 kg' : '66 lbs',
-                      style: _rangeStyle()),
-                  Text(_useKg ? '200 kg' : '440 lbs',
-                      style: _rangeStyle()),
+                  Text(_useKg ? '30 kg' : '66 lbs', style: _rangeStyle()),
+                  Text(_useKg ? '200 kg' : '440 lbs', style: _rangeStyle()),
                 ],
               ),
             ],
@@ -102,10 +106,8 @@ class _StepWeightState extends State<StepWeight> {
     );
   }
 
-  TextStyle _rangeStyle() => GoogleFonts.inter(
-        fontSize: 12,
-        color: AppColors.textMuted,
-      );
+  TextStyle _rangeStyle() =>
+      GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted);
 }
 
 /// Simple BMI hint based on weight only (height not available yet)
@@ -118,10 +120,7 @@ class _BmiIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'We\'ll calculate your BMI after you enter your height',
-      style: GoogleFonts.inter(
-        fontSize: 12,
-        color: AppColors.textMuted,
-      ),
+      style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
     );
   }
 }
@@ -155,7 +154,11 @@ class _Tab extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const _Tab({required this.label, required this.selected, required this.onTap});
+  const _Tab({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ class UserProvider extends ChangeNotifier {
   String? _errorMessage;
 
   UserProvider({required UserRepository userRepository})
-      : _userRepository = userRepository;
+    : _userRepository = userRepository;
 
   UserProfile? get profile => _profile;
   bool get isLoading => _isLoading;
@@ -45,6 +45,8 @@ class UserProvider extends ChangeNotifier {
   /// Clears the profile when the user signs out.
   void clearProfile() {
     _profile = null;
+    _isLoading = false;
+    _errorMessage = null;
     notifyListeners();
   }
 }

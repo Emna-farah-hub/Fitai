@@ -24,11 +24,7 @@ class AiAvatar extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(
-        Icons.auto_awesome,
-        color: Colors.white,
-        size: size * 0.46,
-      ),
+      child: Icon(Icons.auto_awesome, color: Colors.white, size: size * 0.46),
     );
   }
 }
