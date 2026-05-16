@@ -49,17 +49,18 @@ class FitAIBottomNav extends StatelessWidget {
             ],
           ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               for (int i = 0; i < tabs.length; i++)
-                _NavItem(
-                  tab: tabs[i],
-                  isActive: i == currentIndex,
-                  onTap: () {
-                    if (i == currentIndex) return;
-                    HapticFeedback.selectionClick();
-                    onTabSelected(i);
-                  },
+                Expanded(
+                  child: _NavItem(
+                    tab: tabs[i],
+                    isActive: i == currentIndex,
+                    onTap: () {
+                      if (i == currentIndex) return;
+                      HapticFeedback.selectionClick();
+                      onTabSelected(i);
+                    },
+                  ),
                 ),
             ],
           ),
@@ -85,34 +86,40 @@ class _NavItem extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isActive
-              ? AppColors.primary.withValues(alpha: 0.12)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              tab.icon,
-              size: 24,
-              color: isActive ? AppColors.primary : const Color(0xFF444444),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              tab.label,
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+      child: Center(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: isActive
+                ? AppColors.primary.withValues(alpha: 0.12)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                tab.icon,
+                size: 22,
                 color: isActive ? AppColors.primary : const Color(0xFF444444),
               ),
-            ),
-          ],
+              const SizedBox(height: 3),
+              Text(
+                tab.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                  color: isActive ? AppColors.primary : const Color(0xFF444444),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

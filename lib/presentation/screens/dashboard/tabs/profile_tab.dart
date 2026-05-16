@@ -7,6 +7,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../screens/weekly_insights_screen.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/user_provider.dart';
+import '../../../widgets/weigh_in_dialog.dart';
+import '../../../widgets/weight_trend_chart.dart';
 
 /// Profile tab — shows user info, stats, health & goals, and sign out.
 class ProfileTab extends StatelessWidget {
@@ -213,6 +215,66 @@ class ProfileTab extends StatelessWidget {
                     end: 0,
                     duration: 350.ms,
                     delay: 80.ms,
+                    curve: Curves.easeOut,
+                  ),
+
+              const SizedBox(height: 16),
+
+              // Weight Progress card
+              Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _SectionCard(
+                      title: 'Weight Progress',
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          WeightTrendChart(
+                            uid: authProvider.currentUser!.uid,
+                            targetWeightKg: profile.targetWeightKg > 0
+                                ? profile.targetWeightKg
+                                : null,
+                          ),
+                          const SizedBox(height: 12),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                            onPressed: () async {
+                              final saved = await showDialog<bool>(
+                                context: context,
+                                builder: (_) => WeighInDialog(
+                                  uid: authProvider.currentUser!.uid,
+                                  initialWeightKg: profile.weight,
+                                ),
+                              );
+                              if (saved == true && context.mounted) {
+                                await userProvider.loadProfile(
+                                  authProvider.currentUser!.uid,
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.monitor_weight_outlined, size: 18),
+                            label: const Text(
+                              'Log this week\'s weight',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                  .animate()
+                  .fadeIn(duration: 350.ms, delay: 120.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    duration: 350.ms,
+                    delay: 120.ms,
                     curve: Curves.easeOut,
                   ),
 

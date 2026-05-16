@@ -9,9 +9,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 import '../core/constants/app_colors.dart';
-import '../models/swipe_meal.dart';
+import '../models/meal.dart';
 import '../services/food_scoring_service.dart';
-import '../services/swipe_meal_service.dart';
+import '../services/swipe_personalization_service.dart';
 
 class SwipeScreen extends StatefulWidget {
   final bool isOnboarding;
@@ -26,12 +26,12 @@ class SwipeScreen extends StatefulWidget {
 class _SwipeScreenState extends State<SwipeScreen>
     with TickerProviderStateMixin {
   final _scoringService = FoodScoringService();
-  final _mealService = SwipeMealService();
+  final _personalization = SwipePersonalizationService();
   final _db = FirebaseFirestore.instance;
 
   String get _uid => FirebaseAuth.instance.currentUser!.uid;
 
-  List<SwipeMeal> _meals = [];
+  List<Meal> _meals = [];
   int _currentIndex = 0;
   bool _isLoading = true;
   bool _hasError = false;
@@ -112,72 +112,27 @@ class _SwipeScreenState extends State<SwipeScreen>
     });
 
     try {
-      final meals = await _mealService.getUnswipedMeals(uid: _uid);
-      var filteredMeals = List<SwipeMeal>.from(meals);
-
-      try {
-        final profileDoc = await _db.collection('users').doc(_uid).get();
-        final profile = profileDoc.data() ?? {};
-        final goals = List<String>.from(profile['goals'] ?? []);
-        final conditions = List<String>.from(profile['conditions'] ?? []);
-        final cuisinePreferences = List<String>.from(
-          profile['cuisinePreferences'] ?? [],
-        );
-        final allergies = List<String>.from(profile['allergies'] ?? []);
-        final avoidFoods = List<String>.from(profile['avoidFoods'] ?? []);
-        final dietaryPreference =
-            (profile['dietaryPreference'] ?? 'I eat everything').toString();
-
-        filteredMeals = _applyProfileMealFilters(
-          meals: filteredMeals,
-          cuisinePreferences: cuisinePreferences,
-          allergies: allergies,
-          avoidFoods: avoidFoods,
-          dietaryPreference: dietaryPreference,
-        );
-
-        if (filteredMeals.isEmpty &&
-            _selectedCuisineKeys(cuisinePreferences).isNotEmpty) {
-          filteredMeals = _applyProfileMealFilters(
-            meals: meals,
-            cuisinePreferences: const [],
-            allergies: allergies,
-            avoidFoods: avoidFoods,
-            dietaryPreference: dietaryPreference,
-          );
-        }
-
-        final rankedMeals = await _scoringService.rankSwipeMeals(
-          uid: _uid,
-          meals: filteredMeals,
-          goals: goals,
-          conditions: conditions,
-        );
-
-        final rankedOnly = rankedMeals.map((ranked) => ranked.meal).toList();
-        if (rankedOnly.isNotEmpty) {
-          filteredMeals = rankedOnly;
-        }
-      } catch (e, st) {
-        debugPrint('[SWIPE] ranking/profile fallback: $e\n$st');
-      }
-
-      if (widget.isOnboarding && filteredMeals.length > 15) {
-        filteredMeals = filteredMeals.take(15).toList();
+      final existing = await _personalization.loadExistingBatch(_uid);
+      List<Meal> meals;
+      if (existing != null && existing.isNotEmpty) {
+        meals = existing;
+      } else {
+        meals = await _generateFreshBatch();
       }
 
       if (mounted) {
         setState(() {
-          _meals = filteredMeals;
+          _meals = meals;
+          _currentIndex = 0;
           _isLoading = false;
           _stackAnimated = false;
           _isFloating = true;
-          if (_meals.isEmpty) _isComplete = true;
+          _isComplete = _meals.isEmpty;
         });
         Future.delayed(const Duration(milliseconds: 520), () {
           if (mounted) setState(() => _stackAnimated = true);
         });
-        debugPrint('[SWIPE] loaded ${filteredMeals.length} meals');
+        debugPrint('[SWIPE] loaded ${meals.length} meals');
       }
     } catch (e, st) {
       debugPrint('[SWIPE] _loadMeals FAILED: $e\n$st');
@@ -190,309 +145,29 @@ class _SwipeScreenState extends State<SwipeScreen>
     }
   }
 
-  static const Set<String> _supportedCuisineKeys = {
-    'tunisian',
-    'mediterranean',
-    'middle_eastern',
-    'french',
-    'italian',
-    'asian',
-    'mexican',
-    'indian',
-    'international',
-  };
-
-  List<SwipeMeal> _applyProfileMealFilters({
-    required List<SwipeMeal> meals,
-    required List<String> cuisinePreferences,
-    required List<String> allergies,
-    required List<String> avoidFoods,
-    required String dietaryPreference,
-  }) {
-    final allowedCuisines = _selectedCuisineKeys(cuisinePreferences);
-    final blockedTerms = _blockedTermsFor(
-      allergies: allergies,
-      avoidFoods: avoidFoods,
-      dietaryPreference: dietaryPreference,
+  Future<List<Meal>> _generateFreshBatch() async {
+    final profileDoc = await _db.collection('users').doc(_uid).get();
+    final profile = Map<String, dynamic>.from(profileDoc.data() ?? const {});
+    profile['uid'] = _uid;
+    final swipedIds = await _loadSwipedIds(_uid);
+    return _personalization.buildSwipeBatch(
+      userProfile: profile,
+      swipedMealIds: swipedIds,
+      learnedPreferences: null,
     );
-    final requireLowGi = allergies.any(
-      (value) => _normalize(value).contains('diabetic'),
-    );
-
-    return meals.where((meal) {
-      final mealTerms = _mealTerms(meal);
-      if (allowedCuisines.isNotEmpty &&
-          !_matchesCuisinePreference(meal, allowedCuisines, mealTerms)) {
-        return false;
-      }
-
-      if (requireLowGi &&
-          meal.glycemicIndex > 55 &&
-          !mealTerms.contains('low_gi') &&
-          !mealTerms.contains('low gi')) {
-        return false;
-      }
-
-      for (final blocked in blockedTerms) {
-        if (mealTerms.contains(blocked)) return false;
-      }
-      return true;
-    }).toList();
   }
 
-  Set<String> _selectedCuisineKeys(List<String> preferences) {
-    return preferences
-        .map(_normalizeCuisineKey)
-        .where((value) => value.isNotEmpty && value != 'none')
-        .toSet();
-  }
-
-  bool _matchesCuisinePreference(
-    SwipeMeal meal,
-    Set<String> allowedCuisines,
-    Set<String> mealTerms,
-  ) {
-    final mealCuisine = _normalizeCuisineKey(meal.cuisine);
-    if (allowedCuisines.contains(mealCuisine)) {
-      return true;
-    }
-
-    for (final cuisine in allowedCuisines) {
-      if (mealTerms.contains(cuisine)) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  Set<String> _mealTerms(SwipeMeal meal) {
-    final terms = <String>{};
-
-    void addValue(String value) {
-      terms.addAll(_searchableTerms(value));
-    }
-
-    addValue(meal.name);
-    addValue(meal.description);
-    addValue(meal.mealType);
-    addValue(meal.cuisine);
-    terms.add(_normalizeCuisineKey(meal.cuisine));
-
-    for (final tag in meal.tags) {
-      addValue(tag);
-      final cuisineKey = _normalizeCuisineKey(tag);
-      if (_supportedCuisineKeys.contains(cuisineKey)) {
-        terms.add(cuisineKey);
-      }
-    }
-
-    for (final ingredient in meal.mainIngredients) {
-      addValue(ingredient);
-    }
-
-    if (meal.glycemicIndex <= 55) {
-      terms.addAll({'low_gi', 'low gi'});
-    }
-
-    terms.remove('');
-    return terms;
-  }
-
-  Set<String> _searchableTerms(String value) {
-    final normalized = _normalize(value);
-    if (normalized.isEmpty) return const <String>{};
-
-    final spaced = normalized
-        .replaceAll('&', ' and ')
-        .replaceAll('_', ' ')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim();
-    final underscored = spaced.replaceAll(' ', '_');
-    final terms = <String>{normalized, spaced, underscored};
-
-    for (final token in spaced.split(RegExp(r'[^a-z0-9]+'))) {
-      if (token.isNotEmpty) {
-        terms.add(token);
-      }
-    }
-
-    return terms;
-  }
-
-  Set<String> _blockedTermsFor({
-    required List<String> allergies,
-    required List<String> avoidFoods,
-    required String dietaryPreference,
-  }) {
-    final blocked = <String>{};
-
-    for (final allergy in allergies) {
-      switch (_normalize(allergy)) {
-        case 'gluten-free':
-          blocked.addAll({
-            'flour',
-            'bread',
-            'couscous',
-            'bun',
-            'tortillas',
-            'vermicelli',
-            'pasta',
-            'penne',
-            'spaghetti',
-            'pastry',
-            'malsouka',
-            'malsouka pastry',
-            'bread dough',
-          });
-          break;
-        case 'dairy-free':
-          blocked.addAll({
-            'dairy',
-            'milk',
-            'cheese',
-            'feta',
-            'mozzarella',
-            'cheddar',
-            'parmesan',
-            'cream',
-            'butter',
-            'yogurt',
-            'swiss',
-            'buttermilk',
-          });
-          break;
-        case 'nut allergy':
-          blocked.addAll({
-            'nut',
-            'nuts',
-            'walnut',
-            'walnuts',
-            'almond',
-            'almonds',
-            'peanut',
-            'peanuts',
-            'pesto',
-          });
-          break;
-        case 'soy-free':
-          blocked.addAll({'soy', 'tofu', 'soy sauce'});
-          break;
-        case 'shellfish':
-          blocked.addAll({'shellfish', 'shrimp', 'prawns'});
-          break;
-        case 'egg allergy':
-          blocked.addAll({'egg', 'eggs', 'omelet', 'omelets', 'frittata'});
-          break;
-        case 'halal':
-          blocked.addAll({'pork', 'ham', 'bacon', 'alcohol', 'wine'});
-          break;
-        case 'kosher':
-          blocked.addAll({'pork', 'ham', 'bacon', 'shellfish'});
-          break;
-      }
-    }
-
-    for (final avoid in avoidFoods) {
-      switch (_normalize(avoid)) {
-        case 'broccoli':
-          blocked.addAll({'broccoli'});
-          break;
-        case 'liver':
-          blocked.addAll({'liver'});
-          break;
-        case 'tofu':
-          blocked.addAll({'tofu', 'soy'});
-          break;
-        case 'mushrooms':
-          blocked.addAll({'mushroom', 'mushrooms'});
-          break;
-        case 'olives':
-          blocked.addAll({'olive', 'olives'});
-          break;
-        case 'eggplant':
-          blocked.addAll({'eggplant'});
-          break;
-        case 'spicy food':
-          blocked.addAll({'spicy', 'harissa', 'cajun', 'enchilada'});
-          break;
-        case 'seafood':
-          blocked.addAll({
-            'seafood',
-            'shellfish',
-            'shrimp',
-            'fish',
-            'tuna',
-            'salmon',
-          });
-          break;
-      }
-    }
-
-    switch (_normalize(dietaryPreference)) {
-      case 'vegetarian':
-        blocked.addAll({
-          'meat',
-          'beef',
-          'chicken',
-          'lamb',
-          'turkey',
-          'fish',
-          'tuna',
-          'seafood',
-          'shellfish',
-          'shrimp',
-        });
-        break;
-      case 'vegan':
-        blocked.addAll({
-          'meat',
-          'beef',
-          'chicken',
-          'lamb',
-          'turkey',
-          'fish',
-          'tuna',
-          'seafood',
-          'shellfish',
-          'shrimp',
-          'egg',
-          'eggs',
-          'dairy',
-          'milk',
-          'cheese',
-          'feta',
-          'cream',
-          'butter',
-          'yogurt',
-          'honey',
-        });
-        break;
-      case 'pescatarian':
-        blocked.addAll({'meat', 'beef', 'chicken', 'lamb', 'turkey'});
-        break;
-    }
-
-    blocked.remove('none');
-    return blocked;
-  }
-
-  String _normalize(String value) {
-    return value.trim().toLowerCase();
-  }
-
-  String _normalizeCuisineKey(String value) {
-    final normalized = _normalize(
-      value,
-    ).replaceAll('&', ' and ').replaceAll(RegExp(r'\s+'), ' ').trim();
-    switch (normalized) {
-      case 'middle eastern':
-      case 'middle_eastern':
-        return 'middle_eastern';
-      case 'western':
-        return 'international';
-      default:
-        return normalized.replaceAll(' ', '_');
+  Future<Set<String>> _loadSwipedIds(String uid) async {
+    try {
+      final doc = await _db.collection('preferences').doc(uid).get();
+      if (!doc.exists) return <String>{};
+      final data = doc.data() ?? const {};
+      return <String>{
+        ...List<String>.from(data['likedFoodIds'] ?? const []),
+        ...List<String>.from(data['dislikedFoodIds'] ?? const []),
+      };
+    } catch (_) {
+      return <String>{};
     }
   }
 
@@ -541,11 +216,12 @@ class _SwipeScreenState extends State<SwipeScreen>
     HapticFeedback.lightImpact();
     final meal = _meals[_currentIndex];
 
-    // Fire and forget — update preferences + mark meal as shown
+    // Existing preference learning — keep firing on every swipe.
     _scoringService
         .recordMealSwipe(uid: _uid, meal: meal, liked: liked)
         .catchError((_) {});
-    _mealService.markMealAsSwiped(_uid, meal.id).catchError((_) {});
+    // New batch lifecycle — note that this card has been seen.
+    _personalization.markMealSeen(_uid, meal.id).catchError((_) {});
 
     setState(() {
       _dragX = 0;
@@ -562,6 +238,10 @@ class _SwipeScreenState extends State<SwipeScreen>
   }
 
   void _handleComplete() {
+    // Mark the batch complete and prepare the next one in the background.
+    // The success/complete state stays visible until the user leaves.
+    unawaited(_finalizeBatchAndPrepareNext());
+
     if (widget.isOnboarding && widget.onComplete != null) {
       debugPrint('[SWIPE] all done, navigating in 800ms');
       Future.delayed(const Duration(milliseconds: 800), () {
@@ -570,6 +250,15 @@ class _SwipeScreenState extends State<SwipeScreen>
           widget.onComplete!();
         }
       });
+    }
+  }
+
+  Future<void> _finalizeBatchAndPrepareNext() async {
+    try {
+      await _personalization.completeBatch(_uid);
+      await _generateFreshBatch();
+    } catch (e, st) {
+      debugPrint('[SWIPE] _finalizeBatchAndPrepareNext FAILED: $e\n$st');
     }
   }
 
@@ -932,7 +621,7 @@ class _SwipeScreenState extends State<SwipeScreen>
                   child: Opacity(
                     opacity: 0.6,
                     child: _buildMealCard(
-                      _meals[_currentIndex + 2],
+                      _meals[_currentIndex + 2].toSwipeCardMap(),
                       isBackground: true,
                     ),
                   ),
@@ -952,7 +641,7 @@ class _SwipeScreenState extends State<SwipeScreen>
                   child: Opacity(
                     opacity: 0.8,
                     child: _buildMealCard(
-                      _meals[_currentIndex + 1],
+                      _meals[_currentIndex + 1].toSwipeCardMap(),
                       isBackground: true,
                     ),
                   ),
@@ -968,7 +657,7 @@ class _SwipeScreenState extends State<SwipeScreen>
     );
   }
 
-  Widget _buildDraggableCard(SwipeMeal meal) {
+  Widget _buildDraggableCard(Meal meal) {
     final screenWidth = MediaQuery.of(context).size.width;
     final swipeProgress = (_dragX / (screenWidth * 0.4)).clamp(-1.0, 1.0);
 
@@ -1006,7 +695,7 @@ class _SwipeScreenState extends State<SwipeScreen>
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Stack(
               children: [
-                _buildMealCard(meal),
+                _buildMealCard(meal.toSwipeCardMap()),
                 if (likeOpacity > 0)
                   Positioned(
                     top: 24,
@@ -1105,7 +794,7 @@ class _SwipeScreenState extends State<SwipeScreen>
 
   // ─── MEAL CARD ────────────────────────────────────────────
 
-  Widget _buildMealCard(SwipeMeal meal, {bool isBackground = false}) {
+  Widget _buildMealCard(Map<String, dynamic> meal, {bool isBackground = false}) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -1131,7 +820,11 @@ class _SwipeScreenState extends State<SwipeScreen>
     );
   }
 
-  Widget _buildImageSection(SwipeMeal meal) {
+  Widget _buildImageSection(Map<String, dynamic> meal) {
+    final cuisine = (meal['cuisine'] as String?) ?? '';
+    final calories = (meal['calories'] as num?) ?? 0;
+    final name = (meal['name'] as String?) ?? '';
+
     return AspectRatio(
       aspectRatio: 16 / 12,
       child: Stack(
@@ -1171,7 +864,7 @@ class _SwipeScreenState extends State<SwipeScreen>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _capitalize(meal.cuisine),
+                    _capitalize(cuisine),
                     style: GoogleFonts.inter(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -1192,7 +885,7 @@ class _SwipeScreenState extends State<SwipeScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '${meal.calories.toInt()}',
+                        '${calories.toInt()}',
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -1219,7 +912,7 @@ class _SwipeScreenState extends State<SwipeScreen>
             right: 16,
             bottom: 14,
             child: Text(
-              meal.name,
+              name,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
@@ -1241,16 +934,18 @@ class _SwipeScreenState extends State<SwipeScreen>
     );
   }
 
-  Widget _buildImage(SwipeMeal meal) {
-    if (meal.isLocalImage) {
+  Widget _buildImage(Map<String, dynamic> meal) {
+    final isLocal = meal['isLocalImage'] == true;
+    final imagePath = (meal['imagePath'] as String?) ?? '';
+    if (isLocal) {
       return Image.asset(
-        meal.imagePath,
+        imagePath,
         fit: BoxFit.cover,
         errorBuilder: (_, _, _) => _imageFallback(meal),
       );
     }
     return CachedNetworkImage(
-      imageUrl: meal.imagePath,
+      imageUrl: imagePath,
       fit: BoxFit.cover,
       placeholder: (_, _) => Container(
         color: AppColors.divider,
@@ -1260,22 +955,34 @@ class _SwipeScreenState extends State<SwipeScreen>
           child: Container(color: AppColors.surface),
         ),
       ),
-      errorWidget: (_, _, _) => _imageFallback(meal),
+      errorWidget: (_, _, _) => _buildCuisineAssetFallback(meal),
     );
   }
 
-  Widget _imageFallback(SwipeMeal meal) {
+  Widget _buildCuisineAssetFallback(Map<String, dynamic> meal) {
+    final cuisineAsset = (meal['cuisineAssetPath'] as String?) ?? '';
+    if (cuisineAsset.isEmpty) return _imageFallback(meal);
+    return Image.asset(
+      cuisineAsset,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => _imageFallback(meal),
+    );
+  }
+
+  Widget _imageFallback(Map<String, dynamic> meal) {
+    final cuisine = (meal['cuisine'] as String?) ?? '';
+    final mealType = (meal['mealType'] as String?) ?? '';
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: _cuisineGradient(meal.cuisine),
+          colors: _cuisineGradient(cuisine),
         ),
       ),
       child: Center(
         child: Icon(
-          _mealTypeIcon(meal.mealType),
+          _mealTypeIcon(mealType),
           size: 72,
           color: Colors.white.withValues(alpha: 0.9),
         ),
@@ -1283,14 +990,24 @@ class _SwipeScreenState extends State<SwipeScreen>
     );
   }
 
-  Widget _buildContentSection(SwipeMeal meal) {
+  Widget _buildContentSection(Map<String, dynamic> meal) {
+    final description = (meal['description'] as String?) ?? '';
+    final prepTime = (meal['prepTime'] as String?) ?? '';
+    final difficulty = (meal['difficulty'] as String?) ?? '';
+    final protein = ((meal['protein'] as num?) ?? 0).toDouble();
+    final carbs = ((meal['carbs'] as num?) ?? 0).toDouble();
+    final fats = ((meal['fats'] as num?) ?? 0).toDouble();
+    final mainIngredients =
+        (meal['mainIngredients'] as List?)?.cast<String>() ?? const <String>[];
+    final tags = (meal['tags'] as List?)?.cast<String>() ?? const <String>[];
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            meal.description,
+            description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
@@ -1302,9 +1019,9 @@ class _SwipeScreenState extends State<SwipeScreen>
           const SizedBox(height: 10),
           Row(
             children: [
-              _infoChip(Icons.schedule, meal.prepTime),
+              _infoChip(Icons.schedule, prepTime),
               const SizedBox(width: 8),
-              _infoChip(Icons.bar_chart_rounded, _capitalize(meal.difficulty)),
+              _infoChip(Icons.bar_chart_rounded, _capitalize(difficulty)),
             ],
           ),
           const SizedBox(height: 12),
@@ -1312,30 +1029,30 @@ class _SwipeScreenState extends State<SwipeScreen>
             children: [
               _macroPill(
                 'P',
-                meal.protein,
+                protein,
                 AppColors.infoSurface,
                 AppColors.tealDark,
               ),
               const SizedBox(width: 8),
               _macroPill(
                 'C',
-                meal.carbs,
+                carbs,
                 AppColors.amberSoft,
                 AppColors.amberDark,
               ),
               const SizedBox(width: 8),
               _macroPill(
                 'F',
-                meal.fats,
+                fats,
                 AppColors.sageSoft,
                 AppColors.sageDark,
               ),
             ],
           ),
-          if (meal.mainIngredients.isNotEmpty) ...[
+          if (mainIngredients.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
-              meal.mainIngredients.take(4).join(' · '),
+              mainIngredients.take(4).join(' · '),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.inter(
@@ -1345,12 +1062,12 @@ class _SwipeScreenState extends State<SwipeScreen>
               ),
             ),
           ],
-          if (meal.tags.isNotEmpty) ...[
+          if (tags.isNotEmpty) ...[
             const SizedBox(height: 10),
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: _pickDisplayTags(meal.tags).map((tag) {
+              children: _pickDisplayTags(tags).map((tag) {
                 final colors = _tagColors(tag);
                 return Container(
                   padding: const EdgeInsets.symmetric(
@@ -1638,5 +1355,23 @@ class _SwipeScreenState extends State<SwipeScreen>
 
   String _capitalize(String s) {
     return _formatTag(_normalizeCuisineKey(s));
+  }
+
+  String _normalizeCuisineKey(String value) {
+    final normalized = value
+        .trim()
+        .toLowerCase()
+        .replaceAll('&', ' and ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    switch (normalized) {
+      case 'middle eastern':
+      case 'middle_eastern':
+        return 'middle_eastern';
+      case 'western':
+        return 'international';
+      default:
+        return normalized.replaceAll(' ', '_');
+    }
   }
 }

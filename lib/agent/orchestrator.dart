@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import '../models/meal_entry.dart';
 import '../services/food_scoring_service.dart';
+import '../services/meal_catalog_service.dart';
 import '../services/meal_journal_service.dart';
 import 'core/agent_event.dart';
 import 'tools/agent_tools.dart';
@@ -18,6 +19,7 @@ class AgentOrchestrator {
 
   final AgentTools _tools = AgentTools();
   final FoodScoringService _foodScoring = FoodScoringService();
+  final MealCatalogService _mealCatalog = MealCatalogService();
   final AnalystAgent _analyst = AnalystAgent();
   final CoachAgent _coach = CoachAgent();
   final GuardianAgent _guardian = GuardianAgent();
@@ -1422,11 +1424,15 @@ class AgentOrchestrator {
     }
 
     try {
-      final snap = await _db.collection('tunisian_meals').get();
-      _cachedMealDatabase = snap.docs.map((d) => d.data()).toList();
+      await _mealCatalog.initialize();
+      _cachedMealDatabase = _mealCatalog.getAllMealMaps();
       _cacheLoadedAt = DateTime.now();
       return _cachedMealDatabase!;
     } catch (_) {
+      // TODO: remove after migration. Legacy Firestore source kept here so
+      // it's easy to compare the old planner input during rollout.
+      // final snap = await _db.collection('tunisian_meals').get();
+      // _cachedMealDatabase = snap.docs.map((d) => d.data()).toList();
       return _cachedMealDatabase ?? [];
     }
   }

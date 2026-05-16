@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/food_item.dart';
-import '../models/swipe_meal.dart';
+import '../models/meal.dart';
 
 enum NutritionGoalType { weightLoss, muscleGain, diabetes, balanced }
 
@@ -285,13 +285,6 @@ class FoodScoringService {
     return _isGoalSafe(_featuresFromMealMap(meal), goalProfile);
   }
 
-  bool isGoalSafeSwipeMeal(
-    SwipeMeal meal,
-    GoalProfile goalProfile,
-  ) {
-    return _isGoalSafe(_featuresFromSwipeMeal(meal), goalProfile);
-  }
-
   Future<List<RankedMeal<Map<String, dynamic>>>> rankMealMaps({
     required String uid,
     required List<Map<String, dynamic>> meals,
@@ -312,39 +305,6 @@ class FoodScoringService {
           _preferenceScore(features, preferenceState);
       ranked.add(RankedMeal(
         meal: Map<String, dynamic>.from(meal),
-        goalCompatibilityScore: goalScore,
-        preferenceScore: preferenceScore,
-        finalScore: computeFinalScore(
-          goalCompatibilityScore: goalScore,
-          preferenceScore: preferenceScore,
-        ),
-      ));
-    }
-
-    ranked.sort((a, b) => b.finalScore.compareTo(a.finalScore));
-    return ranked;
-  }
-
-  Future<List<RankedMeal<SwipeMeal>>> rankSwipeMeals({
-    required String uid,
-    required List<SwipeMeal> meals,
-    required List<String> goals,
-    required List<String> conditions,
-  }) async {
-    final goalProfile =
-        deriveGoalProfile(goals: goals, conditions: conditions);
-    final preferenceState = await _loadPreferenceState(uid);
-
-    final ranked = <RankedMeal<SwipeMeal>>[];
-    for (final meal in meals) {
-      final features = _featuresFromSwipeMeal(meal);
-      if (!_isGoalSafe(features, goalProfile)) continue;
-
-      final goalScore = _goalCompatibilityScore(features, goalProfile);
-      final preferenceScore =
-          _preferenceScore(features, preferenceState);
-      ranked.add(RankedMeal(
-        meal: meal,
         goalCompatibilityScore: goalScore,
         preferenceScore: preferenceScore,
         finalScore: computeFinalScore(
@@ -393,12 +353,12 @@ class FoodScoringService {
 
   Future<void> recordMealSwipe({
     required String uid,
-    required SwipeMeal meal,
+    required Meal meal,
     required bool liked,
   }) async {
     await _recordPreferenceFeedback(
       uid: uid,
-      mealFeatures: _featuresFromSwipeMeal(meal),
+      mealFeatures: _featuresFromMeal(meal),
       liked: liked,
       likedId: meal.id,
     );
@@ -1160,24 +1120,27 @@ class FoodScoringService {
     );
   }
 
-  _MealFeatures _featuresFromSwipeMeal(SwipeMeal meal) {
+  _MealFeatures _featuresFromMeal(Meal meal) {
     final tags = meal.tags.map(_normalizeKey).where((t) => t.isNotEmpty).toList();
     final features = _MealFeatures(
       id: meal.id,
       name: meal.name,
-      calories: meal.calories,
+      calories: meal.calories.toDouble(),
       protein: meal.protein,
       carbs: meal.carbs,
       fats: meal.fats,
-      glycemicIndex: meal.glycemicIndex,
+      glycemicIndex: meal.glycemicIndex ?? 0,
       mealType: meal.mealType,
       cuisine: meal.cuisine,
       tags: tags,
-      ingredients: meal.mainIngredients
+      ingredients: meal.ingredients
           .map(_normalizeKey)
           .where((t) => t.isNotEmpty)
           .toList(),
-      suitableFor: const [],
+      suitableFor: meal.suitableFor
+          .map(_normalizeKey)
+          .where((t) => t.isNotEmpty)
+          .toList(),
     );
     return features.copyWith(
       macroTags: _macroTagsForMeal(

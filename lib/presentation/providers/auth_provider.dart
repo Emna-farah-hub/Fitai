@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../data/repositories/auth_repository.dart';
+import '../../data/services/push_notification_service.dart';
 
 /// Manages authentication state for the entire app.
 /// Exposed via Provider so any widget can react to sign-in / sign-out.
@@ -26,7 +29,10 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
     _errorMessage = null;
     try {
-      await _authRepository.signUp(email: email, password: password);
+      final uid = await _authRepository.signUp(email: email, password: password);
+      // Register this device with FCM so the user can receive scheduled
+      // proactive notifications (morning briefing, evening summary, etc.).
+      unawaited(PushNotificationService().registerToken(uid));
       return true;
     } catch (e) {
       _errorMessage = e.toString();
@@ -41,7 +47,8 @@ class AuthProvider extends ChangeNotifier {
     _setLoading(true);
     _errorMessage = null;
     try {
-      await _authRepository.signIn(email: email, password: password);
+      final uid = await _authRepository.signIn(email: email, password: password);
+      unawaited(PushNotificationService().registerToken(uid));
       return true;
     } catch (e) {
       _errorMessage = e.toString();
@@ -53,6 +60,10 @@ class AuthProvider extends ChangeNotifier {
 
   /// Signs out the current user.
   Future<void> signOut() async {
+    final uid = _authRepository.currentUser?.uid;
+    if (uid != null) {
+      await PushNotificationService().unregisterToken(uid);
+    }
     await _authRepository.signOut();
     notifyListeners();
   }

@@ -1,4 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for Firebase Cloud Messaging push notifications. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Android 13+ requires runtime permission to post notifications. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Wake the device for scheduled local notifications, when needed. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:label="fitai"
         android:name="${applicationName}"
@@ -30,6 +38,17 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- FCM default notification channel.
+             Cloud Functions sends notifications targeting this channel id. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="fitai_default"/>
+        <!-- FCM default notification icon (uses launcher icon; for production a
+             white silhouette in drawable-anydpi/ic_stat_fitai.png is recommended). -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

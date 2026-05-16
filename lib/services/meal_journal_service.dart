@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -5,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../agent/core/agent_event.dart';
 import '../agent/orchestrator.dart';
 import '../models/meal_entry.dart';
+import 'streak_service.dart';
 
 typedef MealLoggedCallback = void Function(String foodName, double calories);
 
@@ -26,6 +29,9 @@ class MealJournalService {
     try {
       HapticFeedback.mediumImpact();
     } catch (_) {}
+
+    // Update the user's logging streak (idempotent within a day).
+    unawaited(StreakService().recordMealLog(uid));
 
     // Notify agent that a meal was logged
     try {

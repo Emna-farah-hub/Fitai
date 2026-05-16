@@ -1,4 +1,4 @@
-id,name,mealType,calories,protein,searchQuery
+nid,name,mealType,calories,protein,searchQuery
 ew_valentine_s_day_party_board,Valentine's Day Party Board,Snack,269.4,7.1,"site:eatingwell.com ""Valentine's Day Party Board"""
 ew_crispy_roast_chicken_carrot,Crispy Roast Chicken & Carrots,Dinner,262.8,29.7,"site:eatingwell.com ""Crispy Roast Chicken & Carrots"""
 ew_quinoa_black_bean_salad,Quinoa-Black Bean Salad,Dinner,458.3,13.8,"site:eatingwell.com ""Quinoa-Black Bean Salad"""

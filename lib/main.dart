@@ -12,6 +12,7 @@ import 'data/repositories/auth_repository.dart';
 import 'data/repositories/user_repository.dart';
 import 'data/services/firebase_auth_service.dart';
 import 'data/services/firestore_service.dart';
+import 'data/services/push_notification_service.dart';
 import 'firebase_options.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/onboarding_provider.dart';
@@ -51,6 +52,10 @@ Future<void> main() async {
     runApp(_BootstrapErrorApp(error: e.toString()));
     return;
   }
+
+  // Initialise FCM after Firebase is ready. Failures here are non-fatal so
+  // that emulators without Google Play services still boot.
+  unawaited(PushNotificationService().initialize());
 
   runApp(const FitAIApp());
 

@@ -15,6 +15,7 @@ import '../presentation/widgets/app_card.dart';
 import '../presentation/widgets/illustration_widget.dart';
 import '../presentation/widgets/meal_logged_overlay.dart';
 import '../presentation/widgets/plant_refresh_indicator.dart';
+import '../presentation/widgets/streak_badge.dart';
 import '../services/meal_journal_service.dart';
 import 'food_search_screen.dart';
 import 'plan_screen.dart';
@@ -80,6 +81,7 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('[DAILY] initState uid=$_uid');
     _loadProfile();
     _subscription = _mealService
         .watchTodayMeals(_uid)
@@ -117,13 +119,18 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
   }
 
   Future<void> _loadProfile() async {
+    debugPrint('[DAILY] _loadProfile start uid=$_uid');
     try {
+      // Bound the Firestore read so we can never leave the dashboard stuck
+      // on the spinner if the emulator has flaky Play Services / network.
       final doc = await FirebaseFirestore.instance
           .collection('users')
           .doc(_uid)
-          .get();
+          .get()
+          .timeout(const Duration(seconds: 6));
       if (!mounted) return;
 
+      debugPrint('[DAILY] _loadProfile got doc exists=${doc.exists}');
       if (doc.exists) {
         final data = doc.data()!;
         setState(() {
@@ -137,7 +144,8 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
       }
 
       setState(() => _isLoadingProfile = false);
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('[DAILY] _loadProfile FAILED: $e\n$st');
       if (mounted) setState(() => _isLoadingProfile = false);
     }
   }
@@ -206,6 +214,10 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint(
+      '[DAILY] build isLoadingProfile=$_isLoadingProfile '
+      'meals=${_todayMeals.length} target=$_dailyCalorieTarget',
+    );
     if (_isLoadingProfile) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
@@ -219,7 +231,8 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            _buildNutritionSliverAppBar(),
+            // _buildNutritionSliverAppBar(),
+            const SliverToBoxAdapter(child: SizedBox(height: 80)),
             SliverPadding(
               padding: const EdgeInsets.only(bottom: 80),
               sliver: SliverList(
@@ -251,10 +264,18 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showMealTypeSheet('Lunch'),
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
+      // Inner Scaffold doesn't know about the outer DashboardScreen's floating
+      // bottom-nav pill (the outer uses extendBody:true), so lift the FAB by
+      // the pill height + safe-area inset so they never overlap.
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).padding.bottom + 76,
+        ),
+        child: FloatingActionButton(
+          onPressed: () => _showMealTypeSheet('Lunch'),
+          backgroundColor: AppColors.primary,
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
       ),
     );
   }
@@ -280,6 +301,12 @@ class _DailyDashboardScreenState extends State<DailyDashboardScreen> {
           fontWeight: FontWeight.w700,
         ),
       ),
+      actions: [
+        Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: Center(child: StreakBadge(uid: _uid)),
+        ),
+      ],
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
         background: _buildFlexibleNutritionContent(),
